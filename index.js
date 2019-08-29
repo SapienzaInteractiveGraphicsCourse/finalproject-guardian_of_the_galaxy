@@ -148,7 +148,7 @@ function initGame() {
 	scene.add(light);	
 	scene.add(ambientLight);
 			
-	document.addEventListener( "mousedown", onMouseClick, false );
+	document.addEventListener( "mousedown", destroyEnemy, false );
 	animate();
 
 	window.addEventListener( 'resize', onWindowResize, false );
