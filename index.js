@@ -1,8 +1,7 @@
 
-import Stats from './jsm/libs/stats.module.js';
-
-import { GUI } from './jsm/libs/dat.gui.module.js';
-import { OrbitControls } from './jsm/controls/OrbitControls.js';
+import Stats from './utils/stats.module.js';
+import { GUI } from './utils/dat.gui.module.js';
+import { OrbitControls } from './utils/OrbitControls.js';
 
 var container, stats;
 //SETTING UP CAMERA
