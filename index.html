@@ -4,7 +4,7 @@
 		<title>Guardian of the Galaxy</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link type="text/css" rel="stylesheet" href="./files/main.css">
+		<link rel="stylesheet" href="./style.css">
 	</head>
 
 	<style type="text/css">
@@ -42,8 +42,11 @@
 		<div id="container"></div>
 		<div id="info">
 			<h3>Guardian of the Galaxy</h3>
-			
+			<div class="stars" id="starsid"></div>
+			<div class="twinkling" id="twinklingid"></div>
+			<div class="clouds" id="cloudsid"></div>
 		</div>
+		
 		<script src="node_modules/three/build/three.min.js"></script>
 		<script src="utils/three.js"></script>
 		<script src="utils/GLTFLoader.js"></script>
@@ -52,7 +55,7 @@
 		<script src="utils/THREEx.KeyboardState.js"></script>
 		<style type="text/css">
 			*{
-				cursor: url(goal.png), url(goal.cur), auto;
+				cursor: url(images/goal.png), url(images/goal.cur), auto;
 			}
 			body {
 				overflow: hidden;
@@ -75,5 +78,6 @@
 					<h3><div style="position: absolute; top: 75%; left: 32%;" id="percent_load"></div></h3>
 				</div>	
 		</div>
+		
 	</body>
 </html>
