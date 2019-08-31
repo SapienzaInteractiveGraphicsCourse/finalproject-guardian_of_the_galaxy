@@ -6,20 +6,54 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link type="text/css" rel="stylesheet" href="./files/main.css">
 	</head>
+
+	<style type="text/css">
+
+		#load { display: none; position: relative; right: 30%;}
+		#percent_load { color: #ffffff; text-align: center; display: block; }
+		
+		.start-btn{
+    		text-align: center;
+			display: inline-block;
+			margin:5px;
+   		 	font-weight: bold;
+   		 	 font-size: 30pt;
+  			font-family: 'Press Start 2p';
+    		padding: 10px 10px 10px 10px ;
+    		background-color: lightgray;
+    		text-shadow: -1px -1px black, 1px 1px ;
+			color: gray;
+		    -webkit-border-radius: 7px;
+			-moz-border-radius: 7px;
+			-o-border-radius: 7px;
+			border-radius: 7px;
+		    box-shadow: 0 .2em gray; 
+		    cursor: pointer;
+		}
+
+		 .start-btn:active {
+			box-shadow: none;
+			position: relative;
+			top: .2em;
+		}
+	</style>
 	<body>
 
 		<div id="container"></div>
 		<div id="info">
 			<h3>Guardian of the Galaxy</h3>
-			<button id="start">Start</button>
+			
 		</div>
 		<script src="node_modules/three/build/three.min.js"></script>
-		<script src="three.js"></script>
-		<script src="GLTFLoader.js"></script>
-		<script src="OBJLoader.js"></script>
-		<script src="MTLLoader.js"></script>
-		<script src="THREEx.KeyboardState.js"></script>
+		<script src="utils/three.js"></script>
+		<script src="utils/GLTFLoader.js"></script>
+		<script src="utils/OBJLoader.js"></script>
+		<script src="utils/MTLLoader.js"></script>
+		<script src="utils/THREEx.KeyboardState.js"></script>
 		<style type="text/css">
+			*{
+				cursor: url(goal.png), url(goal.cur), auto;
+			}
 			body {
 				overflow: hidden;
 			}
@@ -30,5 +64,16 @@
 			
 		
 		</script>
+
+
+		<div id="container">
+				<div id="menu" style="position: absolute; top: 30%; left: 40%;">
+					<span id="start" class='start-btn'>START</span>
+				</div>
+				<div id="load" style="position: absolute; top: 70%; left: 30%;">
+					<img id="progress_bar" src="images/progressbar.png" /><br/>
+					<h3><div style="position: absolute; top: 75%; left: 32%;" id="percent_load"></div></h3>
+				</div>	
+		</div>
 	</body>
 </html>

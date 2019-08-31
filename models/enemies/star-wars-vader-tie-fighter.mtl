@@ -1,0 +1,39 @@
+# Blender MTL File: 'None'
+# Material Count: 4
+
+newmtl beige_rough_rock_orange_light_spots_shades_of_grey_color_stone_
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.690196 0.690196 0.690196
+Ks 0.001176 0.001176 0.001176
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd beige-rough-rock-orange-light-spots-shades-of-grey-color-stone-uneven-inconsistent-hard-material-squared-seamless-texture-256x256.jpg
+
+newmtl engine
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.231373 0.156863
+Ks 0.049804 0.049804 0.049804
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl gunred
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.654902 0.247059 0.203922
+Ks 0.049804 0.049804 0.049804
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl solar
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.152941 0.152941 0.152941
+Ks 0.049804 0.049804 0.049804
+Ni 1.000000
+d 1.000000
+illum 2
