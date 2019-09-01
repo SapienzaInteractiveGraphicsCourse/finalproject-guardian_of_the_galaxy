@@ -17,13 +17,18 @@ var controls;
 var raycaster ;
 var mouse = new THREE.Vector2();
 
-var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
+
+//Setting up clock and levels
+var clock;
+var level = 1;
 
 
 // Bullets array
 var bullets = [];
 var objects = [];
+var fireRate1 = 0;
+var fireRate2 = 0;
 
 var starship;
 var enemystarship;
@@ -40,7 +45,7 @@ var x_rotate = 0.06;
 starship = { 
 	model:null, 
 	name : "starship",
-	health: 1
+	health: 10
 };
 
 enemystarship = {
@@ -319,7 +324,6 @@ function loadModels(loadManager){
 		materials.preload();
 		enemies_obj_loader.setMaterials(materials);
 		enemies_obj_loader.load('models/enemies/star-wars-vader-tie-fighter-big.obj', (object) => {
-			scene.add(object);
 			object.name ="enemystarship1"
 			object.traverse( function ( child ) {
 				if ( child instanceof THREE.Mesh ) {
@@ -339,7 +343,6 @@ function loadModels(loadManager){
 		materials.preload();
 		enemies_obj_loader.setMaterials(materials);
 		enemies_obj_loader.load('models/enemies/star-wars-vader-tie-fighter-big.obj', (object) => {
-			scene.add(object);
 			object.name ="enemystarship2"
 			object.traverse( function ( child ) {
 				if ( child instanceof THREE.Mesh ) {
@@ -382,7 +385,15 @@ function initGame() {
 		light.position.set(-40.0, 10.0, 0.0);
 	}		
 
+	clock = new THREE.Clock();
+	clock.start();
 
+	var healthDiv = document.createElement("DIV");
+	healthDiv.id = "healthDiv";                                      
+	document.body.appendChild(healthDiv)
+	document.getElementById("healthDiv").innerHTML = "Health: " + starship.health;                                        
+	document.body.appendChild(healthDiv)
+	document.getElementById("healthDiv").style = "position: absolute; left:0px; top:0px; color: white"
 	
 	stats = new Stats();
 	stats.showPanel( 0 ); 
@@ -440,8 +451,24 @@ function animateEnemy(){
 	if (enemystarship.enemystarship2.health > 0){
 		var y_pos = enemystarship.enemystarship2.model.position.y;	//0.0
 		var x_pos = enemystarship.enemystarship2.model.position.x; //0.0
-		enemystarship.enemystarship2.model.position.x -= x_step[1];
-		enemystarship.enemystarship2.model.position.y -= y_step[1];
+		enemystarship.enemystarship2.model.position.x += x_step[2];
+		enemystarship.enemystarship2.model.position.y += y_step[2];
+		if (y_pos > 8.0){
+			enemystarship.enemystarship2.model.position.y = 8.0;
+			y_step[2] = -y_step[2];
+		} 
+		if (y_pos < -8.0){
+			enemystarship.enemystarship2.model.position.y = -8.0;
+			y_step[2] = -y_step[2];
+		}
+		if (x_pos > 40.0){
+			enemystarship.enemystarship2.model.position.x = 40.0;
+			x_step[2] = -x_step[2];
+		}
+		if (x_pos < -40.0){
+			enemystarship.enemystarship2.model.position.x = -40.0;
+			x_step[2] = -x_step[2];
+		}
 	}
 
 }
@@ -462,6 +489,7 @@ function animate() {
 	
 	requestAnimationFrame( animate );
 	handleMovements();
+	loadEnemies();
 	animateEnemy();
 	shotResponse();
 	render();
@@ -471,6 +499,18 @@ function animate() {
 
 }
 
+function loadEnemies(){
+	if (clock.running && clock.getElapsedTime() > 5 && level == 1){
+		scene.add(enemystarship.enemystarship1.model);
+		clock.stop()
+	}
+	if (clock.running && clock.getElapsedTime() > 10 && level == 2){
+		scene.add(enemystarship.enemystarship1.model);
+		scene.add(enemystarship.enemystarship2.model);
+		enemystarship.enemystarship1.health = 3;
+		clock.stop()
+	}
+}
 
 function destroyEnemy( event ) {
 
@@ -482,76 +522,108 @@ function destroyEnemy( event ) {
 
 	raycaster.setFromCamera( mouse, camera );
 	var intersects = raycaster.intersectObjects( scene.children, true);
-	console.log(intersects);
-	if( intersects.length > 0 ) {
+	if (level == 1){
+		if( intersects.length > 0 ) {
 		
-		var firstObjIntersected = intersects[0].object;
+			var firstObjIntersected = intersects[0].object;
 
-		if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
-			enemystarship.enemystarship1.health -= 1;
-			if (enemystarship.enemystarship1.health == 0){
-				scene.remove(enemystarship.enemystarship1.model );	
+			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
+				enemystarship.enemystarship1.health -= 1;
+				console.log(clock.getElapsedTime());
+				if (enemystarship.enemystarship1.health == 0){
+					scene.remove(enemystarship.enemystarship1.model );
+					clock.start();
+					level = 2;	
+				}
+				return;
 			}
-			return;
-		}
-		if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
-			enemystarship.enemystarship2.health -= 1;
-			if (enemystarship.enemystarship2.health == 0){
-				scene.remove(enemystarship.enemystarship2.model );	
-			}
-			return;
 		}
 	}
+	else if (level == 2){
+		if( intersects.length > 0 ) {
+		
+			var firstObjIntersected = intersects[0].object;
+
+			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
+				enemystarship.enemystarship1.health -= 1;
+				console.log(clock.getElapsedTime());
+				if (enemystarship.enemystarship1.health == 0){
+					scene.remove(enemystarship.enemystarship1.model );
+				}
+				return;
+			}
+			if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
+				enemystarship.enemystarship2.health -= 1;
+				console.log(clock.getElapsedTime());
+				if (enemystarship.enemystarship2.health == 0){
+					scene.remove(enemystarship.enemystarship2.model );	
+				}
+				return;
+			}
+			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0){
+				level = 3
+			}
+		}
+	}
+	
 }
 
 function shotResponse(){
-	if (enemystarship.enemystarship1.health <= 2){	//when an enemy is hit, it starts to shot you
-		raycaster = new THREE.Raycaster();
-		var dir = new THREE.Vector3();
-		var starship_pos = starship.model.position.clone();
-		var enemy_pos = enemystarship.enemystarship1.model.position.clone();
-		dir.subVectors(starship_pos, enemy_pos).normalize();
-		raycaster.set(enemy_pos, dir);
-		var intersects = raycaster.intersectObjects( scene.children, true);
-		console.log(intersects);
-		if( intersects.length > 0 ) {
-			
-			var firstObjIntersected = intersects[0].object;
+	fireRate1 += 1;
+	fireRate2 += 1;
+	if (fireRate1 % 10 == 0){
+		if (enemystarship.enemystarship1.health <= 2 && enemystarship.enemystarship1.health > 0){	//when an enemy is hit, it starts to shot you
+			raycaster = new THREE.Raycaster();
+			var dir = new THREE.Vector3();
+			var starship_pos = starship.model.position.clone();
+			var enemy_pos = enemystarship.enemystarship1.model.position.clone();
+			dir.subVectors(starship_pos, enemy_pos).normalize();
+			raycaster.set(enemy_pos, dir);
+			var intersects = raycaster.intersectObjects( scene.children, true);
+			if( intersects.length > 0 ) {
+				
+				var firstObjIntersected = intersects[0].object;
 
-			if ( starship.name === firstObjIntersected.parent.name ) {
-				starship.health -= 1;
-				if (starship.health == 0){
-					scene.remove(starship.model);	
-					alert("GAME OVER");
+				if ( starship.name === firstObjIntersected.parent.name ) {
+					starship.health -= 1;
+					document.getElementById("healthDiv").innerHTML = "Health: " + starship.health;   
+					console.log(clock.getElapsedTime());
+					if (starship.health == 0){
+						scene.remove(starship.model);	
+						alert("GAME OVER");
+					}
+					return;
 				}
-				return;
 			}
 		}
 	}
-	if (enemystarship.enemystarship2.health <= 2){	//when an enemy is hit, it starts to shot you
-		raycaster = new THREE.Raycaster();
-		var dir = new THREE.Vector3();
-		var starship_pos = starship.model.position.clone();
-		var enemy_pos = enemystarship.enemystarship2.model.position.clone();
-		dir.subVectors(starship_pos, enemy_pos).normalize();
-		raycaster.set(enemy_pos, dir);
-		var intersects = raycaster.intersectObjects( scene.children, true);
-		console.log(intersects);
-		if( intersects.length > 0 ) {
-			
-			var firstObjIntersected = intersects[0].object;
+	if (fireRate2 % 20 == 0){
+		if (enemystarship.enemystarship2.health <= 2 && enemystarship.enemystarship2.health > 0){	//when an enemy is hit, it starts to shot you
+			raycaster = new THREE.Raycaster();
+			var dir = new THREE.Vector3();
+			var starship_pos = starship.model.position.clone();
+			var enemy_pos = enemystarship.enemystarship2.model.position.clone();
+			dir.subVectors(starship_pos, enemy_pos).normalize();
+			raycaster.set(enemy_pos, dir);
+			var intersects = raycaster.intersectObjects( scene.children, true);
+			if( intersects.length > 0 ) {
+				
+				var firstObjIntersected = intersects[0].object;
 
-			if ( starship.name === firstObjIntersected.parent.name ) {
-				starship.health -= 1;
-				if (starship.health == 0){
-					scene.remove(starship.model);	
-					alert("GAME OVER");
+				if ( starship.name === firstObjIntersected.parent.name ) {
+					starship.health -= 1;
+					document.getElementById("healthDiv").innerHTML = "Health: " + starship.health;   
+					if (starship.health == 0){
+						scene.remove(starship.model);	
+						alert("GAME OVER");
+					}
+					return;
 				}
-				return;
 			}
 		}
+	
 	}
-
+	
 }
 
 function update(){	
