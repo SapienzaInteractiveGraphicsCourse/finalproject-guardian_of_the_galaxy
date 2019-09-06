@@ -148,8 +148,7 @@ function movimento_pianeta(pianeta,myData){
         scene.remove(pianeta);
     }
 }
-<<<<<<< HEAD
-=======
+
 
 function constructPlanetData(rotation_rate_tmp, distance_from_axis_tmp, name_tmp, texture_tmp, size_tmp, segments_tmp) {
     return { rotationRate: rotation_rate_tmp, distanceFromAxis: distance_from_axis_tmp, name: name_tmp, texture: texture_tmp, size: size_tmp, segments: segments_tmp };
@@ -219,81 +218,8 @@ function getPointLight(intensity, color) {
     light.shadow.mapSize.height = 2048;
     return light;
 }
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
-
-function constructPlanetData(rotation_rate_tmp, distance_from_axis_tmp, name_tmp, texture_tmp, size_tmp, segments_tmp) {
-    return { rotationRate: rotation_rate_tmp, distanceFromAxis: distance_from_axis_tmp, name: name_tmp, texture: texture_tmp, size: size_tmp, segments: segments_tmp };
-}
-
-<<<<<<< HEAD
-function getMaterial(type, color, texture_tmp) {
-    var materialOptions = {
-        color: color === undefined ? 'rgb(255, 255, 255)' : color,
-        map: texture_tmp === undefined ? null : texture_tmp
-    };
-
-    switch (type) {
-        case 'basic':
-            return new THREE.MeshBasicMaterial(materialOptions);
-        case 'lambert':
-            return new THREE.MeshLambertMaterial(materialOptions);
-        case 'phong':
-            return new THREE.MeshPhongMaterial(materialOptions);
-        case 'standard':
-            return new THREE.MeshStandardMaterial(materialOptions);
-        default:
-            return new THREE.MeshBasicMaterial(materialOptions);
-    }
-}
-
-function getSphere(material, size, segments) {
-    var geometry = new THREE.SphereGeometry(size, segments, segments);
-    var obj = new THREE.Mesh(geometry, material);
-    obj.castShadow = true;
-
-    return obj;
-}
 
 
-function loadTexturedPlanet(myData, x, y, z, myMaterialType) {
-    var myMaterial;
-    var passThisTexture;
-
-    if (myData.texture && myData.texture !== "") {
-        //passThisTexture = new THREE.ImageUtils.loadTexture(myData.texture);
-        THREE.ImageUtils.crossOrigin = '';
-        var passThisTexture = THREE.ImageUtils.loadTexture(myData.texture);
-    }
-    if (myMaterialType) {
-        myMaterial = getMaterial(myMaterialType, "rgb(255, 255, 255 )", passThisTexture);
-    } else {
-        myMaterial = getMaterial("lambert", "rgb(255, 255, 255 )", passThisTexture);
-    }
-
-    myMaterial.receiveShadow = true;
-    myMaterial.castShadow = true;
-    var pianeta = getSphere(myMaterial, myData.size, myData.segments);
-    pianeta.receiveShadow = true;
-    pianeta.name = myData.name;
-    scene.add(pianeta);
-    pianeta.position.set(x, y, z);
-
-    return pianeta;
-}
-
-function getPointLight(intensity, color) {
-    var light = new THREE.PointLight(color, intensity);
-    light.castShadow = true;
-
-    light.shadow.bias = 0.001;
-    light.shadow.mapSize.width = 2048;
-    light.shadow.mapSize.height = 2048;
-    return light;
-}
-
-
-=======
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
 function updatePlanet(renderer, scene, camera, controls) {
     pointLight.position.copy([0,0,0]);
     controls.updatePlanet();
@@ -331,11 +257,6 @@ function updatePlanet(renderer, scene, camera, controls) {
 //
 //END PLANETS
 //
-<<<<<<< HEAD
-=======
-
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
-
 	
 var loadManager = new THREE.LoadingManager();
 
@@ -497,7 +418,6 @@ function initGame() {
 
 	clock = new THREE.Clock();
 	clock.start();
-<<<<<<< HEAD
 
 
 
@@ -526,30 +446,11 @@ function initGame() {
 	document.body.appendChild(healthDiv);
 	document.getElementById("healthDiv").innerHTML = starship.health;                                        
 	document.body.appendChild(healthDiv)
-	document.getElementById("healthDiv").style = "position: absolute; left:3%; top:10px; color: white"
+	document.getElementById("healthDiv").style = "position: absolute; left:3%; top:1.5%; color: white"
 
 
 
 
-     
-		
-	
-=======
-
-	var healthDiv = document.createElement("DIV");
-	healthDiv.id = "healthDiv";                                      
-	document.body.appendChild(healthDiv)
-	document.getElementById("healthDiv").innerHTML = "Health: " + starship.health;                                        
-	document.body.appendChild(healthDiv)
-	document.getElementById("healthDiv").style = "position: absolute; left:0px; top:0px; color: white"
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
-	
-	/*var cuore_bar= document.createElement("img");
-	cuore_bar.id="cuore_bar"
-	cuore_bar.setAttribute("src", "images/heart_bar.png");   
-	document.getElementById("healthDiv").appendChild(cuore_bar);
-	document.getElementById("cuore_bar").style = "position: absolute; left:0px; top:25px;background: linear-gradient(90deg,rgba(0,0,0,0),#66ff66  0%);"
-	document.getElementById("cuore_bar").display="none";*/
 
 	stats = new Stats();
 	stats.showPanel( 0 ); 
@@ -573,7 +474,7 @@ function initGame() {
     //var pianeta4 = loadTexturedPlanet(pianeta4_data, pianeta4_data.distanceFromAxis, 0, 0);
     //var pianeta5 = loadTexturedPlanet(pianeta5_data, pianeta5_data.distanceFromAxis, 0, 0);
     //var pianeta6 = loadTexturedPlanet(pianeta6_data, pianeta6_data.distanceFromAxis, 0, 0);
-<<<<<<< HEAD
+
     
     
 	var listener = new THREE.AudioListener();
@@ -591,9 +492,6 @@ function initGame() {
       sound.play();
     });
 
-
-=======
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
 
 
     update(renderer, scene, camera, controls);
@@ -710,12 +608,11 @@ function destroyEnemy( event ) {
 				if (enemystarship.enemystarship1.health == 0){
 					scene.remove(enemystarship.enemystarship1.model );
 					clock.start();
-<<<<<<< HEAD
+
 					level = 2;
 					document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;    	
-=======
+
 					level = 2;	
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
 				}
 				return;
 			}
@@ -744,10 +641,8 @@ function destroyEnemy( event ) {
 			}
 			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0){
 				level = 3
-<<<<<<< HEAD
+
 				document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;    
-=======
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
 			}
 		}
 	}
@@ -772,11 +667,10 @@ function shotResponse(){
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
 					starship.health -= 1;
-<<<<<<< HEAD
+
 					document.getElementById("healthDiv").innerHTML = starship.health;   
-=======
-					document.getElementById("healthDiv").innerHTML = "Health: " + starship.health;   
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
+
+					document.getElementById("healthDiv").innerHTML = starship.health;   
 					console.log(clock.getElapsedTime());
 					if (starship.health == 0){
 						scene.remove(starship.model);	
@@ -802,11 +696,10 @@ function shotResponse(){
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
 					starship.health -= 1;
-<<<<<<< HEAD
+
 					document.getElementById("healthDiv").innerHTML = starship.health;   
-=======
-					document.getElementById("healthDiv").innerHTML = "Health: " + starship.health;   
->>>>>>> c2cf306558c76ef79b2c2ca7f313185034ccea00
+
+					document.getElementById("healthDiv").innerHTML = starship.health;   
 					if (starship.health == 0){
 						scene.remove(starship.model);	
 						alert("GAME OVER");
