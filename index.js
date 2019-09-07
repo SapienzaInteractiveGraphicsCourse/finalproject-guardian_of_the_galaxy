@@ -42,6 +42,13 @@ var z_rotate = 0.06;
 var x_rotate = 0.03;
 
 
+var pianeta1;
+var pianeta2;
+var pianeta3;
+var pianeta4;
+var pianeta5;
+var pianeta6;
+
 starship = { 
 	model:null, 
 	name : "starship",
@@ -67,16 +74,10 @@ enemystarship = {
 //
 var pointLight;
 var segmenti_pianeta = 48;
-var pianeta1_dimensione=3;
-var pianeta2_dimensione=5;
-var pianeta3_dimensione=6;
-var pianeta4_dimensione=1;
-var pianeta5_dimensione=4;
-var pianeta6_dimensione=9;
 
 var texture_planets=["./images/1.jpg","./images/2.jpg","./images/3.jpg","./images/4.jpg","./images/5.jpg","./images/6.jpg","./images/7.jpg","./images/8.jpg","./images/9.jpg","./images/10.jpg","./images/11.jpg","./images/12.jpg",
              "./images/13.jpg","./images/14.jpg","./images/15.jpg","./images/16.jpg"];
-var planets_dimensions=[1,3,5,7,9,4];
+var planets_dimensions=[4,5,6,7,8];
 
 function shuffle(myArray,myLen){
     var array=myArray;
@@ -93,11 +94,11 @@ function shuffle(myArray,myLen){
 shuffle(texture_planets,16);
 shuffle(planets_dimensions,6);
 
-var pianeta1_data = constructPlanetData(0.015, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
+var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
 var pianeta2_data = constructPlanetData(0.015, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
-var pianeta3_data = constructPlanetData(0.015, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
+var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
 var pianeta4_data = constructPlanetData(0.015, (-15,-15,-20), "pianeta4", texture_planets[3], planets_dimensions[3], segmenti_pianeta);
-var pianeta5_data = constructPlanetData(0.015, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
+var pianeta5_data = constructPlanetData(0.02, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
 var pianeta6_data = constructPlanetData(0.015, (0,0,0), "pianeta6", texture_planets[5], planets_dimensions[5], segmenti_pianeta);
 
 shuffle(texture_planets);
@@ -132,21 +133,30 @@ function rotazione_pianeta(pianeta, myData) {
 
 
 function movimento_pianeta(pianeta,myData){
-    /*if(pianeta.position.x >=-40){
-        pianeta.position.x -= 0.2;
-        pianeta.position.z += 0.2;
-    }
-    else{
-        pianeta.position.x=0;
-        pianeta.position.z=0;
-    }*/
+    
     if(pianeta.position.z< camera.position.z){
-        pianeta.position.x -= 0.2;
-        pianeta.position.z += 0.2;
+		if(myData.name=='pianeta1'){
+			pianeta.position.z += 1;
+		}
+		if(myData.name=='pianeta2'){
+			pianeta.position.z += 1;
+		}
+		if(myData.name=='pianeta3'){
+			pianeta.position.z += 1;
+		}
+		if(myData.name=='pianeta4'){
+			pianeta.position.z += 1;
+		}
+		if(myData.name=='pianeta5'){
+			pianeta.position.z += 0.6;
+		}
+		if(myData.name=='pianeta6'){
+			pianeta.position.z +=0.6;
+		}
     }
     else{
         scene.remove(pianeta);
-    }
+	}
 }
 
 
@@ -208,52 +218,6 @@ function loadTexturedPlanet(myData, x, y, z, myMaterialType) {
 
     return pianeta;
 }
-
-function getPointLight(intensity, color) {
-    var light = new THREE.PointLight(color, intensity);
-    light.castShadow = true;
-
-    light.shadow.bias = 0.001;
-    light.shadow.mapSize.width = 2048;
-    light.shadow.mapSize.height = 2048;
-    return light;
-}
-
-
-function updatePlanet(renderer, scene, camera, controls) {
-    pointLight.position.copy([0,0,0]);
-    controls.updatePlanet();
-
-    //pianeta1 movimenti
-    //rotazione_pianeta(pianeta1,pianeta1_data);
-    //movimento_pianeta(pianeta1,pianeta1_data);
-
-    //pianeta2 movimenti
-    //rotazione_pianeta(pianeta2,pianeta2_data);
-    //movimento_pianeta(pianeta2,pianeta2_data);
-
-    //pianeta3 movimenti
-    //rotazione_pianeta(pianeta3,pianeta3_data);
-    //movimento_pianeta(pianeta3,pianeta3_data);
-
-    //pianeta4 movimenti
-    //rotazione_pianeta(pianeta4,pianeta4_data);
-    //movimento_pianeta(pianeta4,pianeta4_data);
-
-    //pianeta5 movimenti
-    //rotazione_pianeta(pianeta5,pianeta5_data);
-    //movimento_pianeta(pianeta5,pianeta5_data);
-
-    //pianeta6 movimenti
-    //rotazione_pianeta(pianeta6,pianeta6_data);
-    //movimento_pianeta(pianeta6,pianeta6_data);
-
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(function () {
-        updatePlanet(renderer, scene, camera, controls);
-    });
-}
 //
 //END PLANETS
 //
@@ -308,10 +272,11 @@ function loadModels(loadManager){
     twinklingDiv.className = "twinkling";
     document.getElementById("info").appendChild(twinklingDiv);
 
-    var cloudsDiv = document.createElement("DIV");
-    cloudsDiv.id = "cloudsid";
-    cloudsDiv.className = "clouds";
-    document.getElementById("info").appendChild(cloudsDiv);
+	//NUVOLE
+    //var cloudsDiv = document.createElement("DIV");
+    //cloudsDiv.id = "cloudsid";
+    //cloudsDiv.className = "clouds";
+    //document.getElementById("info").appendChild(cloudsDiv);
 
 
 
@@ -335,10 +300,6 @@ function loadModels(loadManager){
 			starship.model.position.set(0.0, 0.0, 0.0);	
 		});
 	});
-
-
-	
-
 
 	var enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	var enemies_mtlLoader = new THREE.MTLLoader(loadManager);
@@ -378,7 +339,14 @@ function loadModels(loadManager){
 		});
 	});
 
-	
+
+	//PLANETS MOVEMENT
+	pianeta1 = loadTexturedPlanet(pianeta1_data, 20, 10, -1300, 0);
+	pianeta2 = loadTexturedPlanet(pianeta2_data, -20, -10, -1300, 0);
+	pianeta3 = loadTexturedPlanet(pianeta3_data, -20, 10, -1300, 0);
+	pianeta4 = loadTexturedPlanet(pianeta4_data, 20, -10, -1300, 0);
+	pianeta5 = loadTexturedPlanet(pianeta5_data, -10, 0, -1300, 0);
+	pianeta6 = loadTexturedPlanet(pianeta6_data, 10, 0, -1300, 0);
 
 
 
@@ -467,15 +435,6 @@ function initGame() {
 	animate();
 
 	window.addEventListener( 'resize', onWindowResize, false );
-
-	var pianeta1 = loadTexturedPlanet(pianeta1_data, pianeta1_data.distanceFromAxis, 0, 0);
-    //var pianeta2 = loadTexturedPlanet(pianeta2_data, pianeta2_data.distanceFromAxis, 0, 0);
-    //var pianeta3 = loadTexturedPlanet(pianeta3_data, pianeta3_data.distanceFromAxis, 0, 0);
-    //var pianeta4 = loadTexturedPlanet(pianeta4_data, pianeta4_data.distanceFromAxis, 0, 0);
-    //var pianeta5 = loadTexturedPlanet(pianeta5_data, pianeta5_data.distanceFromAxis, 0, 0);
-    //var pianeta6 = loadTexturedPlanet(pianeta6_data, pianeta6_data.distanceFromAxis, 0, 0);
-
-    
     
 	var listener = new THREE.AudioListener();
     camera.add(listener);
@@ -567,9 +526,24 @@ function animate() {
 	loadEnemies();
 	animateEnemy();
 	shotResponse();
+	movimento_pianeta(pianeta1,pianeta1_data);
+	movimento_pianeta(pianeta2,pianeta2_data);
+	movimento_pianeta(pianeta3,pianeta3_data);
+	movimento_pianeta(pianeta4,pianeta4_data);
+	movimento_pianeta(pianeta5,pianeta5_data);
+	movimento_pianeta(pianeta6,pianeta6_data);
+
+	rotazione_pianeta(pianeta1,pianeta1_data);
+	rotazione_pianeta(pianeta2,pianeta2_data);
+	rotazione_pianeta(pianeta3,pianeta3_data);
+	rotazione_pianeta(pianeta4,pianeta4_data);
+	rotazione_pianeta(pianeta5,pianeta5_data);
+	rotazione_pianeta(pianeta6,pianeta6_data);
+
+
 	render();
 	update();
-		
+	
 	stats.end();
 
 }
