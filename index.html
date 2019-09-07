@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link rel="stylesheet" href="./style.css">
-
+		
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.0/jquery.fancybox.min.css" rel="stylesheet" />
 
 
@@ -18,14 +18,13 @@
 
 		<link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet" />
 
-		
 	</head>
 
 	<style type="text/css">
 
 		#load { display: none; position: relative; right: 30%;}
 		#percent_load { color: #ffffff; text-align: center; display: block; }
-
+		
 		.switch {
         position: relative;
         display: inline-block;
@@ -190,7 +189,6 @@
     transform: scale(1);
   }
 }
-
 		.start-btn{
     		text-align: center;
 			display: inline-block;
@@ -215,12 +213,11 @@
 			position: relative;
 			top: .2em;
 		}
-		
 		a:hover, a:visited, a:link, a:active{
     		text-decoration: none;
 		}
 	</style>
-	<body >
+	<body>
 
 		<div id="container"></div>
 		<div id="info">
@@ -246,6 +243,7 @@
 				overflow: hidden;
 			}
 		</style>
+		<script type='text/javascript' src='./utils/tween.js'></script>
 		<script type="module" src="index.js" />
 		<script>
 		
@@ -263,7 +261,9 @@
 				<div id="load" style="position: absolute; top: 70%; left: 30%;">
 					<img id="progress_bar" src="images/progressbar.png" /><br/>
 					<h4><div style="position: absolute; top: 77%; left: 32%;" id="percent_load"></div></h4>
-				</div>	
+
+				</div>
 		</div>
-			</body>
+		
+	</body>
 </html>
