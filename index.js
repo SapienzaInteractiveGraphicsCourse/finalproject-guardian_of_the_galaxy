@@ -23,6 +23,11 @@ var keyboard = new THREEx.KeyboardState();
 var clock;
 var level = 1;
 
+//Enemies destruction
+
+ var dirs = [];
+ var parts = [];
+
 
 // Bullets array
 var bullets = [];
@@ -35,11 +40,11 @@ var enemystarship;
 
 //SETTING UP ENEMY MOVEMENTS
 var y_step = [0.2, 0.15, -0.15];
-var x_step = [0.2, 0.2, -0.2];
+var x_step = [0.3, 0.2, -0.2];
 
 
 var z_rotate = 0.06;
-var x_rotate = 0.03;
+var x_rotate = 0.06;
 
 
 starship = { 
@@ -49,6 +54,16 @@ starship = {
 };
 
 enemystarship = {
+	originalenemy1 : { 
+		model:null, 
+		name:"enemystarship1",
+		health: 3
+	},
+	originalenemy2: {
+		model:null, 
+		name:"enemystarship2",
+		health: 3
+	},
 	enemystarship1 : { 
 		model:null, 
 		name:"enemystarship1",
@@ -57,6 +72,31 @@ enemystarship = {
 	enemystarship2: {
 		model:null, 
 		name:"enemystarship2",
+		health: 3
+	},
+	damagedstarship1: {
+		model:null, 
+		name:"damagedstarship1",
+		health: 3
+	},
+	damagedstarship2: {
+		model:null, 
+		name:"damagedfinalship1",
+		health: 3
+	},
+	damagedfinalship1: {
+		model:null, 
+		name:"damagedstarship1",
+		health: 3
+	},
+	damagedfinalship2: {
+		model:null, 
+		name:"damagedfinalship2",
+		health: 3
+	},
+	finalenemy: {
+		model:null, 
+		name:"finalenemy",
 		health: 3
 	}
 }
@@ -148,7 +188,6 @@ function movimento_pianeta(pianeta,myData){
         scene.remove(pianeta);
     }
 }
-
 
 function constructPlanetData(rotation_rate_tmp, distance_from_axis_tmp, name_tmp, texture_tmp, size_tmp, segments_tmp) {
     return { rotationRate: rotation_rate_tmp, distanceFromAxis: distance_from_axis_tmp, name: name_tmp, texture: texture_tmp, size: size_tmp, segments: segments_tmp };
@@ -257,7 +296,8 @@ function updatePlanet(renderer, scene, camera, controls) {
 //
 //END PLANETS
 //
-	
+
+
 var loadManager = new THREE.LoadingManager();
 
 document.getElementById("start").addEventListener("click", function(){
@@ -275,14 +315,11 @@ document.getElementById("start").addEventListener("click", function(){
 loadManager.onLoad = function () { 
 
 	document.getElementById("load").parentNode.removeChild(document.getElementById("load"));
-
 	initGame();
 	
 };
 
 loadManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-
-
 	document.getElementById("progress_bar").style = "background: linear-gradient(90deg,#e5405e 0%, #ffdb3a 25%, #3fffa2 50%, #3fffa2 50%" + String((itemsLoaded/itemsTotal)*100) + "%, #000000 0%);";
 	document.getElementById("percent_load").innerHTML = 'LOADING: ' + String((itemsLoaded/itemsTotal)*100)+"%";
 };
@@ -311,17 +348,19 @@ function loadModels(loadManager){
     var cloudsDiv = document.createElement("DIV");
     cloudsDiv.id = "cloudsid";
     cloudsDiv.className = "clouds";
-    document.getElementById("info").appendChild(cloudsDiv);
-
-
+	document.getElementById("info").appendChild(cloudsDiv);
+	
 
 	var starship_loader = new THREE.OBJLoader(loadManager);
 	var starship_mtlLoader = new THREE.MTLLoader(loadManager);
 
-	starship_mtlLoader.load('models/starship/star-wars-x-wing.mtl', (materials) => {
+	
+	
+
+	starship_mtlLoader.load('models/starship/X-Wing.mtl', (materials) => {
 		materials.preload();
 		starship_loader.setMaterials(materials);
-		starship_loader.load('models/starship/star-wars-x-wing.obj', (object) => {
+		starship_loader.load('models/starship/X-Wing.obj', (object) => {
 			object.position.set(0,3,-10);
 			scene.add(object);
 			object.name ="starship"
@@ -337,9 +376,6 @@ function loadModels(loadManager){
 	});
 
 
-	
-
-
 	var enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	var enemies_mtlLoader = new THREE.MTLLoader(loadManager);
 
@@ -347,15 +383,18 @@ function loadModels(loadManager){
 		materials.preload();
 		enemies_obj_loader.setMaterials(materials);
 		enemies_obj_loader.load('models/enemies/star-wars-vader-tie-fighter-big.obj', (object) => {
-			object.name ="enemystarship1"
+			object.name ="enemystarship1";
 			object.traverse( function ( child ) {
 				if ( child instanceof THREE.Mesh ) {
 					child.castShadow = true;
 				}
 			} );
 			objects.push(object);
-			enemystarship.enemystarship1.model = object
+			enemystarship.enemystarship1.model = object;
 			enemystarship.enemystarship1.model.position.set(0.0, 0.0, -10.0);	
+			
+			enemystarship.originalenemy1.model = object.clone();
+			enemystarship.originalenemy1.model.position.set(0.0, 0.0, -10.0);	
 		});
 	});
 
@@ -366,26 +405,159 @@ function loadModels(loadManager){
 		materials.preload();
 		enemies_obj_loader.setMaterials(materials);
 		enemies_obj_loader.load('models/enemies/star-wars-vader-tie-fighter-big.obj', (object) => {
-			object.name ="enemystarship2"
+			object.name ="enemystarship2";
 			object.traverse( function ( child ) {
 				if ( child instanceof THREE.Mesh ) {
 					child.castShadow = true;
 				}
 			} );
 			objects.push(object);
-			enemystarship.enemystarship2.model = object
+			enemystarship.enemystarship2.model = object;
 			enemystarship.enemystarship2.model.position.set(0.0, 0.0, -20.0);	
+			enemystarship.originalenemy2.model = object.clone();
+			enemystarship.originalenemy2.model.position.set(0.0, 0.0, -10.0);	
 		});
 	});
 
-	
+	enemies_obj_loader = new THREE.OBJLoader(loadManager);
+	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
 
+	enemies_mtlLoader.load('models/enemies/star-wars-vader-tie-fighter-big-damaged1.mtl', (materials) => {
+		materials.preload();
+		enemies_obj_loader.setMaterials(materials);
+		enemies_obj_loader.load('models/enemies/star-wars-vader-tie-fighter-big-damaged1.obj', (object) => {
+			object.name ="damagedstarship1";
+			object.traverse( function ( child ) {
+				if ( child instanceof THREE.Mesh ) {
+					child.castShadow = true;
+				}
+			} );
+			objects.push(object);
+			enemystarship.damagedstarship1.model = object
+		});
+	});
 
+	enemies_obj_loader = new THREE.OBJLoader(loadManager);
+	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
+
+	enemies_mtlLoader.load('models/enemies/star-wars-vader-tie-fighter-big-damaged2.mtl', (materials) => {
+		materials.preload();
+		enemies_obj_loader.setMaterials(materials);
+		enemies_obj_loader.load('models/enemies/star-wars-vader-tie-fighter-big-damaged2.obj', (object) => {
+			object.name ="damagedstarship2";
+			object.traverse( function ( child ) {
+				if ( child instanceof THREE.Mesh ) {
+					child.castShadow = true;
+				}
+			} );
+			objects.push(object);
+			enemystarship.damagedstarship2.model = object
+		});
+	});
+
+	enemies_obj_loader = new THREE.OBJLoader(loadManager);
+	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
+	var material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+	var material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+		
+
+	enemies_mtlLoader.load('models/enemies/X-Wing.mtl', (materials) => {
+		enemies_obj_loader.load('models/enemies/X-Wing.obj', (object) => {
+			object.name ="finalenemy"
+			object.traverse( function ( child ) {
+				 // For any meshes in the model, add our material.
+
+				if ( child instanceof THREE.Mesh ) {
+					child.castShadow = true;
+					if (child.name == "polySurface46_Mesh"){
+						child.material = material2
+					}
+					else{
+						child.material = material1;	
+
+					}
+				}
+			} );
+			enemystarship.finalenemy.model = object;
+			enemystarship.finalenemy.model.position.set(0.0, 2.0, -50.0);	
+			enemystarship.finalenemy.model.rotation.x += 0.1;
+		});
+	});
+
+	enemies_obj_loader = new THREE.OBJLoader(loadManager);
+	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
+	material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+	material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+		
+
+	enemies_mtlLoader.load('models/enemies/X-Wing-damaged1.mtl', (materials) => {
+		enemies_obj_loader.load('models/enemies/X-Wing-damaged1.obj', (object) => {
+			object.name ="damagedfinalship1"
+			object.traverse( function ( child ) {
+				 // For any meshes in the model, add our material.
+
+				if ( child instanceof THREE.Mesh ) {
+					child.castShadow = true;
+					if (child.name == "polySurface46_Mesh"){
+						child.material = material2
+					}
+					else{
+						child.material = material1;	
+
+					}
+				}
+			} );
+			enemystarship.damagedfinalship1.model = object;
+			enemystarship.damagedfinalship1.model.position.set(0.0, 2.0, -50.0);	
+			enemystarship.damagedfinalship1.model.rotation.x += 0.1;
+		});
+	});
+
+	enemies_obj_loader = new THREE.OBJLoader(loadManager);
+	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
+	material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+	material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+		
+
+	enemies_mtlLoader.load('models/enemies/X-Wing-damaged2.mtl', (materials) => {
+		enemies_obj_loader.load('models/enemies/X-Wing-damaged2.obj', (object) => {
+			object.name ="damagedfinalship2"
+			object.traverse( function ( child ) {
+				 // For any meshes in the model, add our material.
+
+				if ( child instanceof THREE.Mesh ) {
+					child.castShadow = true;
+					if (child.name == "polySurface46_Mesh"){
+						child.material = material2
+					}
+					else{
+						child.material = material1;	
+
+					}
+				}
+			} );
+			enemystarship.damagedfinalship2.model = object;
+			enemystarship.damagedfinalship2.model.position.set(0.0, 2.0, -50.0);	
+			enemystarship.damagedfinalship2.model.rotation.x += 0.1;	
+		});
+	});
+
+	var starsDiv = document.createElement("DIV");
+	starsDiv.id = "starsid"; 
+	starsDiv.className = "stars";                                     
+	document.getElementById("info").appendChild(starsDiv);  
+
+	var twinklingDiv = document.createElement("DIV");
+	twinklingDiv.id = "twinklingid";   
+	twinklingDiv.className = "twinkling";                                   
+	document.getElementById("info").appendChild(twinklingDiv);
+
+	var cloudsDiv = document.createElement("DIV");
+	cloudsDiv.id = "cloudsid";     
+	cloudsDiv.className = "clouds";                                 
+	document.getElementById("info").appendChild(cloudsDiv);
 
 }
-
-
-
 
 function initGame() {
 		
@@ -393,13 +565,12 @@ function initGame() {
 		scene = new THREE.Scene();
 	}
 				
+				
 	if (!camera) {
 		camera = new THREE.PerspectiveCamera( fovy, window.innerWidth / window.innerHeight, near, far );
 		camera.position.set( 0.0, 0.0, 30.0);
 		camera.lookAt( 0.0, 0.0, 0.0 );
 	}
-			
-	
 	
 	if (!renderer) {
 		renderer = new THREE.WebGLRenderer( { antialias:true,alpha: true, powerPreference:"high-performance" } );
@@ -419,8 +590,6 @@ function initGame() {
 	clock = new THREE.Clock();
 	clock.start();
 
-
-
 	var levelDiv=document.createElement("DIV");
 	levelDiv.id="levelDiv";
 	document.body.appendChild(levelDiv);
@@ -439,19 +608,13 @@ function initGame() {
 	life.setAttribute("display", "block");
 	document.getElementById("lifeDiv").appendChild(life);
 
-	
-
 	var healthDiv = document.createElement("DIV");
-	healthDiv.id = "healthDiv";                                      
+	healthDiv.id = "healthDiv";      
 	document.body.appendChild(healthDiv);
-	document.getElementById("healthDiv").innerHTML = starship.health;                                        
-	document.body.appendChild(healthDiv)
+	document.getElementById("healthDiv").innerHTML = starship.health;         
 	document.getElementById("healthDiv").style = "position: absolute; left:3%; top:1.5%; color: white"
 
-
-
-
-
+	
 	stats = new Stats();
 	stats.showPanel( 0 ); 
 	stats.domElement.style = "position: absolute; left:0px; bottom:0px;"
@@ -459,24 +622,25 @@ function initGame() {
 		
 		
 	scene.add(starship.model);
-	scene.add(enemystarship.enemystarship1.model);
 	scene.add(light);	
 	scene.add(ambientLight);
-			
+	
+	
+
 	document.addEventListener( "mousedown", destroyEnemy, false );
 	animate();
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
 	var pianeta1 = loadTexturedPlanet(pianeta1_data, pianeta1_data.distanceFromAxis, 0, 0);
+	pianeta1.position.z = -40;
     //var pianeta2 = loadTexturedPlanet(pianeta2_data, pianeta2_data.distanceFromAxis, 0, 0);
     //var pianeta3 = loadTexturedPlanet(pianeta3_data, pianeta3_data.distanceFromAxis, 0, 0);
     //var pianeta4 = loadTexturedPlanet(pianeta4_data, pianeta4_data.distanceFromAxis, 0, 0);
     //var pianeta5 = loadTexturedPlanet(pianeta5_data, pianeta5_data.distanceFromAxis, 0, 0);
     //var pianeta6 = loadTexturedPlanet(pianeta6_data, pianeta6_data.distanceFromAxis, 0, 0);
 
-    
-    
+
 	var listener = new THREE.AudioListener();
     camera.add(listener);
 
@@ -490,10 +654,8 @@ function initGame() {
       sound.setLoop(true);
       sound.setVolume(0.06);
       sound.play();
-    });
-
-
-
+	});
+	
     update(renderer, scene, camera, controls);
 	
 }
@@ -545,6 +707,9 @@ function animateEnemy(){
 			x_step[2] = -x_step[2];
 		}
 	}
+	if (enemystarship.finalenemy.health > 0){
+		enemystarship.finalenemy.model.rotation.z += 0.05;
+	}
 
 }
 
@@ -566,6 +731,7 @@ function animate() {
 	handleMovements();
 	loadEnemies();
 	animateEnemy();
+	updateExplosion();
 	shotResponse();
 	render();
 	update();
@@ -574,16 +740,100 @@ function animate() {
 
 }
 
-function loadEnemies(){
-	if (clock.running && clock.getElapsedTime() > 5 && level == 1){
-		scene.add(enemystarship.enemystarship1.model);
-		clock.stop()
+function rotateWings(action){
+	if (action == "open"){
+		starship.model.traverse( function ( child ) {
+			if ( child instanceof THREE.Mesh ) {
+				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
+					child.rotation.z += 0.0012;
+				}
+				if (child.name == "LeftWingTop.001" || child.name == "LeftWingTopEngineAndGreebles.001" || child.name == "LeftWingTopHullPlates.001"){
+					child.rotation.z -= 0.0012;
+				}
+				if (child.name == "RightWingBottom.001" || child.name == "RightWingBottomEngineAndGreebles.001" || child.name == "RightWingBottomHullPlates.001"){
+					child.rotation.z -= 0.0012;
+				}
+				if (child.name == "RightWingTop.001" || child.name == "RightWingTopEngineAndGreebles.001" || child.name == "RightWingTopHullPlates.001"){
+					child.rotation.z += 0.0012;
+				}
+
+			}
+		} );
 	}
-	if (clock.running && clock.getElapsedTime() > 10 && level == 2){
-		scene.add(enemystarship.enemystarship1.model);
-		scene.add(enemystarship.enemystarship2.model);
-		enemystarship.enemystarship1.health = 3;
-		clock.stop()
+	else{
+		starship.model.traverse( function ( child ) {
+			if ( child instanceof THREE.Mesh ) {
+				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
+					child.rotation.z -= 0.0012;
+				}
+				if (child.name == "LeftWingTop.001" || child.name == "LeftWingTopEngineAndGreebles.001" || child.name == "LeftWingTopHullPlates.001"){
+					child.rotation.z += 0.0012;
+				}
+				if (child.name == "RightWingBottom.001" || child.name == "RightWingBottomEngineAndGreebles.001" || child.name == "RightWingBottomHullPlates.001"){
+					child.rotation.z += 0.0012;
+				}
+				if (child.name == "RightWingTop.001" || child.name == "RightWingTopEngineAndGreebles.001" || child.name == "RightWingTopHullPlates.001"){
+					child.rotation.z -= 0.0012;
+				}
+			}
+		} );
+
+	}
+	
+}
+
+function loadEnemies(){
+	if (clock.running && level == 1){
+		if (clock.getElapsedTime() > 3 && clock.getElapsedTime() < 5){
+			rotateWings("open");
+		}
+		else if (clock.getElapsedTime() > 5){
+			scene.add(enemystarship.enemystarship1.model);
+			clock.stop();
+		}
+	}
+	if (clock.running && level == 2){
+		if (clock.getElapsedTime() > 1 && clock.getElapsedTime() < 3){
+			rotateWings("close");
+		}
+		else if (clock.getElapsedTime() > 7 && clock.getElapsedTime() < 9){
+			rotateWings("open");
+		}
+		else if (clock.getElapsedTime() > 9){
+			enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+			scene.add(enemystarship.enemystarship1.model);
+			scene.add(enemystarship.enemystarship2.model);
+			enemystarship.enemystarship1.health = 3;
+			clock.stop()
+		}
+
+	}
+	if (clock.running && level == 3){
+		if (clock.getElapsedTime() > 1 && clock.getElapsedTime() < 3){
+			rotateWings("close");
+		}
+		else if (clock.getElapsedTime() > 7 && clock.getElapsedTime() < 9){
+			rotateWings("open");
+		}
+		else if (clock.getElapsedTime() > 9){
+			enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+			enemystarship.enemystarship2.model = enemystarship.originalenemy2.model.clone();
+			scene.add(enemystarship.enemystarship1.model);
+			scene.add(enemystarship.enemystarship2.model);
+			scene.add(enemystarship.finalenemy.model);
+			enemystarship.enemystarship1.health = 3;
+			enemystarship.enemystarship2.health = 3;
+			clock.stop()
+		}
+
+	}
+	if (clock.running && level == 4){
+		if (clock.getElapsedTime() > 1 && clock.getElapsedTime() < 3){
+			rotateWings("close");
+		}
+		else if (clock.getElapsedTime() >5){
+			clock.stop()
+		}
 	}
 }
 
@@ -597,24 +847,20 @@ function destroyEnemy( event ) {
 
 	raycaster.setFromCamera( mouse, camera );
 	var intersects = raycaster.intersectObjects( scene.children, true);
+	console.log(intersects);
 	if (level == 1){
 		if( intersects.length > 0 ) {
-		
 			var firstObjIntersected = intersects[0].object;
-
 			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
 				enemystarship.enemystarship1.health -= 1;
-				console.log(clock.getElapsedTime());
 				if (enemystarship.enemystarship1.health == 0){
-					scene.remove(enemystarship.enemystarship1.model );
+					parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
 					clock.start();
-
-					level = 2;
-					document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;    	
-
 					level = 2;	
+					document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;
+					return;
 				}
-				return;
+				loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
 			}
 		}
 	}
@@ -625,24 +871,64 @@ function destroyEnemy( event ) {
 
 			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
 				enemystarship.enemystarship1.health -= 1;
-				console.log(clock.getElapsedTime());
 				if (enemystarship.enemystarship1.health == 0){
-					scene.remove(enemystarship.enemystarship1.model );
+					parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
 				}
-				return;
+				else{
+					loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
+				}
+			}
+			else if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
+				enemystarship.enemystarship2.health -= 1;
+				if (enemystarship.enemystarship2.health == 0){
+					parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
+				}
+				else{
+					loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
+				}
+			}
+			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0){
+				clock.start();
+				level = 3;
+				document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;
+			}
+		}
+	}
+	else if (level == 3){
+		if( intersects.length > 0 ) {
+		
+			var firstObjIntersected = intersects[0].object;
+
+			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
+				enemystarship.enemystarship1.health -= 1;
+				if (enemystarship.enemystarship1.health == 0){
+					parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
+				}
+				else{
+					loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
+				}
 			}
 			if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
 				enemystarship.enemystarship2.health -= 1;
-				console.log(clock.getElapsedTime());
 				if (enemystarship.enemystarship2.health == 0){
-					scene.remove(enemystarship.enemystarship2.model );	
+					parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
 				}
-				return;
+				else{
+					loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
+				}
 			}
-			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0){
-				level = 3
-
-				document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;    
+			if ( enemystarship.finalenemy.name === firstObjIntersected.parent.name ) {
+				enemystarship.finalenemy.health -= 1;
+				if (enemystarship.finalenemy.health == 0){
+					parts.push(new esplode_enemy(enemystarship.finalenemy.model));
+				}
+				else{
+					loadDamagedFinalShip(enemystarship.finalenemy.model, enemystarship.finalenemy.health);
+				}
+			}
+			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0 && enemystarship.finalenemy.health == 0){
+				clock.start();
+				level = 4;
 			}
 		}
 	}
@@ -652,7 +938,7 @@ function destroyEnemy( event ) {
 function shotResponse(){
 	fireRate1 += 1;
 	fireRate2 += 1;
-	if (fireRate1 % 10 == 0){
+	if (fireRate1 % 100 == 0){
 		if (enemystarship.enemystarship1.health <= 2 && enemystarship.enemystarship1.health > 0){	//when an enemy is hit, it starts to shot you
 			raycaster = new THREE.Raycaster();
 			var dir = new THREE.Vector3();
@@ -667,9 +953,6 @@ function shotResponse(){
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
 					starship.health -= 1;
-
-					document.getElementById("healthDiv").innerHTML = starship.health;   
-
 					document.getElementById("healthDiv").innerHTML = starship.health;   
 					console.log(clock.getElapsedTime());
 					if (starship.health == 0){
@@ -681,7 +964,7 @@ function shotResponse(){
 			}
 		}
 	}
-	if (fireRate2 % 20 == 0){
+	if (fireRate2 % 100 == 0){
 		if (enemystarship.enemystarship2.health <= 2 && enemystarship.enemystarship2.health > 0){	//when an enemy is hit, it starts to shot you
 			raycaster = new THREE.Raycaster();
 			var dir = new THREE.Vector3();
@@ -696,9 +979,32 @@ function shotResponse(){
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
 					starship.health -= 1;
-
 					document.getElementById("healthDiv").innerHTML = starship.health;   
+					if (starship.health == 0){
+						scene.remove(starship.model);	
+						alert("GAME OVER");
+					}
+					return;
+				}
+			}
+		}
+	
+	}
+	if (fireRate2 % 20 == 0){
+		if (enemystarship.finalenemy.health <= 2 && enemystarship.finalenemy.health > 0){	//when an enemy is hit, it starts to shot you
+			raycaster = new THREE.Raycaster();
+			var dir = new THREE.Vector3();
+			var starship_pos = starship.model.position.clone();
+			var enemy_pos = enemystarship.finalenemy.model.position.clone();
+			dir.subVectors(starship_pos, enemy_pos).normalize();
+			raycaster.set(enemy_pos, dir);
+			var intersects = raycaster.intersectObjects( scene.children, true);
+			if( intersects.length > 0 ) {
+				
+				var firstObjIntersected = intersects[0].object;
 
+				if ( starship.name === firstObjIntersected.parent.name ) {
+					starship.health -= 1;
 					document.getElementById("healthDiv").innerHTML = starship.health;   
 					if (starship.health == 0){
 						scene.remove(starship.model);	
@@ -746,4 +1052,154 @@ function handleMovements(){
 
 	}
 
+}
+
+function esplode_enemy(obj) {
+	var geometry = new THREE.Geometry();
+	var i = 0;
+	for (i = 0; i < 500; i++) {
+
+		var vertex = new THREE.Vector3();
+
+		vertex.x = obj.position.x;
+		vertex.y = obj.position.y + 0.5 ;
+		vertex.z = obj.position.z;
+		geometry.vertices.push(vertex);
+		dirs.push({
+			x: (Math.random() * 10)  - (10 / 2) ,
+			y: (Math.random() * 10)  - (10 / 2) ,
+			z: (Math.random() * 10)  - (10 / 2)
+		});
+	}
+	var color;
+	if (Math.random() < 0.33){
+		color = 0xFBB917;	
+	}
+	else if (Math.random() < 0.66){
+		color = 0xF62817;
+	}
+	else{
+		color = 0x736AFF;
+	}
+	var material = new THREE.PointsMaterial({
+		size: 0.265,
+		color: color
+	});
+	var particles = new THREE.Points(geometry, material);
+
+	this.object = particles;
+	this.status = true;
+
+	scene.add(this.object);
+
+	setTimeout(function() {
+		scene.remove(particles);
+	}, 180);
+
+	this.update = function() {
+		if (this.status == true) {
+			var pCount = 500;
+			while (pCount--) {
+				var particle = this.object.geometry.vertices[pCount]
+				particle.y += dirs[pCount].y/5;
+				particle.x += dirs[pCount].x/5;
+				particle.z += dirs[pCount].z/5;
+			}
+			this.object.geometry.verticesNeedUpdate = true;
+		}
+	}
+	scene.remove(obj);
+}
+
+function updateExplosion(){
+	var pCount = parts.length;
+    while (pCount--) {
+      parts[pCount].update();
+    }
+}
+
+
+function loadDamagedShip(enemy,health){
+	var obj;
+	if (health == 2){
+		obj = enemystarship.damagedstarship1.model.clone();
+	}
+	else if (health == 1){
+		obj = enemystarship.damagedstarship2.model.clone();
+	}
+	var child4, child0, child5, child7;
+	obj.traverse( function ( obj_child ) {
+		if ( obj_child instanceof THREE.Mesh ) {
+			if (obj_child.name == "Line60_solar"){
+				console.log(obj_child)
+				child4 = obj_child;
+			}
+			else if (obj_child.name == "Line53_bluehull"){
+				child0 = obj_child;
+			}
+			else if (obj_child.name == "Spot03_bluehull"){
+				child7 = obj_child;
+			}
+			else if (obj_child.name == "Object04_bluehull"){
+				child5 = obj_child;
+			}
+		}
+	} );
+	enemy.traverse( function ( child ) {
+		if ( child instanceof THREE.Mesh ) {
+			if (child.name == "Line60_solar"){
+				console.log(child)
+				child4.parent = child.parent;
+				enemy.children[4] = child4;
+			}
+			else if (child.name == "Line53_bluehull"){
+				child0.parent = child.parent;
+				enemy.children[0] = child0;
+			}
+			else if (child.name == "Spot03_bluehull"){
+				child7.parent = child.parent;
+				enemy.children[7] = child7;
+			}
+			else if (child.name == "Object04_bluehull"){
+				child5.parent = child.parent;
+				enemy.children[5] = child5;
+			}
+		}			
+	} );
+	
+}
+
+function loadDamagedFinalShip(enemy,health){
+	console.log(enemy);
+	var obj;
+	if (health == 2){
+		obj = enemystarship.damagedfinalship1.model.clone();
+	}
+	else if (health == 1){
+		obj = enemystarship.damagedfinalship2.model.clone();
+	}
+	var child0, child1;
+	obj.traverse( function ( obj_child ) {
+		if ( obj_child instanceof THREE.Mesh ) {
+			if (obj_child.name == "polySurface46_Mesh"){
+				child0 = obj_child;
+			}
+			else if (obj_child.name == "pCube85_Mesh.001"){
+				child1 = obj_child;
+			}
+		}
+	} );
+	enemy.traverse( function ( child ) {
+		if ( child instanceof THREE.Mesh ) {
+			if (child.name == "pCube85_Mesh"){
+				child0.parent = child.parent;
+				enemy.children[0] = child0;
+			}
+			else if (child.name == "polySurface46_Mesh"){
+				child1.parent = child.parent;
+				enemy.children[1] = child1;
+			}
+		}			
+	} );
+	
 }
