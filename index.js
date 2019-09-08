@@ -30,11 +30,16 @@ var pianeta3;
 var pianeta4;
 var pianeta5;
 var pianeta6;
+var pianeta7;
+var pianeta8;
+var pianeta9;
+var pianeta10;
+var pianeta11;
+var pianeta12;
+
 var loader = new THREE.TextureLoader();
 var planet_clock;
 
-var planet_position=[[20,10,-1300],[-20,-10,-1300],[-20,10,-1300],[20,-10,-1300],[-10,0,-1300],[10,0,-1300]];
-shuffle(planet_position,6);
 
 //Enemies destruction
 
@@ -124,7 +129,8 @@ var pointLight;
 var segmenti_pianeta = 48;
 
 var texture_planets=["./images/1.jpg","./images/2.jpg","./images/3.jpg","./images/4.jpg","./images/5.jpg","./images/6.jpg","./images/7.jpg","./images/8.jpg","./images/9.jpg","./images/10.jpg","./images/11.jpg","./images/12.jpg",
-             "./images/13.jpg","./images/14.jpg","./images/15.jpg","./images/16.jpg"];
+			 "./images/13.jpg","./images/14.jpg","./images/15.jpg","./images/16.jpg",
+			 "./images/17.jpg","./images/18.png","./images/19.png","./images/20.png","./images/21.png","./images/22.png","./images/23.jpg","./images/24.jpg","./images/25.jpg","./images/26.jpg"];
 var planets_dimensions=[2,3,4,5,6];
 
 function shuffle(myArray,myLen){
@@ -139,7 +145,7 @@ function shuffle(myArray,myLen){
         array[index]=temp;
     }
 }
-shuffle(texture_planets,16);
+shuffle(texture_planets,26);
 shuffle(planets_dimensions,6);
 
 var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
@@ -148,6 +154,13 @@ var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_pl
 var pianeta4_data = constructPlanetData(0.015, (-15,-15,-20), "pianeta4", texture_planets[3], planets_dimensions[3], segmenti_pianeta);
 var pianeta5_data = constructPlanetData(0.02, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
 var pianeta6_data = constructPlanetData(0.015, (0,0,0), "pianeta6", texture_planets[5], planets_dimensions[5], segmenti_pianeta);
+
+var pianeta7_data = constructPlanetData(0.02, (0,0,20), "pianeta7", texture_planets[6], planets_dimensions[0], segmenti_pianeta);
+var pianeta8_data = constructPlanetData(0.015, (15,15,20), "pianeta8", texture_planets[7], planets_dimensions[1], segmenti_pianeta);
+var pianeta9_data = constructPlanetData(0.02, (15,15,20), "pianeta9", texture_planets[8], planets_dimensions[2], segmenti_pianeta);
+var pianeta10_data = constructPlanetData(0.015, (-15,-15,-20), "pianeta10", texture_planets[9], planets_dimensions[3], segmenti_pianeta);
+var pianeta11_data = constructPlanetData(0.02, (15,15,20), "pianeta11", texture_planets[10], planets_dimensions[4], segmenti_pianeta);
+var pianeta12_data = constructPlanetData(0.015, (0,0,0), "pianeta12", texture_planets[11], planets_dimensions[5], segmenti_pianeta);
 
 shuffle(texture_planets);
 shuffle(planets_dimensions);
@@ -176,6 +189,31 @@ function rotazione_pianeta(pianeta, myData) {
     if(myData.name=='pianeta6'){
         pianeta.rotation.y += myData.rotationRate;
         pianeta.rotation.x += (myData.rotationRate)/3;
+	}
+	
+	if(myData.name=='pianeta7'){
+        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.x += (myData.rotationRate)/3;
+	}
+	if(myData.name=='pianeta8'){
+        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.x += (myData.rotationRate)/3;
+	}
+	if(myData.name=='pianeta9'){
+        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.x += (myData.rotationRate)/3;
+	}
+	if(myData.name=='pianeta10'){
+        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.x += (myData.rotationRate)/3;
+	}
+	if(myData.name=='pianeta11'){
+        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.x += (myData.rotationRate)/3;
+	}
+	if(myData.name=='pianeta12'){
+        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.x += (myData.rotationRate)/3;
     }
 }
 
@@ -199,6 +237,24 @@ function movimento_pianeta(pianeta,myData){
 			pianeta.position.z += 0.6;
 		}
 		if(myData.name=='pianeta6'){
+			pianeta.position.z +=0.8;
+		}
+		if(myData.name=='pianeta7'){
+			pianeta.position.z += 1.5;
+		}
+		if(myData.name=='pianeta8'){
+			pianeta.position.z += 2;
+		}
+		if(myData.name=='pianeta9'){
+			pianeta.position.z += 3;
+		}
+		if(myData.name=='pianeta10'){
+			pianeta.position.z += 1;
+		}
+		if(myData.name=='pianeta11'){
+			pianeta.position.z += 0.6;
+		}
+		if(myData.name=='pianeta12'){
 			pianeta.position.z +=0.8;
 		}
     }
@@ -398,6 +454,14 @@ function loadModels(loadManager){
 	pianeta4 = loadTexturedPlanet(pianeta4_data, 20, -10, -100, 0);
 	pianeta5 = loadTexturedPlanet(pianeta5_data, -10, 0, -300, 0);
 	pianeta6 = loadTexturedPlanet(pianeta6_data, 10, 0, -100, 0);
+
+	pianeta7 = loadTexturedPlanet(pianeta7_data, 30, 15, -200, 0);
+	pianeta8 = loadTexturedPlanet(pianeta8_data, -30, -15, -800, 0);
+	pianeta9 = loadTexturedPlanet(pianeta9_data, 40, -15, -200, 0);
+	pianeta10 = loadTexturedPlanet(pianeta10_data, -40, 15, -1100, 0);
+	pianeta11 = loadTexturedPlanet(pianeta11_data, 50, 20, -10, 0);
+	pianeta12 = loadTexturedPlanet(pianeta12_data, -50, -20, -90, 0);
+
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
@@ -627,58 +691,133 @@ function planets_respawn(){
 	movimento_pianeta(pianeta5,pianeta5_data);
 	movimento_pianeta(pianeta6,pianeta6_data);
 
+	movimento_pianeta(pianeta7,pianeta7_data);
+	movimento_pianeta(pianeta8,pianeta8_data);
+	movimento_pianeta(pianeta9,pianeta9_data);
+	movimento_pianeta(pianeta10,pianeta10_data);
+	movimento_pianeta(pianeta11,pianeta11_data);
+	movimento_pianeta(pianeta12,pianeta12_data);
+
 	rotazione_pianeta(pianeta1,pianeta1_data);
 	rotazione_pianeta(pianeta2,pianeta2_data);
 	rotazione_pianeta(pianeta3,pianeta3_data);
 	rotazione_pianeta(pianeta4,pianeta4_data);
 	rotazione_pianeta(pianeta5,pianeta5_data);
 	rotazione_pianeta(pianeta6,pianeta6_data);
-	var roundednumber=Math.round(planet_clock.getElapsedTime());
-	console.log(roundednumber);
 
+	rotazione_pianeta(pianeta7,pianeta7_data);
+	rotazione_pianeta(pianeta8,pianeta8_data);
+	rotazione_pianeta(pianeta9,pianeta9_data);
+	rotazione_pianeta(pianeta10,pianeta10_data);
+	rotazione_pianeta(pianeta11,pianeta11_data);
+	rotazione_pianeta(pianeta12,pianeta12_data);
+
+
+	var roundednumber=Math.round(planet_clock.getElapsedTime());
+	var starting_position_planets=	[[20, 10, -1300],[-20, -10, -1300],[-20, 10, -1300],[20, -10, -1300],[-10, 0, -1300],[10, 0, -1300]];
+	var starting_position_planets2=[[-130, 100, -1300],[-230, -105, -1300],[200,-95, -1300],[-140,105 , -1300],[-90,60 , -1300],[-40,-50 , -1300]
+	,[-80,-60 , -1300],[-70,70 , -1300],[-10,100 , -1300],[70,-100 , -1300],[80,-62 , -1300],[110,-90 , -1300],[120,52 , -1300],[-100,-85 , -1300]];
+	console.log(roundednumber);
+	shuffle(starting_position_planets,6);
+	var x=starting_position_planets[0];
+	var y=starting_position_planets2[0];
+	//console.log(starting_position_planets[0]);
 	if(roundednumber % 2 ==0){
 		if(pianeta1.position.z >= camera.position.z){
 			console.log("PIANETA1");
-			pianeta1.position.set(20, 10, -1300);			//posizione pianeta 5 cambiare texture
+			pianeta1.position.set(x[0],x[1],x[2]);			
+			shuffle(starting_position_planets,6);
+			x=starting_position_planets[0];
 			scene.add(pianeta1);
 		}
+		if(pianeta12.position.z >= camera.position.z){
+			console.log("PIANETA12");
+			pianeta12.position.set(y[0],y[1],y[2]);			
+			shuffle(starting_position_planets2,14);
+			y=starting_position_planets2[0];
+			scene.add(pianeta12);
+		}
 	}
-	//////////////////////////
+	
 	if(roundednumber % 3 ==0){
 		if(pianeta2.position.z >= camera.position.z){
 			console.log("PIANETA2");
-			pianeta2.position.set(-20, -10, -1300);			//posizione pianeta 6 cambiare texture
+			pianeta2.position.set(x[0],x[1],x[2]);						
+			shuffle(starting_position_planets,6);
+			x=starting_position_planets[0];
 			scene.add(pianeta2);
+		}
+		if(pianeta11.position.z >= camera.position.z){
+			console.log("PIANETA11");
+			pianeta11.position.set(y[0],y[1],y[2]);			
+			shuffle(starting_position_planets2,14);
+			y=starting_position_planets2[0];
+			scene.add(pianeta11);
 		}
 	}
 	if(roundednumber % 4 ==0){
 		if(pianeta3.position.z >= camera.position.z){
 			console.log("PIANETA3");
-			pianeta3.position.set(-20, 10, -1300);			//posizione pianeta 6 cambiare texture
+			pianeta3.position.set(x[0],x[1],x[2]);						
+			shuffle(starting_position_planets,6);
+			x=starting_position_planets[0];
 			scene.add(pianeta3);
+		}
+		if(pianeta10.position.z >= camera.position.z){
+			console.log("PIANETA10");
+			pianeta10.position.set(y[0],y[1],y[2]);			
+			shuffle(starting_position_planets2,14);
+			y=starting_position_planets2[0];
+			scene.add(pianeta10);
 		}
 	}
 	if(roundednumber % 6 ==0){
 		if(pianeta4.position.z >= camera.position.z){
 			console.log("PIANETA4");
-			pianeta4.position.set(20, -10, -1300);			//posizione pianeta 6 cambiare texture
+			pianeta4.position.set(x[0],x[1],x[2]);		
+			shuffle(starting_position_planets,6);
+			x=starting_position_planets[0];
 			scene.add(pianeta4);
+		}
+		if(pianeta9.position.z >= camera.position.z){
+			console.log("PIANETA9");
+			pianeta9.position.set(y[0],y[1],y[2]);			
+			shuffle(starting_position_planets2,14);
+			y=starting_position_planets2[0];
+			scene.add(pianeta9);
 		}
 	}
 
-	///////////////////////////
 	if(roundednumber % 5 ==0){
 		if(pianeta5.position.z >= camera.position.z){
 			console.log("PIANETA5");
-			pianeta5.position.set(-10, 0, -1300);			//posizione pianeta 5 cambiare texture
+			pianeta5.position.set(x[0],x[1],x[2]);			
+			shuffle(starting_position_planets,6);
+			x=starting_position_planets[0];
 			scene.add(pianeta5);
+		}
+		if(pianeta8.position.z >= camera.position.z){
+			console.log("PIANETA8");
+			pianeta8.position.set(y[0],y[1],y[2]);			
+			shuffle(starting_position_planets2,14);
+			y=starting_position_planets2[0];
+			scene.add(pianeta8);
 		}
 	}
 	if(roundednumber % 7 ==0){
 		if(pianeta6.position.z >= camera.position.z){
 			console.log("PIANETA6");
-			pianeta6.position.set(10, 0, -1300);			//posizione pianeta 6 cambiare texture
+			pianeta6.position.set(x[0],x[1],x[2]);			
+			shuffle(starting_position_planets,6);
+			x=starting_position_planets[0];
 			scene.add(pianeta6);
+		}
+		if(pianeta7.position.z >= camera.position.z){
+			console.log("PIANETA7");
+			pianeta7.position.set(y[0],y[1],y[2]);			
+			shuffle(starting_position_planets2,14);
+			y=starting_position_planets2[0];
+			scene.add(pianeta7);
 		}
 	}
 }
