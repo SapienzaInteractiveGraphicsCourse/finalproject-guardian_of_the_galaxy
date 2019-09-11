@@ -10,6 +10,15 @@ var camera;
 var fovy = 60;
 var near = 0.1;
 var far = 1000;
+var position;
+var vec;
+var rete;
+var position;
+var distanza;
+var movimento=false;
+var finelivello=true;
+
+
 
 var scene, renderer, light;
 var controls;
@@ -647,10 +656,10 @@ function initGame() {
 	document.getElementById("healthDiv").style = "position: absolute; left:3%; top:1.5%; color: white"
 
 	
-	stats = new Stats();
-	stats.showPanel( 0 ); 
-	stats.domElement.style = "position: absolute; left:0px; bottom:0px;"
-	document.body.appendChild( stats.domElement );
+	//stats = new Stats();
+	//stats.showPanel( 0 ); 
+	//stats.domElement.style = "position: absolute; left:0px; bottom:0px;"
+	//document.body.appendChild( stats.domElement );
 		
 		
 	scene.add(starship.model);
@@ -882,12 +891,71 @@ function onWindowResize() {
 
 }
 
+
+function mouseMove(event){
+	
+	
+	if(movimento==true){
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	
+	starship.model.rotation.x= Math.min(10,  mouse.y);
+	starship.model.rotation.y= Math.min(10,  -mouse.x);
+}
+	
+}
+
+
+
 function animate() {
 	
-	stats.begin();
 
 	
+	document.addEventListener( "mousemove", mouseMove, false );
+
+	//stats.begin();
+	starship.model.position.z= 0;
+	
+	if (movimento==false){
+		
+		
+		
+		if(starship.model.rotation.x>0)
+		{
+			starship.model.rotation.x-=0.1
+			
+		}
+		if(starship.model.rotation.x<0)
+		{
+			starship.model.rotation.x+=0.1
+		}
+		if(starship.model.rotation.y>0)
+		{
+			starship.model.rotation.y-=0.1
+		}
+		if(starship.model.rotation.y<0)
+		{
+			starship.model.rotation.y+=0.1
+		}
+		
+		
+	}
+
+
+	
+	
+
 	requestAnimationFrame( animate );
+	for(var index=0; index < bullets.length; index+=1){
+        if( bullets[index] === undefined ) continue;
+        if( bullets[index].alive == false ){
+          bullets.splice(index,1);
+          continue;
+        }
+        bullets[index].position.add(bullets[index].velocity);
+		
+      }
 	handleMovements();
 	loadEnemies();
 	animateEnemy();
@@ -898,12 +966,13 @@ function animate() {
 	render();
 	update();
 	
-	stats.end();
+	//stats.end();
 
 }
 
 function rotateWings(action){
 	if (action == "open"){
+		movimento=true;
 		starship.model.traverse( function ( child ) {
 			if ( child instanceof THREE.Mesh ) {
 				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
@@ -923,6 +992,7 @@ function rotateWings(action){
 		} );
 	}
 	else{
+		movimento=false;
 		starship.model.traverse( function ( child ) {
 			if ( child instanceof THREE.Mesh ) {
 				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
@@ -999,10 +1069,128 @@ function loadEnemies(){
 	}
 }
 
-function destroyEnemy( event ) {
 
+var x1;
+var x2;
+var x3;
+var vec1;
+var x11;
+var x22;
+var x33;
+var vec2
+
+           
+
+
+
+function destroyEnemy( event ) {
+	
+	
+
+     
+     
+	
+	vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,
+	 - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+	 
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	 
+	vec.unproject( camera );
+	
+	rete= vec.sub( camera.position ).normalize();
+	distanza= -camera.position.z / rete.z;
+	position= camera.position.clone()
+	position=position.add(rete.multiplyScalar(distanza));
+
+	
+
+	
+	
+	x1=starship.model.position.x+8.5;
+	x2=starship.model.position.y+1.5;
+	x3=starship.model.position.z-3;
+	x11=starship.model.position.x-8.5;
+	x22=starship.model.position.y+1.5;
+	x33=starship.model.position.z-3;
+	vec1=new THREE.Vector3( x1,x2,x3);
+	vec2=new THREE.Vector3( x11,x22,x33);
+
+	
+
+
+	var bullet_dx = new THREE.Mesh(
+		new THREE.SphereGeometry(0.1,20,20),
+		new THREE.MeshBasicMaterial({color:0xffffff})
+	);
+	
+		bullet_dx.position.set(x1,x2,x3);
+
+
+			var dir = new THREE.Vector3();
+			var starship_pos = bullet_dx.position;
+			var enemy_pos =position;
+			dir.subVectors(enemy_pos,starship_pos).normalize();
+
+
+
+	bullet_dx.velocity = dir;
+	console.log("s",bullet_dx)
+	bullet_dx.alive = true;
+	setTimeout(function(){
+	 
+	 hitShot(mouse.x,mouse.y);
+	 bullet_dx.alive = false;
+	 scene.remove(bullet_dx);
+		}, 300);
+
+
+
+
+	bullets.push(bullet_dx);
+	scene.add(bullet_dx);
+	
+	var bullet_dx1 = new THREE.Mesh(
+		new THREE.SphereGeometry(0.1,20,20),
+		new THREE.MeshBasicMaterial({color:0xffffff})
+	);
+	
+		bullet_dx1.position.set(x11,x22,x33);
+
+
+			var dir = new THREE.Vector3();
+			var starship_pos = bullet_dx1.position;
+			var enemy_pos =position;
+			dir.subVectors(enemy_pos,starship_pos).normalize();
+
+
+
+	bullet_dx1.velocity = dir;
+	bullet_dx1.alive = true;
+	setTimeout(function(){
+		
+	 
+	 bullet_dx1.alive = false;
+	 scene.remove(bullet_dx1);
+	 hitShot(event);
+
+		}, 300);
+		
+	bullets.push(bullet_dx1);
+	scene.add(bullet_dx1);
+
+
+	
+
+	
+
+	
+}
+
+function hitShot( x,y ) {
+
+	mouse.x = x;
+	mouse.y = y;
 
 	raycaster = new THREE.Raycaster();
 
@@ -1182,7 +1370,7 @@ function shotResponse(){
 }
 
 function update(){	
-	stats.update();
+	//stats.update();
 }
 
 
@@ -1198,19 +1386,24 @@ function handleMovements(){
 	if ( keyboard.pressed("D") ){
 		starship.model.translateX(x_step[0]);
 		starship.model.rotation.z= -z_rotate;
+		document.addEventListener( "mousemove", mouseMove, false );
+
 	}
 	if ( keyboard.pressed("A") ){
 		starship.model.translateX(-x_step[0]);
 		starship.model.rotation.z= z_rotate;
+		document.addEventListener( "mousemove", mouseMove, false );
+
 	}
 	if ( keyboard.pressed("W") ){
 		starship.model.translateY(y_step[0]);
-		starship.model.rotation.x= -x_rotate;
-
+		starship.model.rotation.z= -z_rotate;
+		document.addEventListener( "mousemove", mouseMove, false );
 	}
 	if ( keyboard.pressed("S") ){
 		starship.model.translateY(-y_step[0]);
-		starship.model.rotation.x= x_rotate;
+		starship.model.rotation.z= -z_rotate;
+		document.addEventListener( "mousemove", mouseMove, false );
 
 	}
 
