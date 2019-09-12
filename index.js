@@ -173,7 +173,7 @@ function shuffle(myArray,myLen){
 }
 shuffle(texture_planets,26);
 shuffle(planets_dimensions,6);
-
+//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
 var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
 var pianeta2_data = constructPlanetData(0.015, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
 var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
@@ -246,40 +246,40 @@ function movimento_pianeta(pianeta,myData){
     
     if(pianeta.position.z< camera.position.z){
 		if(myData.name=='pianeta1'){
-			pianeta.position.z += 1.5;
+			pianeta.position.z += 0.7;
 		}
 		if(myData.name=='pianeta2'){
-			pianeta.position.z += 2;
+			pianeta.position.z += 0.88;
 		}
 		if(myData.name=='pianeta3'){
-			pianeta.position.z += 3;
+			pianeta.position.z += 0.9;
 		}
 		if(myData.name=='pianeta4'){
-			pianeta.position.z += 1;
+			pianeta.position.z += 0.5;
 		}
 		if(myData.name=='pianeta5'){
-			pianeta.position.z += 0.6;
+			pianeta.position.z += 0.2;
 		}
 		if(myData.name=='pianeta6'){
-			pianeta.position.z +=0.8;
+			pianeta.position.z +=0.3;
 		}
 		if(myData.name=='pianeta7'){
-			pianeta.position.z += 1.5;
+			pianeta.position.z += 0.7;
 		}
 		if(myData.name=='pianeta8'){
-			pianeta.position.z += 2;
+			pianeta.position.z += 0.4;
 		}
 		if(myData.name=='pianeta9'){
-			pianeta.position.z += 3;
+			pianeta.position.z += 0.85;
 		}
 		if(myData.name=='pianeta10'){
-			pianeta.position.z += 1;
+			pianeta.position.z += 0.9;
 		}
 		if(myData.name=='pianeta11'){
-			pianeta.position.z += 0.6;
+			pianeta.position.z += 0.55;
 		}
 		if(myData.name=='pianeta12'){
-			pianeta.position.z +=0.8;
+			pianeta.position.z +=0.75;
 		}
     }
     else{
@@ -749,13 +749,13 @@ function planets_respawn(){
 	rotazione_pianeta(pianeta11,pianeta11_data);
 	rotazione_pianeta(pianeta12,pianeta12_data);
 	var roundednumber=Math.round(planet_clock.getElapsedTime());
-	var starting_position_planets=	[[20, 10, -1300],[-20, -10, -1300],[-20, 10, -1300],[20, -10, -1300],[-10, 0, -1300],[10, 0, -1300]];
-	var starting_position_planets2=[[-130, 100, -1300],[-230, -105, -1300],[200,-95, -1300],[-140,105 , -1300],[-90,60 , -1300],[-40,-50 , -1300]
-	,[-80,-60 , -1300],[-70,70 , -1300],[-10,100 , -1300],[70,-100 , -1300],[80,-62 , -1300],[110,-90 , -1300],[120,52 , -1300],[-100,-85 , -1300]];
+	var starting_position_planets=	[[50, 40, -1300],[117, 97, -1300],[-200, -70, -1300],[-70, -84, -1300],[-129, 106, -1300],[-59, 79, -1300],
+	[120, -90, -1300],[103, -105, -1300], [-100, 100, -1300],[-94, 120, -1300],[100, -123, -1300],[108, 74, -1300],[-110, 100, -1300],[-70, -105, -1300],[59,-95, -1300],[-140,105 , -1300],[-90,60 , -1300],[-40,-50 , -1300]
+	,[-80,-60 , -1300],[-70,70 , -1300],[-10,100 , -1300],[70,-100 , -1300],[80,-62 , -1300],[110,-90 , -1300],[120,52 , -1300],[-55,-85 , -1300]];
 	//console.log(roundednumber);
 	shuffle(starting_position_planets,6);
 	var x=starting_position_planets[0];
-	var y=starting_position_planets2[0];
+	var y=starting_position_planets[0];
 	//console.log(starting_position_planets[0]);
 	if(roundednumber % 2 ==0){
 		if(pianeta1.position.z >= camera.position.z){
@@ -763,12 +763,14 @@ function planets_respawn(){
 			shuffle(starting_position_planets,6);
 			x=starting_position_planets[0];
 			scene.add(pianeta1);
+			//console.log("RESPAWN1");
 		}
 		if(pianeta12.position.z >= camera.position.z){
 			pianeta12.position.set(y[0],y[1],y[2]);			
-			shuffle(starting_position_planets2,14);
-			y=starting_position_planets2[0];
+			shuffle(starting_position_planets,14);
+			y=starting_position_planets[0];
 			scene.add(pianeta12);
+			//console.log("RESPAWN2");
 		}
 	}
 	
@@ -781,8 +783,8 @@ function planets_respawn(){
 		}
 		if(pianeta11.position.z >= camera.position.z){
 			pianeta11.position.set(y[0],y[1],y[2]);			
-			shuffle(starting_position_planets2,14);
-			y=starting_position_planets2[0];
+			shuffle(starting_position_planets,14);
+			y=starting_position_planets[0];
 			scene.add(pianeta11);
 		}
 	}
@@ -795,8 +797,8 @@ function planets_respawn(){
 		}
 		if(pianeta10.position.z >= camera.position.z){
 			pianeta10.position.set(y[0],y[1],y[2]);			
-			shuffle(starting_position_planets2,14);
-			y=starting_position_planets2[0];
+			shuffle(starting_position_planets,14);
+			y=starting_position_planets[0];
 			scene.add(pianeta10);
 		}
 	}
@@ -809,8 +811,8 @@ function planets_respawn(){
 		}
 		if(pianeta9.position.z >= camera.position.z){
 			pianeta9.position.set(y[0],y[1],y[2]);			
-			shuffle(starting_position_planets2,14);
-			y=starting_position_planets2[0];
+			shuffle(starting_position_planets,14);
+			y=starting_position_planets[0];
 			scene.add(pianeta9);
 		}
 	}
@@ -923,13 +925,14 @@ function animate() {
 	
 	requestAnimationFrame( animate );
 	if (startGame){
-		handleMovements();
+		
 		loadEnemies();
 		animateEnemy();
 		updateExplosion();
 		shotResponse();
 		planets_respawn();
-		setStarshipRotation()
+		setStarshipRotation();
+		handleMovements();
 		createBullets()
 	}
 	else{
@@ -1267,6 +1270,107 @@ function hitShot( x,y ) {
 		}
 	}
 	
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	if( intersects.length > 0 ) {
+		var firstObjIntersected = intersects[0].object;
+		//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
+		console.log(firstObjIntersected.name);
+		//console.log(planet_list);
+		switch (firstObjIntersected.name) {
+			case "pianeta1":
+				//console.log("AAAAAAA");
+				parts.push(new explode_planet(pianeta1,1));
+				setTimeout(function() {
+					//console.log("BBBBBBBBBBB");
+					parts.push(new explode_planet(pianeta1,2));
+				}, 180);
+				pianeta1.position.z= camera.position.z+1;
+				break;
+			case "pianeta2":
+				parts.push(new explode_planet(pianeta2,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta2,2));
+				}, 180);
+				pianeta2.position.z= camera.position.z+2;
+				break;
+			case "pianeta3":
+				parts.push(new explode_planet(pianeta3,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta3,2));
+				}, 180);
+				pianeta3.position.z= camera.position.z+3;
+				break;
+			case "pianeta4":
+				parts.push(new explode_planet(pianeta4,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta4,2));
+				}, 180);
+				pianeta4.position.z= camera.position.z+4;
+				break;
+			case "pianeta5":
+				parts.push(new explode_planet(pianeta5,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta5,2));
+				}, 180);
+				pianeta5.position.z= camera.position.z+5;
+				break;
+			case "pianeta6":
+				parts.push(new explode_planet(pianeta6,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta6,2));
+				}, 180);
+				pianeta6.position.z= camera.position.z+1;
+				break;
+			case "pianeta7":
+				parts.push(new explode_planet(pianeta7,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta7,2));
+				}, 180);
+				pianeta7.position.z= camera.position.z+2;
+				break;
+			case "pianeta8":
+				parts.push(new explode_planet(pianeta8,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta8,2));
+				}, 180);
+				pianeta8.position.z= camera.position.z+3;
+				break;
+			case "pianeta9":
+				parts.push(new explode_planet(pianeta9,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta9,2));
+				}, 180);
+				pianeta9.position.z= camera.position.z+4;
+				break;
+			case "pianeta10":
+				parts.push(new explode_planet(pianeta10,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta10,2));
+				}, 180);
+				pianeta10.position.z= camera.position.z+5;
+				break;
+			case "pianeta11":
+				parts.push(new explode_planet(pianeta11,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta11,2));
+				}, 180);
+				pianeta11.position.z= camera.position.z+1;
+				break;
+			case "pianeta12":
+				parts.push(new explode_planet(pianeta12,1));
+				setTimeout(function() {
+					parts.push(new explode_planet(pianeta12,2));
+				}, 180);
+				pianeta12.position.z= camera.position.z+5;
+				break;
+			default:
+				console.log("enemystarship hit");
+		}
+		
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
 
 function shotResponse(){
@@ -1389,6 +1493,60 @@ function handleMovements(){
 		starship.model.rotateOnAxis(axis, 0.05);
 	}
 
+}
+function explode_planet(obj,info) {
+	var geometry = new THREE.Geometry();
+	var i = 0;
+	for (i = 0; i < 1000; i++) {
+
+		var vertex = new THREE.Vector3();
+
+		vertex.x = obj.position.x+10;
+		vertex.y = obj.position.y +10 ;
+		vertex.z = obj.position.z+10;
+		geometry.vertices.push(vertex);
+		dirs.push({
+			x: (Math.random() * 10)  - (10 / 2) ,
+			y: (Math.random() * 10)  - (10 / 2) ,
+			z: (Math.random() * 10)  - (10 / 2)
+		});
+	}
+	var color;
+	if(info==1){
+		color= 0xFFD700;
+	}
+	else{
+		color= 0xA52A2A;
+	}
+	
+	var material = new THREE.PointsMaterial({
+		size: 2.500,
+		color: color
+	});
+	var particles = new THREE.Points(geometry, material);
+
+	this.object = particles;
+	this.status = true;
+
+	scene.add(this.object);
+
+	setTimeout(function() {
+		scene.remove(particles);
+	}, 180);
+
+	this.update = function() {
+		if (this.status == true) {
+			var pCount = 500;
+			while (pCount--) {
+				var particle = this.object.geometry.vertices[pCount]
+				particle.y += dirs[pCount].y/2;
+				particle.x += dirs[pCount].x/2;
+				particle.z += dirs[pCount].z/2;
+			}
+			this.object.geometry.verticesNeedUpdate = true;
+		}
+	}
+	scene.remove(obj);
 }
 
 function esplode_enemy(obj) {
