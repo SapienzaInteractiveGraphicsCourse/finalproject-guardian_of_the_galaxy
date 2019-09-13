@@ -38,6 +38,7 @@ var level = 1;
 
 //SETTING UP GAME LOGIC
 var startGame = false;
+var entered = false;
 var posStart = {z : 0};
 var posEnd = -10;
 var tweenShip;
@@ -1013,7 +1014,7 @@ function animate() {
 		updateInfoBar();
 		getMoney();
 	}
-	else if (!game_over){
+	else if (!game_over && !startGame){
 		playGame();
 		TWEEN.update();
 	}
@@ -1793,8 +1794,9 @@ function loadDamagedFinalShip(enemy,health){
 }
 
 function playGame(){
-	if ( keyboard.pressed("E")){
+	if ( keyboard.pressed("E") && !entered){
 		enter.style.display = "none";
+		entered = true;
 		tweenShip = new TWEEN.Tween(posStart)
 			.to({z: -35}, 2000)
 			.easing(TWEEN.Easing.Linear.None)
@@ -1809,11 +1811,9 @@ function playGame(){
 				const sleep = (milliseconds) => {
 					return new Promise(resolve => setTimeout(resolve, milliseconds))
 				}
-				sleep(1000).then(() => {
-					scene.add(starship.model);
-					starship.model.position.set(0.0, -8.0, 0.0);
-					clock.start();
-				})
+				scene.add(starship.model);
+				starship.model.position.set(0.0, -8.0, 0.0);
+				clock.start();
 			})
 			.start();
 	}
