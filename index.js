@@ -33,6 +33,7 @@ var keyboard = new THREEx.KeyboardState();
 
 //Setting up clock and levels
 var clock;
+var clock_money;
 var level = 1;
 
 //SETTING UP GAME LOGIC
@@ -40,6 +41,11 @@ var startGame = false;
 var posStart = {z : 0};
 var posEnd = -10;
 var tweenShip;
+var game_over;
+var gOverElement = document.getElementById("game_over");
+var warning = document.getElementById("warning");
+var enter = document.getElementById("hint");
+var improvemnts = document.getElementById("improvements");
 
 //PLANETS
 var pianeta1;
@@ -64,6 +70,7 @@ shuffle(planet_position,6);
  var dirs = [];
  var parts = [];
  var shooting = false;
+ var canShot = false;
 
 
 // Bullets array
@@ -75,6 +82,9 @@ var fireRate2 = 0;
 var starship;
 var enemystarship;
 var stargate;
+var moneys=[];
+var k;
+var beta;
 
 //SETTING UP ENEMY MOVEMENTS
 var y_step = [0.2, 0.15, -0.15];
@@ -93,7 +103,9 @@ stargate = {
 starship = { 
 	model:null, 
 	name : "starship",
-	health: 10
+	money: 0,
+	health: 10,
+	damage: 1
 };
 
 enemystarship = {
@@ -173,7 +185,7 @@ function shuffle(myArray,myLen){
 }
 shuffle(texture_planets,26);
 shuffle(planets_dimensions,6);
-//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
+
 var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
 var pianeta2_data = constructPlanetData(0.015, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
 var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
@@ -351,6 +363,10 @@ function loadTexturedPlanet(myData, x, y, z, myMaterialType) {
 
 
 var loadManager = new THREE.LoadingManager();
+gOverElement.style.display = "none";
+warning.style.display = "none";
+improvemnts.style.display = "none";
+enter.style.display = "none";
 
 document.getElementById("start").addEventListener("click", function(){
 
@@ -360,6 +376,9 @@ document.getElementById("start").addEventListener("click", function(){
 
 	loadModels(loadManager);
 });
+
+document.getElementById("health").addEventListener("click", restoreHealth);
+document.getElementById("damage").addEventListener("click", increaseDamage);
 
 
 
@@ -626,12 +645,27 @@ function loadModels(loadManager){
 				}
 			} );
 			stargate.model = object;
-			stargate.model.position.set(0.0, -5.0, -15.0);	
+			stargate.model.position.set(0.0, -5.0, -20.0);	
 			scene.add(stargate.model);
 		});
 		stargate_obj_loader.setMaterials(materials);
 	});
 
+	var money_loader = new THREE.OBJLoader(loadManager);
+    var money_mtlLoader = new THREE.MTLLoader(loadManager);
+
+	money_mtlLoader.load('models/money/money.mtl', (materials) => {
+        materials.preload();
+        money_loader.setMaterials(materials);
+        money_loader.load('models/money/money.obj', (object) => {
+			object.rotation.y= 1.5;
+            for(var i = 0; i < 60; i++){
+				moneys[i]=object.clone();
+                moneys[i].name ="money" + i;
+			}
+			setMoneys();
+        });
+    });
 }
 
 function initGame() {
@@ -662,7 +696,11 @@ function initGame() {
 		light.position.set(-40.0, 10.0, 0.0);
 	}		
 
+	game_over = false;
+
 	clock = new THREE.Clock();
+	clock_money= new THREE.Clock();
+	clock_money.stop();
 
 	planet_clock = new THREE.Clock();
 	planet_clock.start();
@@ -691,6 +729,42 @@ function initGame() {
 	document.getElementById("healthDiv").innerHTML = starship.health;         
 	document.getElementById("healthDiv").style = "position: absolute; left:3%; top:1.5%; color: white"
 
+	var laserDiv=document.createElement("DIV");
+	laserDiv.id="laserDiv";
+	document.body.appendChild(laserDiv);
+	document.getElementById("laserDiv").style = "position: absolute; top:30px; color: white"
+
+	var laser=document.createElement("IMG");
+	laser.id="laser";
+	laser.src = "./images/laser.png"
+	laser.setAttribute("color", "white");
+	laser.setAttribute("display", "block");
+	document.getElementById("laserDiv").appendChild(laser);
+
+	var damageDiv = document.createElement("DIV");
+	damageDiv.id = "damageDiv";      
+	document.body.appendChild(damageDiv);
+	document.getElementById("damageDiv").innerHTML = starship.damage;         
+	document.getElementById("damageDiv").style = "position: absolute; left:3%; top:40px; color: white"
+
+	var moneyDiv=document.createElement("DIV");
+	moneyDiv.id="moneyDiv";
+	document.body.appendChild(moneyDiv);
+	document.getElementById("moneyDiv").style = "position: absolute; top:63px; color: white"
+
+	var money=document.createElement("IMG");
+	money.id="money";
+	money.src = "./images/money.png"
+	money.setAttribute("color", "white");
+	money.setAttribute("display", "block");
+	document.getElementById("moneyDiv").appendChild(money);
+
+	var moneysDiv = document.createElement("DIV");
+	moneysDiv.id = "moneysDiv";      
+	document.body.appendChild(moneysDiv);
+	document.getElementById("moneysDiv").innerHTML = starship.money;         
+	document.getElementById("moneysDiv").style = "position: absolute; left:3%; top:73px; color: white"
+
 		
 	scene.add(starship.model);
 	scene.add(light);	
@@ -718,6 +792,8 @@ function initGame() {
       sound.setVolume(0.06);
       sound.play();
 	});
+
+	enter.style.display = "block";
 	
 	
 }
@@ -763,14 +839,12 @@ function planets_respawn(){
 			shuffle(starting_position_planets,6);
 			x=starting_position_planets[0];
 			scene.add(pianeta1);
-			//console.log("RESPAWN1");
 		}
 		if(pianeta12.position.z >= camera.position.z){
-			pianeta12.position.set(y[0],y[1],y[2]);			
+			pianeta12.position.set(y[0],y[1],y[2]);		
 			shuffle(starting_position_planets,14);
 			y=starting_position_planets[0];
 			scene.add(pianeta12);
-			//console.log("RESPAWN2");
 		}
 	}
 	
@@ -796,7 +870,7 @@ function planets_respawn(){
 			scene.add(pianeta3);
 		}
 		if(pianeta10.position.z >= camera.position.z){
-			pianeta10.position.set(y[0],y[1],y[2]);			
+			pianeta10.position.set(y[0],y[1],y[2]);				
 			shuffle(starting_position_planets,14);
 			y=starting_position_planets[0];
 			scene.add(pianeta10);
@@ -810,7 +884,7 @@ function planets_respawn(){
 			scene.add(pianeta4);
 		}
 		if(pianeta9.position.z >= camera.position.z){
-			pianeta9.position.set(y[0],y[1],y[2]);			
+			pianeta9.position.set(y[0],y[1],y[2]);		
 			shuffle(starting_position_planets,14);
 			y=starting_position_planets[0];
 			scene.add(pianeta9);
@@ -924,18 +998,22 @@ function createBullets(){
 function animate() {
 	
 	requestAnimationFrame( animate );
-	if (startGame){
-		
+	quitGame();
+	if (startGame && !game_over){
+		handleMovements();
 		loadEnemies();
 		animateEnemy();
+		showImprovements();
 		updateExplosion();
 		shotResponse();
 		planets_respawn();
-		setStarshipRotation();
-		handleMovements();
+		setStarshipRotation()
+		animateMoney();
 		createBullets()
+		updateInfoBar();
+		getMoney();
 	}
-	else{
+	else if (!game_over){
 		playGame();
 		TWEEN.update();
 	}
@@ -966,6 +1044,7 @@ function rotateWings(action){
 	}
 	else{
 		movimento=false;
+		canShot = false;
 		starship.model.traverse( function ( child ) {
 			if ( child instanceof THREE.Mesh ) {
 				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
@@ -989,6 +1068,12 @@ function rotateWings(action){
 
 function loadEnemies(){
 	if (clock.running && level == 1){
+		if (clock.getElapsedTime() > 10 && clock.getElapsedTime() < 16){
+			warning.style.display = "block";
+		}
+		if (clock.getElapsedTime() >= 16){
+			warning.style.display = "none";
+		}
 		if (clock.getElapsedTime() > 13 && clock.getElapsedTime() < 15){
 			rotateWings("open");
 		}
@@ -1001,18 +1086,22 @@ function loadEnemies(){
 			}
 			else{
 				enemystarship.enemystarship1.appeared = true;
+				canShot = true;
 				clock.stop();
 			}
 		}
 	}
 	if (clock.running && level == 2){
-		if (clock.getElapsedTime() > 1 && clock.getElapsedTime() < 3){
-			rotateWings("close");
+		if (clock.getElapsedTime() > 11 && clock.getElapsedTime() < 17){
+			warning.style.display = "block";
 		}
-		if (clock.getElapsedTime() > 19 && clock.getElapsedTime() < 21){
+		if (clock.getElapsedTime() >= 17){
+			warning.style.display = "none";
+		}
+		if (clock.getElapsedTime() > 15 && clock.getElapsedTime() < 17){
 			rotateWings("open");
 		}
-		if (clock.getElapsedTime() > 9){
+		if (clock.getElapsedTime() > 5){
 			
 			if (enemystarship.enemystarship1.model.position.z < -118){
 				enemystarship.enemystarship1.model.position.z += 1.5;
@@ -1025,6 +1114,7 @@ function loadEnemies(){
 			else{
 				enemystarship.enemystarship1.appeared = true;
 				enemystarship.enemystarship2.appeared = true;
+				canShot = true;
 				clock.stop();
 			}
 			enemystarship.enemystarship1.health = 3;
@@ -1032,13 +1122,17 @@ function loadEnemies(){
 
 	}
 	if (clock.running && level == 3){
-		if (clock.getElapsedTime() > 1 && clock.getElapsedTime() < 3){
-			rotateWings("close");
+		
+		if (clock.getElapsedTime() > 11 && clock.getElapsedTime() < 17){
+			warning.style.display = "block";
 		}
-		else if (clock.getElapsedTime() > 7 && clock.getElapsedTime() < 9){
+		if (clock.getElapsedTime() >= 17){
+			warning.style.display = "none";
+		}
+		if (clock.getElapsedTime() > 15 && clock.getElapsedTime() < 17){
 			rotateWings("open");
 		}
-		else if (clock.getElapsedTime() > 9){
+		if (clock.getElapsedTime() > 5){
 			if (enemystarship.enemystarship1.model.position.z < -118){
 				enemystarship.enemystarship1.model.position.z += 1.5;
 				enemystarship.enemystarship2.model.position.z += 1.5;
@@ -1053,6 +1147,7 @@ function loadEnemies(){
 				enemystarship.enemystarship1.appeared = true;
 				enemystarship.enemystarship2.appeared = true;
 				enemystarship.finalenemy.appeared = true;
+				canShot = true;
 				clock.stop();
 			}
 			enemystarship.enemystarship1.health = 3;
@@ -1071,306 +1166,300 @@ function loadEnemies(){
 }
 
 function destroyEnemy( event ) {
-	
-	vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,
-	 - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+	if (canShot){
+		vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
 	 
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-	 
-	vec.unproject( camera );
-	
-	rete= vec.sub( camera.position ).normalize();
-	distanza= -camera.position.z / rete.z;
-	position= camera.position.clone()
-	position=position.add(rete.multiplyScalar(distanza));
-	
-	
-	x1=starship.model.position.x+8.5;
-	x2=starship.model.position.y+1.5;
-	x3=starship.model.position.z-3;
-	x11=starship.model.position.x-8.5;
-	x22=starship.model.position.y+1.5;
-	x33=starship.model.position.z-3;
-	vec1=new THREE.Vector3( x1,x2,x3);
-	vec2=new THREE.Vector3( x11,x22,x33);
+		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+		
+		vec.unproject( camera );
+		
+		rete= vec.sub( camera.position ).normalize();
+		distanza= -camera.position.z / rete.z;
+		position= camera.position.clone()
+		position=position.add(rete.multiplyScalar(distanza));
+		
+		
+		x1=starship.model.position.x+8.5;
+		x2=starship.model.position.y+1.5;
+		x3=starship.model.position.z-3;
+		x11=starship.model.position.x-8.5;
+		x22=starship.model.position.y+1.5;
+		x33=starship.model.position.z-3;
+		vec1=new THREE.Vector3( x1,x2,x3);
+		vec2=new THREE.Vector3( x11,x22,x33);
 
-	
-
-
-	var bullet_dx = new THREE.Mesh(
-		new THREE.SphereGeometry(0.1,20,20),
-		new THREE.MeshBasicMaterial({color:0xffffff})
-	);
-	
-		bullet_dx.position.set(x1,x2,x3);
+		
 
 
-			var dir = new THREE.Vector3();
-			var starship_pos = bullet_dx.position;
-			var enemy_pos =position;
-			dir.subVectors(enemy_pos,starship_pos).normalize();
+		var bullet_dx = new THREE.Mesh(
+			new THREE.SphereGeometry(0.1,20,20),
+			new THREE.MeshBasicMaterial({color:0xffffff})
+		);
+		
+			bullet_dx.position.set(x1,x2,x3);
 
 
-
-	bullet_dx.velocity = dir;
-	//console.log("s",bullet_dx)
-	bullet_dx.alive = true;
-	setTimeout(function(){
-		hitShot(mouse.x,mouse.y);
-		bullet_dx.alive = false;
-		scene.remove(bullet_dx);
-	}, 300);
-
-
-	bullets.push(bullet_dx);
-	scene.add(bullet_dx);
-	
-	var bullet_dx1 = new THREE.Mesh(
-		new THREE.SphereGeometry(0.1,20,20),
-		new THREE.MeshBasicMaterial({color:0xffffff})
-	);
-	
-	bullet_dx1.position.set(x11,x22,x33);
-
-
-	var dir = new THREE.Vector3();
-	var starship_pos = bullet_dx1.position;
-	var enemy_pos =position;
-	dir.subVectors(enemy_pos,starship_pos).normalize();
+				var dir = new THREE.Vector3();
+				var starship_pos = bullet_dx.position;
+				var enemy_pos =position;
+				dir.subVectors(enemy_pos,starship_pos).normalize();
 
 
 
-	bullet_dx1.velocity = dir;
-	bullet_dx1.alive = true;
-	setTimeout(function(){
-		bullet_dx1.alive = false;
-		scene.remove(bullet_dx1);
-		hitShot(event);
-	}, 300);
-	
-	bullets.push(bullet_dx1);
-	scene.add(bullet_dx1);	
+		bullet_dx.velocity = dir;
+		//console.log("s",bullet_dx)
+		bullet_dx.alive = true;
+		setTimeout(function(){
+			hitShot(mouse.x,mouse.y);
+			bullet_dx.alive = false;
+			scene.remove(bullet_dx);
+		}, 300);
+
+
+		bullets.push(bullet_dx);
+		scene.add(bullet_dx);
+		
+		var bullet_dx1 = new THREE.Mesh(
+			new THREE.SphereGeometry(0.1,20,20),
+			new THREE.MeshBasicMaterial({color:0xffffff})
+		);
+		
+		bullet_dx1.position.set(x11,x22,x33);
+
+
+		var dir = new THREE.Vector3();
+		var starship_pos = bullet_dx1.position;
+		var enemy_pos =position;
+		dir.subVectors(enemy_pos,starship_pos).normalize();
+
+
+
+		bullet_dx1.velocity = dir;
+		bullet_dx1.alive = true;
+		setTimeout(function(){
+			bullet_dx1.alive = false;
+			scene.remove(bullet_dx1);
+			hitShot(event);
+		}, 300);
+		
+		bullets.push(bullet_dx1);
+		scene.add(bullet_dx1);	
+	}	
 }
 
 function hitShot( x,y ) {
-
-	mouse.x = x;
-	mouse.y = y;
-
-	raycaster = new THREE.Raycaster();
-
-
-	raycaster.setFromCamera( mouse, camera );
-	var intersects = raycaster.intersectObjects( scene.children, true);
-	console.log(intersects);
-	if (level == 1){
-		if( intersects.length > 0 ) {
-			var firstObjIntersected = intersects[0].object;
-			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
-				enemystarship.enemystarship1.health -= 1;
-				shooting = true;
-				if (enemystarship.enemystarship1.health == 0){
-					parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
-					enemystarship.enemystarship1.appeared = false;
-					enemystarship.enemystarship1.model.position.z = -1000;
-					enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
-					scene.add(enemystarship.enemystarship1.model);
+	if (canShot){
+		mouse.x = x;
+		mouse.y = y;	
+		raycaster = new THREE.Raycaster();	
+		raycaster.setFromCamera( mouse, camera );
+		var intersects = raycaster.intersectObjects( scene.children, true);
+		if (level == 1){
+			if( intersects.length > 0 ) {
+				var firstObjIntersected = intersects[0].object;
+				if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
+					enemystarship.enemystarship1.health -= starship.damage;
+					shooting = true;
+					if (enemystarship.enemystarship1.health <= 0){
+						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
+						enemystarship.enemystarship1.appeared = false;
+						enemystarship.enemystarship1.model.position.z = -1000;
+						enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+						scene.add(enemystarship.enemystarship1.model);
+						clock_money.start();
+						shooting = false;
+						level = 2;	
+						document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;
+						return;
+					}
+					loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
+				}
+			}
+		}
+		else if (level == 2){
+			if( intersects.length > 0 ) {
+			
+				var firstObjIntersected = intersects[0].object;
+	
+				if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
+					enemystarship.enemystarship1.health -= starship.damage;
+					console.log(firstObjIntersected);
+					shooting = true;
+					if (enemystarship.enemystarship1.health <= 0){
+						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
+						enemystarship.enemystarship1.appeared = false;
+						enemystarship.enemystarship1.model.position.z = -1000;
+						enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+						scene.add(enemystarship.enemystarship1.model);
+					}
+					else{
+						loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
+					}
+				}
+				else if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
+					enemystarship.enemystarship2.health -= starship.damage;
+					shooting = true;
+					if (enemystarship.enemystarship2.health <= 0){
+						parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
+						enemystarship.enemystarship2.appeared = false;
+						enemystarship.enemystarship2.model.position.z = -1010;
+						enemystarship.enemystarship2.model = enemystarship.originalenemy2.model.clone();
+						scene.add(enemystarship.enemystarship2.model);
+					}
+					else{
+						loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
+					}
+				}
+				if (enemystarship.enemystarship1.health <= 0 && enemystarship.enemystarship2.health <= 0){
+					setMoneys();
+					clock_money.start();
+					shooting = false;
+					level = 3;
+					document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;
+				}
+			}
+		}
+		else if (level == 3){
+			if( intersects.length > 0 ) {
+			
+				var firstObjIntersected = intersects[0].object;
+	
+				if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
+					enemystarship.enemystarship1.health -= starship.damage;
+					shooting = true;
+					if (enemystarship.enemystarship1.health <= 0){
+						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
+					}
+					else{
+						loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
+					}
+				}
+				if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
+					enemystarship.enemystarship2.health -= starship.damage;
+					shooting = true;
+					if (enemystarship.enemystarship2.health <= 0){
+						parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
+					}
+					else{
+						loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
+					}
+				}
+				if ( enemystarship.finalenemy.name === firstObjIntersected.parent.name ) {
+					enemystarship.finalenemy.health -= starship.damage;
+					shooting = true;
+					if (enemystarship.finalenemy.health <= 0){
+						parts.push(new esplode_enemy(enemystarship.finalenemy.model));
+					}
+					else{
+						loadDamagedFinalShip(enemystarship.finalenemy.model, enemystarship.finalenemy.health);
+					}
+				}
+				if (enemystarship.enemystarship1.health <= 0 && enemystarship.enemystarship2.health <= 0 && enemystarship.finalenemy.health <= 0){
 					clock.start();
 					shooting = false;
-					level = 2;	
-					document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;
-					return;
+					level = 4;
 				}
-				loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
 			}
 		}
-	}
-	else if (level == 2){
+		////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if( intersects.length > 0 ) {
-		
 			var firstObjIntersected = intersects[0].object;
-
-			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
-				enemystarship.enemystarship1.health -= 1;
-				shooting = true;
-				if (enemystarship.enemystarship1.health == 0){
-					parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
-					enemystarship.enemystarship1.appeared = false;
-					enemystarship.enemystarship1.model.position.z = -1000;
-					enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
-					scene.add(enemystarship.enemystarship1.model);
-				}
-				else{
-					loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
-				}
+			//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
+			console.log(firstObjIntersected.name);
+			//console.log(planet_list);
+			switch (firstObjIntersected.name) {
+				case "pianeta1":
+					parts.push(new explode_planet(pianeta1,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta1,2));
+					}, 180);
+					pianeta1.position.z= camera.position.z+1;
+					break;
+				case "pianeta2":
+					parts.push(new explode_planet(pianeta2,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta2,2));
+					}, 180);
+					pianeta2.position.z= camera.position.z+2;
+					break;
+				case "pianeta3":
+					parts.push(new explode_planet(pianeta3,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta3,2));
+					}, 180);
+					pianeta3.position.z= camera.position.z+3;
+					break;
+				case "pianeta4":
+					parts.push(new explode_planet(pianeta4,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta4,2));
+					}, 180);
+					pianeta4.position.z= camera.position.z+4;
+					break;
+				case "pianeta5":
+					parts.push(new explode_planet(pianeta5,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta5,2));
+					}, 180);
+					pianeta5.position.z= camera.position.z+5;
+					break;
+				case "pianeta6":
+					parts.push(new explode_planet(pianeta6,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta6,2));
+					}, 180);
+					pianeta6.position.z= camera.position.z+1;
+					break;
+				case "pianeta7":
+					parts.push(new explode_planet(pianeta7,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta7,2));
+					}, 180);
+					pianeta7.position.z= camera.position.z+2;
+					break;
+				case "pianeta8":
+					parts.push(new explode_planet(pianeta8,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta8,2));
+					}, 180);
+					pianeta8.position.z= camera.position.z+3;
+					break;
+				case "pianeta9":
+					parts.push(new explode_planet(pianeta9,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta9,2));
+					}, 180);
+					pianeta9.position.z= camera.position.z+4;
+					break;
+				case "pianeta10":
+					parts.push(new explode_planet(pianeta10,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta10,2));
+					}, 180);
+					pianeta10.position.z= camera.position.z+5;
+					break;
+				case "pianeta11":
+					parts.push(new explode_planet(pianeta11,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta11,2));
+					}, 180);
+					pianeta11.position.z= camera.position.z+1;
+					break;
+				case "pianeta12":
+					parts.push(new explode_planet(pianeta12,1));
+					setTimeout(function() {
+						parts.push(new explode_planet(pianeta12,2));
+					}, 180);
+					pianeta12.position.z= camera.position.z+5;
+					break;
+				default:
+					console.log("enemystarship hit");
 			}
-			else if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
-				enemystarship.enemystarship2.health -= 1;
-				shooting = true;
-				if (enemystarship.enemystarship2.health == 0){
-					parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
-					enemystarship.enemystarship2.appeared = false;
-					enemystarship.enemystarship2.model.position.z = -1010;
-					enemystarship.enemystarship2.model = enemystarship.originalenemy2.model.clone();
-					scene.add(enemystarship.enemystarship2.model);
-				}
-				else{
-					loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
-				}
-			}
-			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0){
-				clock.start();
-				shooting = false;
-				level = 3;
-				document.getElementById("levelDiv").innerHTML = "LEVEL: " + level;
-			}
+			
 		}
-	}
-	else if (level == 3){
-		if( intersects.length > 0 ) {
-		
-			var firstObjIntersected = intersects[0].object;
-
-			if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
-				enemystarship.enemystarship1.health -= 1;
-				shooting = true;
-				if (enemystarship.enemystarship1.health == 0){
-					parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
-				}
-				else{
-					loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
-				}
-			}
-			if ( enemystarship.enemystarship2.name === firstObjIntersected.parent.name ) {
-				enemystarship.enemystarship2.health -= 1;
-				shooting = true;
-				if (enemystarship.enemystarship2.health == 0){
-					parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
-				}
-				else{
-					loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
-				}
-			}
-			if ( enemystarship.finalenemy.name === firstObjIntersected.parent.name ) {
-				enemystarship.finalenemy.health -= 1;
-				shooting = true;
-				if (enemystarship.finalenemy.health == 0){
-					parts.push(new esplode_enemy(enemystarship.finalenemy.model));
-				}
-				else{
-					loadDamagedFinalShip(enemystarship.finalenemy.model, enemystarship.finalenemy.health);
-				}
-			}
-			if (enemystarship.enemystarship1.health == 0 && enemystarship.enemystarship2.health == 0 && enemystarship.finalenemy.health == 0){
-				clock.start();
-				shooting = false;
-				level = 4;
-			}
-		}
-	}
-	
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	if( intersects.length > 0 ) {
-		var firstObjIntersected = intersects[0].object;
-		//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
-		console.log(firstObjIntersected.name);
-		//console.log(planet_list);
-		switch (firstObjIntersected.name) {
-			case "pianeta1":
-				//console.log("AAAAAAA");
-				parts.push(new explode_planet(pianeta1,1));
-				setTimeout(function() {
-					//console.log("BBBBBBBBBBB");
-					parts.push(new explode_planet(pianeta1,2));
-				}, 180);
-				pianeta1.position.z= camera.position.z+1;
-				break;
-			case "pianeta2":
-				parts.push(new explode_planet(pianeta2,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta2,2));
-				}, 180);
-				pianeta2.position.z= camera.position.z+2;
-				break;
-			case "pianeta3":
-				parts.push(new explode_planet(pianeta3,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta3,2));
-				}, 180);
-				pianeta3.position.z= camera.position.z+3;
-				break;
-			case "pianeta4":
-				parts.push(new explode_planet(pianeta4,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta4,2));
-				}, 180);
-				pianeta4.position.z= camera.position.z+4;
-				break;
-			case "pianeta5":
-				parts.push(new explode_planet(pianeta5,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta5,2));
-				}, 180);
-				pianeta5.position.z= camera.position.z+5;
-				break;
-			case "pianeta6":
-				parts.push(new explode_planet(pianeta6,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta6,2));
-				}, 180);
-				pianeta6.position.z= camera.position.z+1;
-				break;
-			case "pianeta7":
-				parts.push(new explode_planet(pianeta7,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta7,2));
-				}, 180);
-				pianeta7.position.z= camera.position.z+2;
-				break;
-			case "pianeta8":
-				parts.push(new explode_planet(pianeta8,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta8,2));
-				}, 180);
-				pianeta8.position.z= camera.position.z+3;
-				break;
-			case "pianeta9":
-				parts.push(new explode_planet(pianeta9,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta9,2));
-				}, 180);
-				pianeta9.position.z= camera.position.z+4;
-				break;
-			case "pianeta10":
-				parts.push(new explode_planet(pianeta10,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta10,2));
-				}, 180);
-				pianeta10.position.z= camera.position.z+5;
-				break;
-			case "pianeta11":
-				parts.push(new explode_planet(pianeta11,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta11,2));
-				}, 180);
-				pianeta11.position.z= camera.position.z+1;
-				break;
-			case "pianeta12":
-				parts.push(new explode_planet(pianeta12,1));
-				setTimeout(function() {
-					parts.push(new explode_planet(pianeta12,2));
-				}, 180);
-				pianeta12.position.z= camera.position.z+5;
-				break;
-			default:
-				console.log("enemystarship hit");
-		}
-		
 	}
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 }
 
 function shotResponse(){
@@ -1391,10 +1480,10 @@ function shotResponse(){
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
 					starship.health -= 1;
-					document.getElementById("healthDiv").innerHTML = starship.health; 
 					if (starship.health == 0){
 						scene.remove(starship.model);	
-						alert("GAME OVER");
+						canShot = false;
+						gameOver();
 					}
 					return;
 				}
@@ -1416,10 +1505,10 @@ function shotResponse(){
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
 					starship.health -= 1;
-					document.getElementById("healthDiv").innerHTML = starship.health;   
 					if (starship.health == 0){
 						scene.remove(starship.model);	
-						alert("GAME OVER");
+						canShot = false;
+						gameOver();
 					}
 					return;
 				}
@@ -1441,11 +1530,11 @@ function shotResponse(){
 				var firstObjIntersected = intersects[0].object;
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
-					starship.health -= 1;
-					document.getElementById("healthDiv").innerHTML = starship.health;   
+					starship.health -= 1; 
 					if (starship.health == 0){
 						scene.remove(starship.model);	
-						alert("GAME OVER");
+						canShot = false;
+						gameOver();
 					}
 					return;
 				}
@@ -1467,24 +1556,23 @@ function render() {
 
 
 function handleMovements(){
-	console.log(starship.model.position.y);
-	if ( keyboard.pressed("D")  && starship.model.position.x <24){
+	if ( keyboard.pressed("D") && starship.model.position.x < 24){
 		starship.model.translateX(x_step[0]);
 		starship.model.rotation.z= -z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("A") && starship.model.position.x >-24){
+	if ( keyboard.pressed("A") && starship.model.position.x > -24){
 		starship.model.translateX(-x_step[0]);
 		starship.model.rotation.z= z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("W") && starship.model.position.y <10){
+	if ( keyboard.pressed("W") && starship.model.position.y < 10){
 		starship.model.translateY(y_step[0]);
 		starship.model.rotation.x= -x_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 
 	}
-	if ( keyboard.pressed("S") && starship.model.position.y >-10){
+	if ( keyboard.pressed("S") && starship.model.position.y > -10 ){
 		starship.model.translateY(-y_step[0]);
 		starship.model.rotation.x= x_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
@@ -1493,8 +1581,8 @@ function handleMovements(){
 		var axis = new THREE.Vector3(0, 0, 1).normalize();
 		starship.model.rotateOnAxis(axis, 0.05);
 	}
-
 }
+
 function explode_planet(obj,info) {
 	var geometry = new THREE.Geometry();
 	var i = 0;
@@ -1549,6 +1637,7 @@ function explode_planet(obj,info) {
 	}
 	scene.remove(obj);
 }
+
 
 function esplode_enemy(obj) {
 	var geometry = new THREE.Geometry();
@@ -1623,6 +1712,9 @@ function loadDamagedShip(enemy,health){
 	else if (health == 1){
 		obj = enemystarship.damagedstarship2.model.clone();
 	}
+	else{
+		return;
+	}
 	var child4, child0, child5, child7;
 	obj.traverse( function ( obj_child ) {
 		if ( obj_child instanceof THREE.Mesh ) {
@@ -1671,6 +1763,9 @@ function loadDamagedFinalShip(enemy,health){
 	else if (health == 1){
 		obj = enemystarship.damagedfinalship2.model.clone();
 	}
+	else{
+		return;
+	}
 	var child0, child1;
 	obj.traverse( function ( obj_child ) {
 		if ( obj_child instanceof THREE.Mesh ) {
@@ -1699,8 +1794,9 @@ function loadDamagedFinalShip(enemy,health){
 
 function playGame(){
 	if ( keyboard.pressed("E")){
+		enter.style.display = "none";
 		tweenShip = new TWEEN.Tween(posStart)
-			.to({z: -50}, 2000)
+			.to({z: -35}, 2000)
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(function() {
 				starship.model.position.z = posStart.z;
@@ -1726,4 +1822,114 @@ function playGame(){
 
 function start(){
 	startGame = true;
+}
+
+function setMoneys(){
+	if (level < 3){
+		k = 2;
+		beta = 0;
+		for (var i = 0; i < 60; i++){
+			moneys[i].position.x = k*beta*Math.cos(beta);
+			moneys[i].position.y = k*beta*Math.sin(beta) - 3;
+			moneys[i].position.z = -950-20*i;
+			beta += 0.25;
+			if (beta >= 5){
+				beta = -beta;
+			}
+			scene.add(moneys[i]);
+		}
+	}
+}
+
+function animateMoney(){
+	if (clock_money.getElapsedTime() > 1 && clock_money.getElapsedTime() < 3){
+		rotateWings("close");
+	}
+    if(clock_money.running && clock_money.getElapsedTime() > 5 && clock_money.getElapsedTime() < 70){
+        
+        for(var i=0; i < 60; i++){
+			if (moneys[0].position.z <= -300){
+				moneys[i].position.z += 3;
+			}
+            else if(moneys[i].position.z <= camera.position.z){
+                 moneys[i].position.z += 0.75;
+            }else{
+				scene.remove(moneys[i]);
+				if (i == 59){					
+					clock_money.stop();
+					clock.start();
+				}
+            }
+        }
+    }
+}
+
+function getMoney(){
+	if (clock_money.running){
+		raycaster = new THREE.Raycaster();
+		var dir = new THREE.Vector3(0.0, 0.0, -1.0);
+		var starship_pos = starship.model.position.clone();
+		raycaster.set(starship_pos, dir);
+		var intersects = raycaster.intersectObjects( scene.children, true);
+		if( intersects.length > 0 ) {
+			var firstObjIntersected = intersects[0].object;
+			for(var i = 0; i < 60; i++){
+				if ( moneys[i].name === firstObjIntersected.parent.name) {
+					scene.remove(moneys[i]);
+					starship.money += 1;
+					return;
+				}
+			}
+		}
+	}
+
+}
+
+function gameOver(){
+	game_over = true;
+	while(scene.children.length > 0){ 
+		scene.remove(scene.children[0]); 
+	}
+	gOverElement.style.display = "block";
+}
+
+function showImprovements(){
+	if (starship.money >= 10){
+		improvemnts.style.display = "block";
+	}
+	else{
+		improvemnts.style.display = "none";
+	}
+}
+
+function restoreHealth(){
+	starship.health = 10;
+	starship.money -= 10;
+}
+
+function increaseDamage(){
+	if (starship.money >= 10*starship.damage){
+		starship.money -= 10*starship.damage;
+		starship.damage += 1;
+	}
+	else{
+		document.getElementById("msg").innerHTML = "You need " + 10*starship.damage + " money to upgrade!";
+		document.getElementById("msg").style.display = "block";
+		setTimeout(function(){
+			document.getElementById("msg").style.display = "none";
+		}, 2000);
+
+	}
+}
+
+function updateInfoBar(){
+	document.getElementById("healthDiv").innerHTML = starship.health; 
+	document.getElementById("damageDiv").innerHTML = starship.damage; 
+	document.getElementById("moneysDiv").innerHTML = starship.money;
+}
+
+function quitGame(){
+	if ( keyboard.pressed("Q") ){
+		window.location.reload(false); 
+	}
 }

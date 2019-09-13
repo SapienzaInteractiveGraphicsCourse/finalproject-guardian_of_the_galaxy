@@ -136,9 +136,9 @@
 		}
 
 		#heart{
-
  			animation: .8s infinite beatHeart;
 		}
+
 		#lifeDiv {
 			text-shadow: 1px 1px green, -1px -1px green;
 
@@ -151,7 +151,7 @@
 			-o-border-radius: .75em;
 				border-radius: .75em;
 			background-color: red;
-			-webkit-box-shadow:  0 .2em green
+			-webkit-box-shadow:  0 .2em green;
 			-o-box-shadow:  0 .2em green;
 			box-shadow:  0 .2em green;
 			color: green;
@@ -165,6 +165,87 @@
  			padding-left: 10px;
 		}
 
+		#laser{
+			margin-top: 5px;
+		}
+
+		#laserDiv {
+			text-shadow: 1px 1px red, -1px -1px red;
+
+			line-height: 1.5em;
+			text-align: left ;
+			display: inline-block;
+			width: 3.5em;
+			-webkit-border-radius: .75em;
+			-moz-border-radius: .75em;
+			-o-border-radius: .75em;
+				border-radius: .75em;
+			background-color: red;
+			-webkit-box-shadow:  0 .2em red;
+			-o-box-shadow:  0 .2em red;
+			box-shadow:  0 .2em red;
+			color: red;
+			margin: 5px;
+			background-color: red;
+			background-image: -o-linear-gradient(left top, red 99%);
+			background-image: -moz-linear-gradient(left top, red 99%);
+			background-image: -webkit-linear-gradient(left top, red 99%);
+			background-image: linear-gradient(left top, red 99%);
+			cursor: pointer;
+ 			padding-left: 10px;
+		}
+
+		
+		#money{
+			margin-top: 5px;
+		}
+
+		#moneyDiv {
+			text-shadow: 1px 1px rgb(255, 187, 0), -1px -1px rgb(255, 187, 0);
+
+			line-height: 1.5em;
+			text-align: left ;
+			display: inline-block;
+			width: 3.5em;
+			-webkit-border-radius: .75em;
+			-moz-border-radius: .75em;
+			-o-border-radius: .75em;
+				border-radius: .75em;
+			background-color: rgb(255, 187, 0);
+			-webkit-box-shadow:  0 .2em rgb(255, 187, 0);
+			-o-box-shadow:  0 .2em rgb(255, 187, 0);
+			box-shadow:  0 .2em rgb(255, 187, 0);
+			color: rgb(255, 187, 0);
+			margin: 5px;
+			background-color: rgb(255, 187, 0);
+			background-image: -o-linear-gradient(left top, rgb(255, 187, 0) 99%);
+			background-image: -moz-linear-gradient(left top, rgb(255, 187, 0) 99%);
+			background-image: -webkit-linear-gradient(left top, rgb(255, 187, 0) 99%);
+			background-image: linear-gradient(left top, rgb(255, 187, 0) 99%);
+			cursor: pointer;
+ 			padding-left: 10px;
+		}
+
+		.restart {
+				color: white;
+				animation-duration: 1.2s;
+				animation-name: restart;
+				animation-iteration-count: infinite;
+				animation-direction: alternate;
+				animation-timing-function: ease-in-out;
+			}
+		@keyframes restart { from { opacity: 1; } to { opacity: 0; } }
+
+		.enter {
+				color: white;
+				animation-duration: 1.2s;
+				animation-name: enter;
+				animation-iteration-count: infinite;
+				animation-direction: alternate;
+				animation-timing-function: ease-in-out;
+			}
+		@keyframes enter { from { opacity: 1; } to { opacity: 0; } }
+
 		 #lifeDiv:active{
 			box-shadow: none;
 			position: relative;
@@ -173,22 +254,22 @@
 
 
 		@keyframes beatHeart {
-  0% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(1.1);
-  }
-  40% {
-    transform: scale(1);
-  }
-  60% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+			0% {
+				transform: scale(1);
+			}
+			25% {
+				transform: scale(1.1);
+			}
+			40% {
+				transform: scale(1);
+			}
+			60% {
+				transform: scale(1.1);
+			}
+			100% {
+				transform: scale(1);
+			}
+		}
 		.start-btn{
     		text-align: center;
 			display: inline-block;
@@ -199,12 +280,12 @@
     		padding: 10px 10px 10px 10px ;
     		background-color: lightgray;
     		text-shadow: -1px -1px black, 1px 1px ;
-			color: gray;
+			color: rgb(250, 163, 46);
 		    -webkit-border-radius: 7px;
 			-moz-border-radius: 7px;
 			-o-border-radius: 7px;
 			border-radius: 7px;
-		    box-shadow: 0 .2em gray; 
+		    box-shadow: 0 .2em gray;
 		    cursor: pointer;
 		}
 
@@ -213,9 +294,51 @@
 			position: relative;
 			top: .2em;
 		}
+
+		.improvements-btn{
+    		text-align: center;
+			display: inline-block;
+			margin:5px;
+   		 	font-weight: bold;
+   		 	font-size: 18pt;
+    		padding: 7px 7px 7px 7px ;
+    		background-color: lightgray;
+    		text-shadow: -1px -1px black, 1px 1px ;
+			color: rgb(250, 163, 46);
+		    -webkit-border-radius: 7px;
+			-moz-border-radius: 7px;
+			-o-border-radius: 7px;
+			border-radius: 7px;
+		    box-shadow: 0 .2em gray;
+		    cursor: pointer;
+		}
+
+		.improvements {
+				animation-duration: 1.2s;
+				animation-name: improvements;
+				animation-iteration-count: infinite;
+				animation-direction: alternate;
+				animation-timing-function: ease-in-out;
+			}
+		@keyframes improvements { from { opacity: 1; } to { opacity: 0; } }
+
 		a:hover, a:visited, a:link, a:active{
     		text-decoration: none;
 		}
+
+		h1{
+			color: rgb(243, 152, 33);
+			font-size: 48px;
+			animation-duration: 1.2s;
+			animation-name: h1;
+			animation-iteration-count: infinite;
+			animation-direction: alternate;
+			animation-timing-function: ease-in-out;
+		}
+		@keyframes h1 { from { opacity: 1; } to { opacity: 0; } }
+
+		
+
 	</style>
 	<body>
 
@@ -253,16 +376,33 @@
 
 
 		<div id="container">
-				<div id="menu" style="position: absolute; top: 30%; left: 40%;">
+				<div id="hint" style="position: absolute;  top: 15%; left: 40%">
+					<h2 id="enter" class="enter">Press E to enter the galaxy</h2>
+				</div>
+				<div id="menu" style="position: absolute; top: 40%; left: 45%">
 					<span id="start" class='start-btn'>START</span>
 					<span id="commands" style="position: absolute; top: 130%; left:-30%;" class='start-btn'>
 					<a data-fancybox="gallery" href="images/control2.jpg " style="color:gray">COMMANDS</a></span>
 				</div>
-				<div id="load" style="position: absolute; top: 70%; left: 30%;">
+				<div id="improvements" style="position: absolute; left: 0%; top: 17%;">
+					<span id="health" class='improvements-btn'>Restore health</span><br/>
+					<span id="damage" class='improvements-btn'>Increase damage</span>
+				</div>
+				<div id="msg" style="position: absolute; left: 0%; top: 35%; color: white; font-size: 24px; display: none;">
+				</div>
+				<div id="load" style="position: absolute; top: 40%; left: 33%;">
 					<img id="progress_bar" src="images/progressbar.png" /><br/>
 					<h4><div style="position: absolute; top: 77%; left: 32%;" id="percent_load"></div></h4>
 
 				</div>
+				<div id="game_over" style="position: absolute;  top: 10%; left: 27%">
+					<img src="images/game_over.jpg" />
+					<h2 id="restart" class="restart" style="margin-top: 5%; margin-left:30%;">Press Q to quit the game</h2>
+				</div>
+				<div id="warning" style="position: absolute;  top: 5%; left: 40%">
+					<h1>WARNING!</h1>
+				</div>
+
 		</div>
 		
 	</body>
