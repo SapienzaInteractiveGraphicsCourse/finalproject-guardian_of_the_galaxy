@@ -1467,23 +1467,24 @@ function render() {
 
 
 function handleMovements(){
-	if ( keyboard.pressed("D") ){
+	console.log(starship.model.position.y);
+	if ( keyboard.pressed("D")  && starship.model.position.x <24){
 		starship.model.translateX(x_step[0]);
 		starship.model.rotation.z= -z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("A") ){
+	if ( keyboard.pressed("A") && starship.model.position.x >-24){
 		starship.model.translateX(-x_step[0]);
 		starship.model.rotation.z= z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("W") ){
+	if ( keyboard.pressed("W") && starship.model.position.y <10){
 		starship.model.translateY(y_step[0]);
 		starship.model.rotation.x= -x_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 
 	}
-	if ( keyboard.pressed("S") ){
+	if ( keyboard.pressed("S") && starship.model.position.y >-10){
 		starship.model.translateY(-y_step[0]);
 		starship.model.rotation.x= x_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
