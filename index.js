@@ -76,6 +76,9 @@ shuffle(planet_position,6);
 
 // Bullets array
 var bullets = [];
+var enemy_bullets = [];
+var curr_bullet1;
+var curr_bullet2;
 var objects = [];
 var fireRate1 = 0;
 var fireRate2 = 0;
@@ -996,6 +999,17 @@ function createBullets(){
 	}
 }
 
+function createEnemyBullets(){
+	for(var index=0; index < enemy_bullets.length; index+=1){
+		if( enemy_bullets[index] === undefined ) continue;
+		if( enemy_bullets[index].alive == false ){
+		  enemy_bullets.splice(index,1);
+		  continue;
+		}
+		enemy_bullets[index].position.add(enemy_bullets[index].velocity);
+	}
+}
+
 function animate() {
 	
 	requestAnimationFrame( animate );
@@ -1011,6 +1025,7 @@ function animate() {
 		setStarshipRotation()
 		animateMoney();
 		createBullets()
+		createEnemyBullets()
 		updateInfoBar();
 		getMoney();
 	}
@@ -1166,6 +1181,7 @@ function loadEnemies(){
 	}
 }
 
+
 function destroyEnemy( event ) {
 	if (canShot){
 		vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
@@ -1198,13 +1214,13 @@ function destroyEnemy( event ) {
 			new THREE.MeshBasicMaterial({color:0xffffff})
 		);
 		
-			bullet_dx.position.set(x1,x2,x3);
+		bullet_dx.position.set(x1,x2,x3);
 
 
-				var dir = new THREE.Vector3();
-				var starship_pos = bullet_dx.position;
-				var enemy_pos =position;
-				dir.subVectors(enemy_pos,starship_pos).normalize();
+		var dir = new THREE.Vector3();
+		var starship_pos = bullet_dx.position;
+		var enemy_pos =position;
+		dir.subVectors(enemy_pos,starship_pos).normalize();
 
 
 
@@ -1463,59 +1479,98 @@ function hitShot( x,y ) {
 	}
 }
 
+
+function enemyShot(obj){
+	var enemy_pos = obj.position.clone();
+	var starship_pos = starship.model.position.clone();
+	var dir = new THREE.Vector3();
+	dir.sub(starship_pos, enemy_pos).normalize();
+	var bullet = new THREE.Mesh(
+		new THREE.SphereGeometry(0.2,20,20),
+		new THREE.MeshBasicMaterial({color:0xffff00})
+	);
+	
+	bullet.position.set(enemy_pos.x, enemy_pos.y, enemy_pos.z);
+	bullet.velocity = dir;
+	bullet.alive = true;
+	enemy_bullets.push(bullet);
+	scene.add(bullet);
+	
+	return bullet;
+
+}
+
 function shotResponse(){
 	fireRate1 += 1;
 	fireRate2 += 1;
 	if (fireRate1 % 100 == 0){
 		if (shooting && enemystarship.enemystarship1.health > 0){	//when an enemy is hit, it starts to shot you
-			raycaster = new THREE.Raycaster();
-			var dir = new THREE.Vector3();
-			var starship_pos = starship.model.position.clone();
-			var enemy_pos = enemystarship.enemystarship1.model.position.clone();
-			dir.subVectors(starship_pos, enemy_pos).normalize();
-			raycaster.set(enemy_pos, dir);
-			var intersects = raycaster.intersectObjects( scene.children, true);
-			if( intersects.length > 0 ) {
-				
-				var firstObjIntersected = intersects[0].object;
+			curr_bullet1 = enemyShot(enemystarship.enemystarship1.model);
+		}
+	}
+	if (curr_bullet1 != undefined){
+		if (curr_bullet1.position.z >= camera.position.z){
+			scene.remove(curr_bullet1);
+			return;
+		}
+		raycaster = new THREE.Raycaster();
+		var dir = new THREE.Vector3();
+		var starship_pos = starship.model.position.clone();
+		var enemy_pos = curr_bullet1.position.clone();
+		dir.subVectors(starship_pos, enemy_pos).normalize();
+		raycaster.set(enemy_pos, dir);
+		var intersects = raycaster.intersectObjects( scene.children, true);
+		if( intersects.length > 0 && intersects[0].distance < 2) {
+			
+			var firstObjIntersected = intersects[0].object;
 
-				if ( starship.name === firstObjIntersected.parent.name ) {
-					starship.health -= 1;
-					if (starship.health == 0){
-						scene.remove(starship.model);	
-						canShot = false;
-						gameOver();
-					}
-					return;
+			if ( starship.name === firstObjIntersected.parent.name ) {
+				starship.health -= 1;
+				scene.remove(curr_bullet1);
+				curr_bullet1 = undefined;
+				if (starship.health == 0){
+					scene.remove(starship.model);	
+					canShot = false;
+					gameOver();
 				}
+				return;
 			}
 		}
 	}
+
 	if (fireRate2 % 100 == 0){
 		if (shooting && enemystarship.enemystarship2.health > 0 && level >= 2){	//when an enemy is hit, it starts to shot you
-			raycaster = new THREE.Raycaster();
-			var dir = new THREE.Vector3();
-			var starship_pos = starship.model.position.clone();
-			var enemy_pos = enemystarship.enemystarship2.model.position.clone();
-			dir.subVectors(starship_pos, enemy_pos).normalize();
-			raycaster.set(enemy_pos, dir);
-			var intersects = raycaster.intersectObjects( scene.children, true);
-			if( intersects.length > 0 ) {
-				
-				var firstObjIntersected = intersects[0].object;
+			curr_bullet2 = enemyShot(enemystarship.enemystarship2.model);
+		}
+	}
+	if (curr_bullet2 != undefined){
+		if (curr_bullet2.position.z >= camera.position.z){
+			scene.remove(curr_bullet2);
+			return;
+		}
+		raycaster = new THREE.Raycaster();
+		var dir = new THREE.Vector3();
+		var starship_pos = starship.model.position.clone();
+		var enemy_pos = curr_bullet2.position.clone();
+		dir.subVectors(starship_pos, enemy_pos).normalize();
+		raycaster.set(enemy_pos, dir);
+		var intersects = raycaster.intersectObjects( scene.children, true);
+		if( intersects.length > 0 && intersects[0].distance < 2) {
+			
+			var firstObjIntersected = intersects[0].object;
 
-				if ( starship.name === firstObjIntersected.parent.name ) {
-					starship.health -= 1;
-					if (starship.health == 0){
-						scene.remove(starship.model);	
-						canShot = false;
-						gameOver();
-					}
-					return;
+			if ( starship.name === firstObjIntersected.parent.name ) {
+				starship.health -= 1;
+				scene.remove(curr_bullet2);
+				curr_bullet2 = undefined;
+				if (starship.health == 0){
+					scene.remove(starship.model);	
+					canShot = false;
+					gameOver();
 				}
+				return;
 			}
 		}
-	
 	}
 	if (fireRate2 % 20 == 0){
 		if (shooting && enemystarship.finalenemy.health > 0 && level == 3){	//when an enemy is hit, it starts to shot you
@@ -1557,23 +1612,24 @@ function render() {
 
 
 function handleMovements(){
-	if ( keyboard.pressed("D") && starship.model.position.x < 24){
+	if ( keyboard.pressed("D") && starship.model.position.x < window.innerWidth/42){
 		starship.model.translateX(x_step[0]);
 		starship.model.rotation.z= -z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("A") && starship.model.position.x > -24){
+	if ( keyboard.pressed("A") && starship.model.position.x > -window.innerWidth/42){
 		starship.model.translateX(-x_step[0]);
 		starship.model.rotation.z= z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("W") && starship.model.position.y < 10){
+	if ( keyboard.pressed("W") && starship.model.position.y < window.innerHeight/42){
+		console.log(window.innerHeight);
 		starship.model.translateY(y_step[0]);
 		starship.model.rotation.x= -x_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 
 	}
-	if ( keyboard.pressed("S") && starship.model.position.y > -10 ){
+	if ( keyboard.pressed("S") && starship.model.position.y > -window.innerHeight/42){
 		starship.model.translateY(-y_step[0]);
 		starship.model.rotation.x= x_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
