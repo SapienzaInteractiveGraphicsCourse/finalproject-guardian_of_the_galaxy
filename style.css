@@ -108,3 +108,14 @@ header a, a:visited {
 #start{
     z-index:10;
 }
+
+.withfont{
+    font-size:70px;
+    line-height: 92px;
+    font-family: 'Abel', sans-serif;
+    color: #ff8c00c4;
+    background: linear-gradient(to right, #e0d540, #ff8c00, #ff0080);
+    background-size: cover;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
