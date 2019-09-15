@@ -48,6 +48,17 @@ var warning = document.getElementById("warning");
 var enter = document.getElementById("hint");
 var improvemnts = document.getElementById("improvements");
 
+/* ----- Lensflare: propulsor -----*/
+
+var initial_intensity_propulsor=256;
+var final_intensity_propulsor=260;
+var propulsor_upper_right;
+var propulsor_upper_left;
+var propulsor_lower_right;
+var propulsor_lower_left;
+
+/* -------------------------------*/
+
 //PLANETS
 var pianeta1;
 var pianeta2;
@@ -396,7 +407,8 @@ loadManager.onLoad = function () {
 
 loadManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
 	document.getElementById("progress_bar").style = "background: linear-gradient(90deg,#e5405e 0%, #ffdb3a 25%, #3fffa2 50%, #3fffa2 50%" + String((itemsLoaded/itemsTotal)*100) + "%, #000000 0%);";
-	document.getElementById("percent_load").innerHTML = 'LOADING: ' + String((itemsLoaded/itemsTotal)*100)+"%";
+	var round=Math.round((itemsLoaded/itemsTotal)*100);
+	document.getElementById("percent_load").innerHTML = 'LOADING: ' + String(round)+"%";
 };
 
 loadManager.onError = function ( url ) { 
@@ -426,7 +438,9 @@ function loadModels(loadManager){
     //cloudsDiv.className = "clouds";
     //document.getElementById("info").appendChild(cloudsDiv);
 
+    var textureLoader = new THREE.TextureLoader(loadManager);
 
+	var lensFlareTexture = textureLoader.load("./images/lensflare2.jpg");
 
 	var starship_loader = new THREE.OBJLoader(loadManager);
 	var starship_mtlLoader = new THREE.MTLLoader(loadManager);
@@ -449,6 +463,64 @@ function loadModels(loadManager){
 			objects.push(object);
 			starship.model = object
 			starship.model.position.set(0.0, -8.0, 0.0);	
+
+			/* propulsor_upper_right */
+
+			propulsor_upper_right= new THREE.Lensflare();
+			propulsor_upper_right.flame = new THREE.LensflareElement( lensFlareTexture );
+			propulsor_upper_right.addElement( propulsor_upper_right.flame );
+			
+
+			propulsor_upper_right.position.y = 1;
+			propulsor_upper_right.position.x = 2.2;
+			propulsor_upper_right.position.z = 8.25;
+
+			propulsor_upper_right.flame.size = initial_intensity_propulsor/1.5;
+			
+
+			/* propulsor_upper_left*/
+
+			propulsor_upper_left = new THREE.Lensflare();
+			propulsor_upper_left.flame = new THREE.LensflareElement( lensFlareTexture );
+			propulsor_upper_left.addElement( propulsor_upper_left.flame );
+			
+
+			propulsor_upper_left.position.y = 1;
+			propulsor_upper_left.position.x = -2.2;
+			propulsor_upper_left.position.z = 8.25;
+
+			propulsor_upper_left.flame.size = initial_intensity_propulsor/1.5;
+
+
+			/* propulsor_lower_right */
+
+			propulsor_lower_right= new THREE.Lensflare();
+			propulsor_lower_right.flame = new THREE.LensflareElement( lensFlareTexture );
+			propulsor_lower_right.addElement( propulsor_lower_right.flame );
+			
+
+			propulsor_lower_right.position.y = -1.5;
+			propulsor_lower_right.position.x = 2.2;
+			propulsor_lower_right.position.z = 8.25;
+
+			propulsor_lower_right.flame.size = initial_intensity_propulsor/1.5;
+
+
+			/* propulsor_lower_left*/
+
+			propulsor_lower_left = new THREE.Lensflare();
+			propulsor_lower_left.flame = new THREE.LensflareElement( lensFlareTexture );
+			propulsor_lower_left.addElement( propulsor_lower_left.flame );
+			
+
+			propulsor_lower_left.position.y = -1.5;
+			propulsor_lower_left.position.x = -2.1;
+			propulsor_lower_left.position.z = 8.25;
+
+			propulsor_lower_left.flame.size = initial_intensity_propulsor/1.5;
+
+			
+			
 		});
 	});
 
@@ -1044,15 +1116,23 @@ function rotateWings(action){
 			if ( child instanceof THREE.Mesh ) {
 				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
 					child.rotation.z += 0.0012;
+					propulsor_lower_left.position.y -= 0.00085;
+					propulsor_lower_left.position.x += 0.00060;
 				}
 				if (child.name == "LeftWingTop.001" || child.name == "LeftWingTopEngineAndGreebles.001" || child.name == "LeftWingTopHullPlates.001"){
 					child.rotation.z -= 0.0012;
+					propulsor_upper_left.position.y += 0.00085;
+					propulsor_upper_left.position.x += 0.00060;
 				}
 				if (child.name == "RightWingBottom.001" || child.name == "RightWingBottomEngineAndGreebles.001" || child.name == "RightWingBottomHullPlates.001"){
 					child.rotation.z -= 0.0012;
+					propulsor_lower_right.position.y -= 0.00085;
+					propulsor_lower_right.position.x -= 0.00060;
 				}
 				if (child.name == "RightWingTop.001" || child.name == "RightWingTopEngineAndGreebles.001" || child.name == "RightWingTopHullPlates.001"){
 					child.rotation.z += 0.0012;
+					propulsor_upper_right.position.y += 0.00085;
+					propulsor_upper_right.position.x -= 0.00060;
 				}
 
 			}
@@ -1060,20 +1140,27 @@ function rotateWings(action){
 	}
 	else{
 		movimento=false;
-		canShot = false;
 		starship.model.traverse( function ( child ) {
 			if ( child instanceof THREE.Mesh ) {
 				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
 					child.rotation.z -= 0.0012;
+					propulsor_lower_left.position.y += 0.00085;
+					propulsor_lower_left.position.x += 0.00060;
 				}
 				if (child.name == "LeftWingTop.001" || child.name == "LeftWingTopEngineAndGreebles.001" || child.name == "LeftWingTopHullPlates.001"){
 					child.rotation.z += 0.0012;
+					propulsor_upper_left.position.y -= 0.00085;
+					propulsor_upper_left.position.x -= 0.00060;
 				}
 				if (child.name == "RightWingBottom.001" || child.name == "RightWingBottomEngineAndGreebles.001" || child.name == "RightWingBottomHullPlates.001"){
 					child.rotation.z += 0.0012;
+					propulsor_lower_right.position.y += 0.00085;
+					propulsor_lower_right.position.x += 0.00060;
 				}
 				if (child.name == "RightWingTop.001" || child.name == "RightWingTopEngineAndGreebles.001" || child.name == "RightWingTopHullPlates.001"){
 					child.rotation.z -= 0.0012;
+					propulsor_upper_right.position.y -= 0.00085;
+					propulsor_upper_right.position.x += 0.00060;
 				}
 			}
 		} );
@@ -1851,6 +1938,20 @@ function loadDamagedFinalShip(enemy,health){
 
 function playGame(){
 	if ( keyboard.pressed("E") && !entered){
+		starship.model.add(propulsor_upper_right);
+		starship.model.add(propulsor_upper_left);
+		starship.model.add(propulsor_lower_right);
+		starship.model.add(propulsor_lower_left);
+
+
+		var temporal_intensity=initial_intensity_propulsor;
+		while(initial_intensity_propulsor<final_intensity_propulsor){
+			temporal_intensity+=25;
+			propulsor_upper_right.flame.size = temporal_intensity/1.5;
+			propulsor_upper_left.flame.size = temporal_intensity/1.5;
+			initial_intensity_propulsor+=1;
+		}
+
 		enter.style.display = "none";
 		entered = true;
 		tweenShip = new TWEEN.Tween(posStart)
@@ -1858,6 +1959,12 @@ function playGame(){
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(function() {
 				starship.model.position.z = posStart.z;
+				if(starship.model.position.z <= -29){
+					starship.model.remove(propulsor_upper_right);
+					starship.model.remove(propulsor_upper_left);
+					starship.model.remove(propulsor_lower_right);
+					starship.model.remove(propulsor_lower_left);
+				}
 			})
 			.onComplete(function(){
 				TweenMax.set($('.stars'),{opacity:0 });
@@ -1867,9 +1974,16 @@ function playGame(){
 				const sleep = (milliseconds) => {
 					return new Promise(resolve => setTimeout(resolve, milliseconds))
 				}
-				scene.add(starship.model);
-				starship.model.position.set(0.0, -8.0, 0.0);
-				clock.start();
+				sleep(3000).then(() => {
+					scene.add(starship.model);
+					starship.model.position.set(0.0, -8.0, 0.0);
+					initial_intensity_propulsor=256;
+					starship.model.add(propulsor_upper_right);
+					starship.model.add(propulsor_upper_left);
+					starship.model.add(propulsor_lower_right);
+					starship.model.add(propulsor_lower_left);
+					clock.start();
+				})
 			})
 			.start();
 	}
