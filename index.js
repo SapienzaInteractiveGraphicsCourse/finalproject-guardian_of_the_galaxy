@@ -184,7 +184,7 @@ var segmenti_pianeta = 48;
 var texture_planets=["./images/1.jpg","./images/2.jpg","./images/3.jpg","./images/4.jpg","./images/5.jpg","./images/6.jpg","./images/7.jpg","./images/8.jpg","./images/9.jpg","./images/10.jpg","./images/11.jpg","./images/12.jpg",
 			 "./images/13.jpg","./images/14.jpg","./images/15.jpg","./images/16.jpg",
 			 "./images/17.jpg","./images/18.png","./images/19.png","./images/20.png","./images/21.png","./images/22.png","./images/23.jpg","./images/24.jpg","./images/25.jpg","./images/26.jpg"];
-var planets_dimensions=[5,6,7,8,9];
+var planets_dimensions=[15,14,13,12,11];
 
 function shuffle(myArray,myLen){
     var array=myArray;
@@ -201,29 +201,29 @@ function shuffle(myArray,myLen){
 shuffle(texture_planets,26);
 shuffle(planets_dimensions,6);
 
-var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
-var pianeta2_data = constructPlanetData(0.015, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
-var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
-var pianeta4_data = constructPlanetData(0.015, (-15,-15,-20), "pianeta4", texture_planets[3], planets_dimensions[3], segmenti_pianeta);
-var pianeta5_data = constructPlanetData(0.02, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
-var pianeta6_data = constructPlanetData(0.015, (0,0,0), "pianeta6", texture_planets[5], planets_dimensions[5], segmenti_pianeta);
-var pianeta7_data = constructPlanetData(0.02, (0,0,20), "pianeta7", texture_planets[6], planets_dimensions[0], segmenti_pianeta);
-var pianeta8_data = constructPlanetData(0.015, (15,15,20), "pianeta8", texture_planets[7], planets_dimensions[1], segmenti_pianeta);
-var pianeta9_data = constructPlanetData(0.02, (15,15,20), "pianeta9", texture_planets[8], planets_dimensions[2], segmenti_pianeta);
-var pianeta10_data = constructPlanetData(0.015, (-15,-15,-20), "pianeta10", texture_planets[9], planets_dimensions[3], segmenti_pianeta);
-var pianeta11_data = constructPlanetData(0.02, (15,15,20), "pianeta11", texture_planets[10], planets_dimensions[4], segmenti_pianeta);
-var pianeta12_data = constructPlanetData(0.015, (0,0,0), "pianeta12", texture_planets[11], planets_dimensions[5], segmenti_pianeta);
+var pianeta1_data = constructPlanetData(0.03, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
+var pianeta2_data = constructPlanetData(0.025, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
+var pianeta3_data = constructPlanetData(0.03, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
+var pianeta4_data = constructPlanetData(0.025, (-15,-15,-20), "pianeta4", texture_planets[3], planets_dimensions[3], segmenti_pianeta);
+var pianeta5_data = constructPlanetData(0.03, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
+var pianeta6_data = constructPlanetData(0.025, (0,0,0), "pianeta6", texture_planets[5], planets_dimensions[5], segmenti_pianeta);
+var pianeta7_data = constructPlanetData(0.03, (0,0,20), "pianeta7", texture_planets[6], planets_dimensions[0], segmenti_pianeta);
+var pianeta8_data = constructPlanetData(0.025, (15,15,20), "pianeta8", texture_planets[7], planets_dimensions[1], segmenti_pianeta);
+var pianeta9_data = constructPlanetData(0.03, (15,15,20), "pianeta9", texture_planets[8], planets_dimensions[2], segmenti_pianeta);
+var pianeta10_data = constructPlanetData(0.025, (-15,-15,-20), "pianeta10", texture_planets[9], planets_dimensions[3], segmenti_pianeta);
+var pianeta11_data = constructPlanetData(0.03, (15,15,20), "pianeta11", texture_planets[10], planets_dimensions[4], segmenti_pianeta);
+var pianeta12_data = constructPlanetData(0.025, (0,0,0), "pianeta12", texture_planets[11], planets_dimensions[5], segmenti_pianeta);
 
 shuffle(texture_planets);
 shuffle(planets_dimensions);
 
 function rotazione_pianeta(pianeta, myData) {
     if(myData.name=='pianeta1'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.5;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta2'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.5;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta3'){
@@ -231,35 +231,35 @@ function rotazione_pianeta(pianeta, myData) {
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta4'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.8;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta5'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.6;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta6'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.5;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta7'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.1;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta8'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.2;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta9'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.5;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta10'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.5;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta11'){
-        pianeta.rotation.y += myData.rotationRate;
+        pianeta.rotation.y += myData.rotationRate*1.3;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta12'){
@@ -272,42 +272,7 @@ function rotazione_pianeta(pianeta, myData) {
 function movimento_pianeta(pianeta,myData){
     
     if(pianeta.position.z< camera.position.z){
-		if(myData.name=='pianeta1'){
-			pianeta.position.z += 0.7;
-		}
-		if(myData.name=='pianeta2'){
-			pianeta.position.z += 0.88;
-		}
-		if(myData.name=='pianeta3'){
-			pianeta.position.z += 0.9;
-		}
-		if(myData.name=='pianeta4'){
-			pianeta.position.z += 0.5;
-		}
-		if(myData.name=='pianeta5'){
-			pianeta.position.z += 0.2;
-		}
-		if(myData.name=='pianeta6'){
-			pianeta.position.z +=0.3;
-		}
-		if(myData.name=='pianeta7'){
-			pianeta.position.z += 0.7;
-		}
-		if(myData.name=='pianeta8'){
-			pianeta.position.z += 0.4;
-		}
-		if(myData.name=='pianeta9'){
-			pianeta.position.z += 0.85;
-		}
-		if(myData.name=='pianeta10'){
-			pianeta.position.z += 0.9;
-		}
-		if(myData.name=='pianeta11'){
-			pianeta.position.z += 0.55;
-		}
-		if(myData.name=='pianeta12'){
-			pianeta.position.z +=0.75;
-		}
+		pianeta.position.z +=2.5;
     }
     else{
         scene.remove(pianeta);
@@ -588,18 +553,18 @@ function loadModels(loadManager){
 
 	
 	//PLANETS MOVEMENT
-	pianeta1 = loadTexturedPlanet(pianeta1_data, 220, 10, -400, 0);
+	pianeta1 = loadTexturedPlanet(pianeta1_data, 220, 80, -400, 0);
 	pianeta2 = loadTexturedPlanet(pianeta2_data, -205, -20, -500, 0);
-	pianeta3 = loadTexturedPlanet(pianeta3_data, -280, 10, -200, 0);
-	pianeta4 = loadTexturedPlanet(pianeta4_data, 230, -10, -100, 0);
-	pianeta5 = loadTexturedPlanet(pianeta5_data, -215, 0, -300, 0);
-	pianeta6 = loadTexturedPlanet(pianeta6_data, 185, 0, -100, 0);
-	pianeta7 = loadTexturedPlanet(pianeta7_data, 30, 15, -200, 0);
-	pianeta8 = loadTexturedPlanet(pianeta8_data, -30, -15, -800, 0);
-	pianeta9 = loadTexturedPlanet(pianeta9_data, 40, -15, -200, 0);
-	pianeta10 = loadTexturedPlanet(pianeta10_data, -40, 15, -1100, 0);
-	pianeta11 = loadTexturedPlanet(pianeta11_data, 50, 20, -10, 0);
-	pianeta12 = loadTexturedPlanet(pianeta12_data, -50, -20, -90, 0);
+	pianeta3 = loadTexturedPlanet(pianeta3_data, -280, -90, -200, 0);
+	pianeta4 = loadTexturedPlanet(pianeta4_data, 230, -70, -100, 0);
+	pianeta5 = loadTexturedPlanet(pianeta5_data, -215, 100, -300, 0);
+	pianeta6 = loadTexturedPlanet(pianeta6_data, 185, -100, -100, 0);
+	pianeta7 = loadTexturedPlanet(pianeta7_data, 40, 95, -200, 0);
+	pianeta8 = loadTexturedPlanet(pianeta8_data, -40, -65, -800, 0);
+	pianeta9 = loadTexturedPlanet(pianeta9_data, 90, -25, -200, 0);
+	pianeta10 = loadTexturedPlanet(pianeta10_data, -90, 75, -1100, 0);
+	pianeta11 = loadTexturedPlanet(pianeta11_data, -75, -50, -10, 0);
+	pianeta12 = loadTexturedPlanet(pianeta12_data, -100, -50, -90, 0);
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
@@ -901,9 +866,9 @@ function planets_respawn(){
 	rotazione_pianeta(pianeta11,pianeta11_data);
 	rotazione_pianeta(pianeta12,pianeta12_data);
 	var roundednumber=Math.round(planet_clock.getElapsedTime());
-	var starting_position_planets=	[[50, 40, -1300],[117, 97, -1300],[-200, -70, -1300],[-70, -84, -1300],[-129, 106, -1300],[-59, 79, -1300],
-	[120, -90, -1300],[103, -105, -1300], [-100, 100, -1300],[-94, 120, -1300],[100, -123, -1300],[108, 74, -1300],[-110, 100, -1300],[-70, -105, -1300],[59,-95, -1300],[-140,105 , -1300],[-90,60 , -1300],[-40,-50 , -1300]
-	,[-80,-60 , -1300],[-70,70 , -1300],[-10,100 , -1300],[70,-100 , -1300],[80,-62 , -1300],[110,-90 , -1300],[120,52 , -1300],[-55,-85 , -1300]];
+	var starting_position_planets=	[[80, 70, -1300],[127, 107, -1300],[-200, -104, -1300],[-110, -114, -1300],[-129, 116, -1300],[-79, 89, -1300],
+	[120, -100, -1300],[113, -115, -1300], [-110, 110, -1300],[-104, 130, -1300],[110, -123, -1300],[118, 84, -1300],[-110, 100, -1300],[-80, -105, -1300],[89,-95, -1300],[-140,105 , -1300],[-100,80 , -1300],[-75,-95 , -1300]
+	,[90,-95 , -1300],[-80,85 , -1300],[-100,100 , -1300],[87,-100 , -1300],[90,-82 , -1300],[110,-90 , -1300],[120,52 , -1300],[-120,-125 , -1300]];
 	//console.log(roundednumber);
 	shuffle(starting_position_planets,6);
 	var x=starting_position_planets[0];
