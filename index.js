@@ -8,7 +8,7 @@ var near = 0.1;
 var far = 1000;
 var reset = false;
 
-// starship rotation and shot
+//starship rotation and shot
 var position;
 var vec;
 var rete;
@@ -2007,6 +2007,7 @@ function playGame(){
 function start(){
 	startGame = true;
 	entered = true;
+	reset = false;
 }
 
 function createMoneyAndAsteroid(){
