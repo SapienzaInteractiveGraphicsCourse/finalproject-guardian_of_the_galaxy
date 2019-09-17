@@ -75,6 +75,7 @@ var pianeta11;
 var pianeta12;
 var loader = new THREE.TextureLoader();
 var planet_clock;
+var parti=false;
 
 var planet_position=[[20,10,-1300],[-20,-10,-1300],[-20,10,-1300],[20,-10,-1300],[-10,0,-1300],[10,0,-1300]];
 shuffle(planet_position,6);
@@ -1024,8 +1025,42 @@ function animateEnemy(){
 		}
 	}
 	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true){
+	
 		var axis = new THREE.Vector3(0, 0, 1);
-		enemystarship.finalenemy.model.rotateOnAxis(axis, 0.05);
+		/*if (enemystarship.finalenemy.model.position.x>=0){
+			setTimeout(function(){
+		enemystarship.finalenemy.model.position.x=-30
+		enemystarship.finalenemy.model.position.y=-30
+
+		console.log("1")
+	}, 1000);
+			
+		}
+	if (enemystarship.finalenemy.model.position.y<0){
+			setTimeout(function(){
+				console.log("2")
+		enemystarship.finalenemy.model.position.y=30
+	}, 1000);
+			
+		}
+		
+		if (enemystarship.finalenemy.model.position.x<2){
+			setTimeout(function(){
+				console.log("3")
+		enemystarship.finalenemy.model.position.x=30
+		
+	}, 1000);
+			
+		}
+		
+		
+		if (enemystarship.finalenemy.model.position.y>=2){
+			setTimeout(function(){
+				console.log("4")
+		enemystarship.finalenemy.model.position.y=-30
+	}, 700);
+			
+		}*/
 	}
 
 }
@@ -1077,6 +1112,114 @@ function createBullets(){
 	}
 }
 
+
+function render2() {
+        requestAnimationFrame( render );
+         
+        var pCount = parts.length;
+          while(pCount--) {
+            parts[pCount].update();
+          }
+
+				renderer.render( scene, camera );
+
+			}
+
+var end=false;
+function finishGame(){
+	
+	if (level==4){
+			if (starship.model.position.x>0){
+				starship.model.position.x-=0.1;
+			}
+			if (starship.model.position.y>0){
+				starship.model.position.y-=0.1;
+			}
+			
+			
+			if (starship.model.position.x<0){
+				starship.model.position.x+=0.1;
+			}
+			if (starship.model.position.y<0){
+				starship.model.position.y+=0.1;
+			}
+			
+	
+			
+		
+			if (parti==true){
+			starship.model.position.z-=2
+			console.log(starship.model.position.z);
+		}
+	
+			
+		}
+		
+		if (end==false && level==4){
+			end=true;
+				
+	setTimeout(function(){
+	var renderer2 = new THREE.WebGLRenderer();
+			renderer2.setSize(window.innerWidth, window.innerHeight);
+			container.appendChild( renderer2.domElement );
+
+			renderer2.render( scene, camera );
+			render2();
+			
+	}, 3000);
+	setTimeout(function(){
+		
+				var sizeRandomness = 20;
+
+		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+	}, 3500);
+	
+	setTimeout(function(){
+				var sizeRandomness = 30;
+
+		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+	}, 4000);
+	
+	setTimeout(function(){
+		
+						var sizeRandomness = 40;
+
+		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+	}, 5000);
+	
+	setTimeout(function(){
+		
+				var sizeRandomness = 20;
+
+		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+	}, 3500);
+	
+	setTimeout(function(){
+		
+				var sizeRandomness = 20;
+
+		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+	}, 3500);
+	
+	setTimeout(function(){
+		
+				var sizeRandomness = 20;
+
+		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+	}, 3500);
+	
+	setTimeout(function(){
+					parti=true;
+	}, 1000);
+	
+		
+	
+	
+		
+
+		}
+	
+}
 function createEnemyBullets(){
 	for(var index=0; index < enemy_bullets.length; index+=1){
 		if( enemy_bullets[index] === undefined ) continue;
@@ -1090,16 +1233,24 @@ function createEnemyBullets(){
 
 function animate() {
 	
+	if (parti==false){
+	starship.model.position.z=0;
+	console.log("ss")
+}
+	
 	animation = requestAnimationFrame( animate );
-	starship.model.position.z = 0;
 	if (enemystarship.enemystarship1.model.position.z >= -70 && !enemystarship.enemystarship1.appeared && starship.model.getObjectByName("LeftWingBottom.001").rotation.z < 1 ){
 		rotateWings("open");
 	}
 	if (enemystarship.enemystarship1.health <= 0 && level == 2 && starship.model.getObjectByName("LeftWingBottom.001").rotation.z > 0 ){
-		rotateWings("close");
+		if (!enemystarship.enemystarship2.appeared){
+			rotateWings("close");
+		}
 	}
-	if (enemystarship.enemystarship1.health && enemystarship.enemystarship2.health <= 0 && level == 3 && starship.model.getObjectByName("LeftWingBottom.001").rotation.z > 0 ){
-		rotateWings("close");
+	if (enemystarship.enemystarship1.health <= 0 && enemystarship.enemystarship2.health <= 0 && level == 3 && starship.model.getObjectByName("LeftWingBottom.001").rotation.z > 0 ){
+		if (!enemystarship.finalenemy.appeared){
+			rotateWings("close");
+		}
 	}
 	if (enemystarship.enemystarship1.health <= 0 && enemystarship.enemystarship2.health <= 0 && enemystarship.finalenemy.health <= 0 && level == 4 && starship.model.getObjectByName("LeftWingBottom.001").rotation.z > 0 ){
 		rotateWings("close");
@@ -1122,6 +1273,8 @@ function animate() {
 		createEnemyBullets()
 		updateInfoBar();
 		getMoney();
+		finishGame()
+
 	}
 	else if (!game_over && !startGame){
 		playGame();
@@ -1279,6 +1432,9 @@ function loadEnemies(){
 
 
 function destroyEnemy( event ) {
+	
+	
+		
 	if (canShot){
 		vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
 	 
@@ -1352,12 +1508,14 @@ function destroyEnemy( event ) {
 		setTimeout(function(){
 			bullet_dx1.alive = false;
 			scene.remove(bullet_dx1);
-			hitShot(event);
+			
 		}, 300);
 		
 		bullets.push(bullet_dx1);
 		scene.add(bullet_dx1);	
 	}	
+	
+	
 }
 
 function hitShot( x,y ) {
@@ -1703,35 +1861,96 @@ function render() {
 
 
 function handleMovements(){
-	if ( keyboard.pressed("D") && starship.model.position.x < window.innerWidth/42){
+	
+	if(level!=4){
+	if ( keyboard.pressed("D") ){
 		starship.model.translateX(x_step[0]);
-		starshipBox.translateX(x_step[0]);
 		starship.model.rotation.z= -z_rotate;
-		starshipBox.rotation.z= -z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("A") && starship.model.position.x > -window.innerWidth/42){
+	if ( keyboard.pressed("A") ){
 		starship.model.translateX(-x_step[0]);
-		starshipBox.translateX(-x_step[0]);
 		starship.model.rotation.z= z_rotate;
-		starshipBox.rotation.z= z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
-	if ( keyboard.pressed("W") && starship.model.position.y < window.innerHeight/42){
+	if ( keyboard.pressed("W") ){
 		starship.model.translateY(y_step[0]);
-		starshipBox.translateY(y_step[0]);
-		starship.model.rotation.x= -x_rotate;
-		starshipBox.rotation.x= -x_rotate;
-		document.addEventListener( "mousemove", mouseMove, false );
+		starship.model.rotation.z= z_rotate;
+		document.addEventListener( "mousemove", mouseMove, false );;
 
 	}
-	if ( keyboard.pressed("S") && starship.model.position.y > -window.innerHeight/42){
+	if ( keyboard.pressed("S") ){
 		starship.model.translateY(-y_step[0]);
-		starshipBox.translateY(-y_step[0]);
-		starship.model.rotation.x= x_rotate;
-		starshipBox.rotation.x= x_rotate;
+		starship.model.rotation.z= z_rotate;
 		document.addEventListener( "mousemove", mouseMove, false );
 	}
+	if ( keyboard.pressed(" ")){		
+		var axis = new THREE.Vector3(0, 0, 1).normalize();
+		starship.model.rotateOnAxis(axis, 0.05);
+	}
+	
+}
+
+}
+
+var movementSpeed = 2;
+var totalObjects = 1000;
+var objectSize = 0.1;
+var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
+var sizeRandomness = 0;
+
+
+	
+function fuochi(x,y){
+	
+
+	 var geometry = new THREE.Geometry();
+  var i;
+  for (i = 0; i < totalObjects; i ++) 
+  { 
+    var vertex = new THREE.Vector3();
+    vertex.x = x;
+    vertex.y = y;
+    vertex.z = 0;
+  
+    geometry.vertices.push( vertex );
+    dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
+  }
+  var material = new THREE.PointsMaterial( { size: objectSize,  color: colors[Math.round(Math.random() * colors.length)] });
+  var particles = new THREE.Points( geometry, material );
+  
+  this.object = particles;
+  this.status = true;
+  
+  setTimeout(function() {
+		scene.remove(particles);
+	}, 180);
+  
+  this.xDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  this.yDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  this.zDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  
+  scene.add( this.object  ); 
+  
+  this.update = function(){
+    if (this.status == true){
+      var pCount = totalObjects;
+      while(pCount--) {
+        var particle =  this.object.geometry.vertices[pCount]
+        particle.y += dirs[pCount].y;
+        particle.x += dirs[pCount].x;
+        particle.z += dirs[pCount].z;
+      }
+      this.object.geometry.verticesNeedUpdate = true;
+    }
+  }
+  
+	
+	
+
+	
+
+	
 }
 
 function explode_planet(obj,info) {
