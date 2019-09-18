@@ -1395,6 +1395,7 @@ function loadEnemies(){
 		}
 		else{
 			win.style.display = "none";
+			clock.stop();
 		}
 	}
 }
