@@ -39,6 +39,7 @@ var clock_money;
 var level = 1;
 
 //SETTING UP GAME LOGIC
+var world = 1;
 var startGame = false;
 var entered = false;
 var posStart = {z : 0};
@@ -49,6 +50,7 @@ var gOverElement = document.getElementById("game_over");
 var warning = document.getElementById("warning");
 var enter = document.getElementById("hint");
 var improvemnts = document.getElementById("improvements");
+var parti=false;
 
 /* ----- Lensflare: propulsor -----*/
 
@@ -75,7 +77,6 @@ var pianeta11;
 var pianeta12;
 var loader = new THREE.TextureLoader();
 var planet_clock;
-var parti=false;
 
 var planet_position=[[20,10,-1300],[-20,-10,-1300],[-20,10,-1300],[20,-10,-1300],[-10,0,-1300],[10,0,-1300]];
 shuffle(planet_position,6);
@@ -145,6 +146,11 @@ enemystarship = {
 		name:"enemystarship2",
 		health: 3
 	},
+	originalfinalenemy : { 
+		model:null, 
+		name:"originalfinalenemy",
+		health: 3
+	},
 	enemystarship1 : { 
 		model:null, 
 		name:"enemystarship1",
@@ -212,29 +218,29 @@ function shuffle(myArray,myLen){
 shuffle(texture_planets,26);
 shuffle(planets_dimensions,6);
 
-var pianeta1_data = constructPlanetData(0.03, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
+var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
 var pianeta2_data = constructPlanetData(0.025, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
-var pianeta3_data = constructPlanetData(0.03, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
+var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
 var pianeta4_data = constructPlanetData(0.025, (-15,-15,-20), "pianeta4", texture_planets[3], planets_dimensions[3], segmenti_pianeta);
-var pianeta5_data = constructPlanetData(0.03, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
+var pianeta5_data = constructPlanetData(0.02, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
 var pianeta6_data = constructPlanetData(0.025, (0,0,0), "pianeta6", texture_planets[5], planets_dimensions[5], segmenti_pianeta);
-var pianeta7_data = constructPlanetData(0.03, (0,0,20), "pianeta7", texture_planets[6], planets_dimensions[0], segmenti_pianeta);
+var pianeta7_data = constructPlanetData(0.02, (0,0,20), "pianeta7", texture_planets[6], planets_dimensions[0], segmenti_pianeta);
 var pianeta8_data = constructPlanetData(0.025, (15,15,20), "pianeta8", texture_planets[7], planets_dimensions[1], segmenti_pianeta);
-var pianeta9_data = constructPlanetData(0.03, (15,15,20), "pianeta9", texture_planets[8], planets_dimensions[2], segmenti_pianeta);
+var pianeta9_data = constructPlanetData(0.02, (15,15,20), "pianeta9", texture_planets[8], planets_dimensions[2], segmenti_pianeta);
 var pianeta10_data = constructPlanetData(0.025, (-15,-15,-20), "pianeta10", texture_planets[9], planets_dimensions[3], segmenti_pianeta);
-var pianeta11_data = constructPlanetData(0.03, (15,15,20), "pianeta11", texture_planets[10], planets_dimensions[4], segmenti_pianeta);
+var pianeta11_data = constructPlanetData(0.02, (15,15,20), "pianeta11", texture_planets[10], planets_dimensions[4], segmenti_pianeta);
 var pianeta12_data = constructPlanetData(0.025, (0,0,0), "pianeta12", texture_planets[11], planets_dimensions[5], segmenti_pianeta);
 
-shuffle(texture_planets);
-shuffle(planets_dimensions);
+shuffle(texture_planets, 26);
+shuffle(planets_dimensions, 6);
 
 function rotazione_pianeta(pianeta, myData) {
     if(myData.name=='pianeta1'){
-        pianeta.rotation.y += myData.rotationRate*1.5;
+        pianeta.rotation.y += myData.rotationRate*1.2;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta2'){
-        pianeta.rotation.y += myData.rotationRate*1.5;
+        pianeta.rotation.y += myData.rotationRate*1.2;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta3'){
@@ -242,7 +248,7 @@ function rotazione_pianeta(pianeta, myData) {
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta4'){
-        pianeta.rotation.y += myData.rotationRate*1.8;
+        pianeta.rotation.y += myData.rotationRate*1.3;
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta5'){
@@ -250,7 +256,7 @@ function rotazione_pianeta(pianeta, myData) {
         pianeta.rotation.x += (myData.rotationRate)/3;
     }
     if(myData.name=='pianeta6'){
-        pianeta.rotation.y += myData.rotationRate*1.5;
+        pianeta.rotation.y += myData.rotationRate*1.3;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta7'){
@@ -262,11 +268,11 @@ function rotazione_pianeta(pianeta, myData) {
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta9'){
-        pianeta.rotation.y += myData.rotationRate*1.5;
+        pianeta.rotation.y += myData.rotationRate*1.2;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta10'){
-        pianeta.rotation.y += myData.rotationRate*1.5;
+        pianeta.rotation.y += myData.rotationRate*1.3;
         pianeta.rotation.x += (myData.rotationRate)/3;
 	}
 	if(myData.name=='pianeta11'){
@@ -330,7 +336,6 @@ function loadTexturedPlanet(myData, x, y, z, myMaterialType) {
     if (myData.texture && myData.texture !== "") {
         THREE.ImageUtils.crossOrigin = '';
         var passThisTexture = loader.load(myData.texture);
-
     }
     if (myMaterialType) {
         myMaterial = getMaterial(myMaterialType, "rgb(255, 255, 255 )", passThisTexture);
@@ -444,8 +449,8 @@ function loadModels(loadManager){
 				wireframe: true
 			});
 			starshipBox = new THREE.Mesh(starshipBox, starshipBoxMaterial);
-			starshipBox.position.set(0.0, -8.0, 2.0);	
-			starshipBox.material.visible = false;
+			starshipBox.position.set(-1.0, -8.0, 2.0);	
+			starshipBox.material.visible = true;
 			/* propulsor_upper_right */
 
 			propulsor_upper_right= new THREE.Lensflare();
@@ -520,7 +525,6 @@ function loadModels(loadManager){
 			} );
 			objects.push(object);
 			enemystarship.enemystarship1.model = object;
-			enemystarship.enemystarship1.model.position.set(-5.0, 0.0, -1000.0);	
 			enemystarship.originalenemy1.model = object.clone();
 			enemystarship.originalenemy1.model.position.set(-5.0, 0.0, -1000.0);	
 		});
@@ -541,7 +545,6 @@ function loadModels(loadManager){
 			} );
 			objects.push(object);
 			enemystarship.enemystarship2.model = object;
-			enemystarship.enemystarship2.model.position.set(5.0, 0.0, -1010.0);	
 
 			enemystarship.originalenemy2.model = object.clone();
 			enemystarship.originalenemy2.model.position.set(5.0, 0.0, -1010.0);	
@@ -623,7 +626,8 @@ function loadModels(loadManager){
 				}
 			} );
 			enemystarship.finalenemy.model = object;
-			enemystarship.finalenemy.model.position.set(0.0, 2.0, -1040.0);	
+			enemystarship.originalfinalenemy.model = object.clone();
+			enemystarship.originalfinalenemy.model.position.set(5.0, 0.0, 1040.0);	
 
 		});
 	});
@@ -835,6 +839,14 @@ function initGame() {
 		document.getElementById("moneysDiv").innerHTML = starship.money;         
 		document.getElementById("moneysDiv").style = "position: absolute; left:3%; top:73px; color: white"
 	}
+	if (!document.getElementById("worldDiv")){
+		var worldDiv=document.createElement("DIV");
+		worldDiv.id="worldDiv";
+		document.body.appendChild(worldDiv);
+		document.getElementById("worldDiv").innerHTML = "World " + world;     
+		document.getElementById("worldDiv").style = "position: absolute; left:43%; top:10px;"
+		document.getElementById("worldDiv").style.display = "block";
+	}
 	
 
 	
@@ -979,8 +991,8 @@ function animateEnemy(){
 	if (enemystarship.enemystarship1.health > 0 && enemystarship.enemystarship1.appeared == true){
 		var y_pos = enemystarship.enemystarship1.model.position.y;	//0.0
 		var x_pos = enemystarship.enemystarship1.model.position.x; //0.0
-		enemystarship.enemystarship1.model.position.x += x_step[1];
-		enemystarship.enemystarship1.model.position.y += y_step[1];
+		enemystarship.enemystarship1.model.position.x += x_step[1]*world;
+		enemystarship.enemystarship1.model.position.y += y_step[1]*world;
 		if (y_pos > 8.0){
 			enemystarship.enemystarship1.model.position.y = 8.0;
 			y_step[1] = -y_step[1];
@@ -1001,8 +1013,8 @@ function animateEnemy(){
 	if (enemystarship.enemystarship2.health > 0 && enemystarship.enemystarship2.appeared == true){
 		var y_pos = enemystarship.enemystarship2.model.position.y;	//0.0
 		var x_pos = enemystarship.enemystarship2.model.position.x; //0.0
-		enemystarship.enemystarship2.model.position.x += x_step[2];
-		enemystarship.enemystarship2.model.position.y += y_step[2];
+		enemystarship.enemystarship2.model.position.x += x_step[2]*world;
+		enemystarship.enemystarship2.model.position.y += y_step[2]*world;
 		var dir = new THREE.Vector3();
 		var starship_pos = starship.model.position.clone();
 		var enemy_pos = enemystarship.enemystarship1.model.position.clone();
@@ -1025,42 +1037,8 @@ function animateEnemy(){
 		}
 	}
 	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true){
-	
 		var axis = new THREE.Vector3(0, 0, 1);
-		/*if (enemystarship.finalenemy.model.position.x>=0){
-			setTimeout(function(){
-		enemystarship.finalenemy.model.position.x=-30
-		enemystarship.finalenemy.model.position.y=-30
-
-		console.log("1")
-	}, 1000);
-			
-		}
-	if (enemystarship.finalenemy.model.position.y<0){
-			setTimeout(function(){
-				console.log("2")
-		enemystarship.finalenemy.model.position.y=30
-	}, 1000);
-			
-		}
-		
-		if (enemystarship.finalenemy.model.position.x<2){
-			setTimeout(function(){
-				console.log("3")
-		enemystarship.finalenemy.model.position.x=30
-		
-	}, 1000);
-			
-		}
-		
-		
-		if (enemystarship.finalenemy.model.position.y>=2){
-			setTimeout(function(){
-				console.log("4")
-		enemystarship.finalenemy.model.position.y=-30
-	}, 700);
-			
-		}*/
+		enemystarship.finalenemy.model.rotateOnAxis(axis, 0.05);
 	}
 
 }
@@ -1080,22 +1058,28 @@ function mouseMove(event){
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;	
 		starship.model.rotation.x= Math.min(10,  mouse.y);
 		starship.model.rotation.y= Math.min(10,  -mouse.x);
+		starshipBox.rotation.x = Math.min(10,  mouse.y);
+		starshipBox.rotation.y = Math.min(10,  -mouse.x);
 	}
 }
 
 function setStarshipRotation(){
 	if (movimento==false){
 		if(starship.model.rotation.x>0){
-			starship.model.rotation.x-=0.1
+			starship.model.rotation.x-=0.1;
+			starshipBox.rotation.x-=0.1	;
 		}
 		if(starship.model.rotation.x<0){
-			starship.model.rotation.x+=0.1
+			starship.model.rotation.x+=0.1;
+			starshipBox.rotation.x+=0.1	;
 		}
 		if(starship.model.rotation.y>0){
-			starship.model.rotation.y-=0.1
+			starship.model.rotation.y-=0.1;
+			starshipBox.rotation.y-=0.1	;
 		}
 		if(starship.model.rotation.y<0){
-			starship.model.rotation.y+=0.1
+			starship.model.rotation.y+=0.1;
+			starshipBox.rotation.y+=0.1	;
 		}
 		
 	}
@@ -1113,113 +1097,88 @@ function createBullets(){
 }
 
 
-function render2() {
-        requestAnimationFrame( render );
-         
-        var pCount = parts.length;
-          while(pCount--) {
-            parts[pCount].update();
-          }
-
-				renderer.render( scene, camera );
-
-			}
-
 var end=false;
+
 function finishGame(){
-	
-	if (level==4){
-			if (starship.model.position.x>0){
-				starship.model.position.x-=0.1;
-			}
-			if (starship.model.position.y>0){
-				starship.model.position.y-=0.1;
-			}
-			
-			
-			if (starship.model.position.x<0){
-				starship.model.position.x+=0.1;
-			}
-			if (starship.model.position.y<0){
-				starship.model.position.y+=0.1;
-			}
-			
-	
-			
-		
-			if (parti==true){
-			starship.model.position.z-=2
-			console.log(starship.model.position.z);
+
+	if (level == 4){
+		if (starship.model.position.x > 0){
+			starship.model.position.x-=0.1;
 		}
-	
-			
+		if (starship.model.position.x < 0){
+			starship.model.position.x+=0.1;
 		}
-		
-		if (end==false && level==4){
-			end=true;
-				
-	setTimeout(function(){
-	var renderer2 = new THREE.WebGLRenderer();
-			renderer2.setSize(window.innerWidth, window.innerHeight);
-			container.appendChild( renderer2.domElement );
-
-			renderer2.render( scene, camera );
-			render2();
-			
-	}, 3000);
-	setTimeout(function(){
-		
-				var sizeRandomness = 20;
-
-		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
-	}, 3500);
-	
-	setTimeout(function(){
-				var sizeRandomness = 30;
-
-		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
-	}, 4000);
-	
-	setTimeout(function(){
-		
-						var sizeRandomness = 40;
-
-		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
-	}, 5000);
-	
-	setTimeout(function(){
-		
-				var sizeRandomness = 20;
-
-		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
-	}, 3500);
-	
-	setTimeout(function(){
-		
-				var sizeRandomness = 20;
-
-		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
-	}, 3500);
-	
-	setTimeout(function(){
-		
-				var sizeRandomness = 20;
-
-		parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
-	}, 3500);
-	
-	setTimeout(function(){
-					parti=true;
-	}, 1000);
-	
-		
-	
-	
-		
-
+		if (starship.model.position.y > -8){
+			starship.model.position.y-=0.1;
 		}
-	
+		if (starship.model.position.y < -8){
+			starship.model.position.y+=0.1;
+		}
+		if (parti==true){
+			if (starship.model.position.z >= -90){
+				if (starship.model.position.z <= -65){
+					starship.model.remove(propulsor_upper_right);
+					starship.model.remove(propulsor_upper_left);
+					starship.model.remove(propulsor_lower_right);
+					starship.model.remove(propulsor_lower_left);
+				}
+				starship.model.position.z -= 0.2;
+			}
+			else if (starship.model.position.z >= -130){
+				starship.model.position.z -= 0.2;
+				TweenMax.set($('.stars'), {opacity:0 });
+				TweenMax.staggerTo($('.stars'), 3, {opacity:1}, 0.1 );
+				while(scene.children.length > 0){ 
+					scene.remove(scene.children[0]); 
+				}
+			}
+			else{				
+				world += 1;
+				parti = false;
+				resetGame(end);
+			}
+		}
+	}
+	if (end==false && level==4){
+		end=true;
+			
+		
+		setTimeout(function(){
+			var sizeRandomness = 0;
+			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		}, 3500);
+
+		setTimeout(function(){
+			var sizeRandomness = 0;
+			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		}, 4000);
+
+		setTimeout(function(){
+			var sizeRandomness = 0;
+			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		}, 5000);
+
+		setTimeout(function(){			
+			var sizeRandomness = 0;
+			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		}, 3500);
+
+		setTimeout(function(){			
+			var sizeRandomness = 0;
+			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		}, 3500);
+
+		setTimeout(function(){			
+			var sizeRandomness = 0;
+			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		}, 3500);
+
+		setTimeout(function(){
+			parti=true;
+		}, 3000);
+	}
 }
+
 function createEnemyBullets(){
 	for(var index=0; index < enemy_bullets.length; index+=1){
 		if( enemy_bullets[index] === undefined ) continue;
@@ -1233,12 +1192,20 @@ function createEnemyBullets(){
 
 function animate() {
 	
-	if (parti==false){
-	starship.model.position.z=0;
-	console.log("ss")
-}
-	
 	animation = requestAnimationFrame( animate );
+	if (movimento==false){
+		starship.model.rotation.x=0;
+		starship.model.rotation.y=0;
+		starship.model.rotation.z=0;
+		starshipBox.rotation.x= 0;	
+		starshipBox.rotation.y= 0;	
+		starshipBox.rotation.z= 0;		
+	}
+	if (parti == false){
+		starship.model.position.z = 0;
+		starshipBox.position.z= 0;	
+	}
+	
 	if (enemystarship.enemystarship1.model.position.z >= -70 && !enemystarship.enemystarship1.appeared && starship.model.getObjectByName("LeftWingBottom.001").rotation.z < 1 ){
 		rotateWings("open");
 	}
@@ -1257,7 +1224,7 @@ function animate() {
 	}
 	quitGame();
 	if (!reset){
-		resetGame();
+		resetGame(false);
 	}
 	if (startGame && !game_over){
 		handleMovements();
@@ -1274,13 +1241,11 @@ function animate() {
 		updateInfoBar();
 		getMoney();
 		finishGame()
-
 	}
 	else if (!game_over && !startGame){
 		playGame();
 		TWEEN.update();
 	}
-
 	render();
 }
 
@@ -1425,16 +1390,10 @@ function loadEnemies(){
 		}
 
 	}
-	if (clock.running && level == 4){
-		clock.stop()
-	}
 }
 
 
 function destroyEnemy( event ) {
-	
-	
-		
 	if (canShot){
 		vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
 	 
@@ -1508,14 +1467,12 @@ function destroyEnemy( event ) {
 		setTimeout(function(){
 			bullet_dx1.alive = false;
 			scene.remove(bullet_dx1);
-			
+			hitShot(event);
 		}, 300);
 		
 		bullets.push(bullet_dx1);
 		scene.add(bullet_dx1);	
 	}	
-	
-	
 }
 
 function hitShot( x,y ) {
@@ -1600,6 +1557,9 @@ function hitShot( x,y ) {
 					shooting = true;
 					if (enemystarship.enemystarship1.health <= 0){
 						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
+						enemystarship.enemystarship1.appeared = false;
+						enemystarship.enemystarship1.model.position.z = -1000;
+						enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
 					}
 					else{
 						loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
@@ -1610,6 +1570,9 @@ function hitShot( x,y ) {
 					shooting = true;
 					if (enemystarship.enemystarship2.health <= 0){
 						parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
+						enemystarship.enemystarship2.appeared = false;
+						enemystarship.enemystarship2.model.position.z = -1010;
+						enemystarship.enemystarship2.model = enemystarship.originalenemy2.model.clone();
 					}
 					else{
 						loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
@@ -1620,15 +1583,19 @@ function hitShot( x,y ) {
 					shooting = true;
 					if (enemystarship.finalenemy.health <= 0){
 						parts.push(new esplode_enemy(enemystarship.finalenemy.model));
+						enemystarship.finalenemy.appeared = false;
+						enemystarship.finalenemy.model.position.z = -1040;
+						enemystarship.finalenemy.model = enemystarship.originalfinalenemy.model.clone();
 					}
 					else{
 						loadDamagedFinalShip(enemystarship.finalenemy.model, enemystarship.finalenemy.health);
 					}
 				}
 				if (enemystarship.enemystarship1.health <= 0 && enemystarship.enemystarship2.health <= 0 && enemystarship.finalenemy.health <= 0){
-					clock.start();
 					shooting = false;
 					level = 4;
+					stargate.model.position.z = -50;
+					scene.add(stargate.model);
 				}
 			}
 		}
@@ -1774,7 +1741,7 @@ function shotResponse(){
 			var firstObjIntersected = intersects[0].object;
 
 			if ( starship.name === firstObjIntersected.parent.name ) {
-				starship.health -= 1;
+				starship.health -= 1*world;
 				scene.remove(curr_bullet1);
 				curr_bullet1 = undefined;
 				if (starship.health == 0){
@@ -1787,7 +1754,7 @@ function shotResponse(){
 		}
 	}
 
-	if (fireRate2 % 100 == 0){
+	if (fireRate2 % 70 == 0){
 		if (shooting && enemystarship.enemystarship2.health > 0 && level >= 2){	//when an enemy is hit, it starts to shot you
 			curr_bullet2 = enemyShot(enemystarship.enemystarship2.model);
 		}
@@ -1809,10 +1776,10 @@ function shotResponse(){
 			var firstObjIntersected = intersects[0].object;
 
 			if ( starship.name === firstObjIntersected.parent.name ) {
-				starship.health -= 1;
+				starship.health -= 1*world;
 				scene.remove(curr_bullet2);
 				curr_bullet2 = undefined;
-				if (starship.health == 0){
+				if (starship.health <= 0){
 					scene.remove(starship.model);	
 					canShot = false;
 					gameOver();
@@ -1835,8 +1802,8 @@ function shotResponse(){
 				var firstObjIntersected = intersects[0].object;
 
 				if ( starship.name === firstObjIntersected.parent.name ) {
-					starship.health -= 1; 
-					if (starship.health == 0){
+					starship.health -= 2*world; 
+					if (starship.health <= 0){
 						scene.remove(starship.model);	
 						canShot = false;
 						gameOver();
@@ -1853,7 +1820,6 @@ function shotResponse(){
 
 
 function render() {
-
 	var time = performance.now() * 0.001;
 	renderer.render( scene, camera );
 
@@ -1861,41 +1827,44 @@ function render() {
 
 
 function handleMovements(){
+	if (level != 4){
+		if ( keyboard.pressed("D") && starship.model.position.x < window.innerWidth/42){
+			starship.model.translateX(x_step[0]);
+			starship.model.rotation.z= -z_rotate;
+			starshipBox.translateX(x_step[0]);
+			starshipBox.rotation.z= -z_rotate;
+			document.addEventListener( "mousemove", mouseMove, false );
+		}
+		if ( keyboard.pressed("A") && starship.model.position.x > -window.innerWidth/42){
+			starship.model.translateX(-x_step[0]);
+			starship.model.rotation.z= z_rotate;
+			starshipBox.translateX(-x_step[0]);
+			starshipBox.rotation.z= z_rotate;
+			document.addEventListener( "mousemove", mouseMove, false );
+		}
+		if ( keyboard.pressed("W") && starship.model.position.y < window.innerHeight/42){
+			starship.model.translateY(y_step[0]);
+			starship.model.rotation.x= -x_rotate;
+			starshipBox.translateY(y_step[0]);
+			starshipBox.rotation.x= -x_rotate;
+			document.addEventListener( "mousemove", mouseMove, false );
 	
-	if(level!=4){
-	if ( keyboard.pressed("D") ){
-		starship.model.translateX(x_step[0]);
-		starship.model.rotation.z= -z_rotate;
-		document.addEventListener( "mousemove", mouseMove, false );
-	}
-	if ( keyboard.pressed("A") ){
-		starship.model.translateX(-x_step[0]);
-		starship.model.rotation.z= z_rotate;
-		document.addEventListener( "mousemove", mouseMove, false );
-	}
-	if ( keyboard.pressed("W") ){
-		starship.model.translateY(y_step[0]);
-		starship.model.rotation.z= z_rotate;
-		document.addEventListener( "mousemove", mouseMove, false );;
+		}
+		if ( keyboard.pressed("S") && starship.model.position.y > -window.innerHeight/42){
+			starship.model.translateY(-y_step[0]);
+			starship.model.rotation.x= x_rotate;
+			starshipBox.translateY(-y_step[0]);
+			starshipBox.rotation.x= x_rotate;
+			document.addEventListener( "mousemove", mouseMove, false );
+		}
 
 	}
-	if ( keyboard.pressed("S") ){
-		starship.model.translateY(-y_step[0]);
-		starship.model.rotation.z= z_rotate;
-		document.addEventListener( "mousemove", mouseMove, false );
-	}
-	if ( keyboard.pressed(" ")){		
-		var axis = new THREE.Vector3(0, 0, 1).normalize();
-		starship.model.rotateOnAxis(axis, 0.05);
-	}
 	
-}
-
 }
 
 var movementSpeed = 2;
 var totalObjects = 1000;
-var objectSize = 0.1;
+var objectSize = 0.15;
 var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
 var sizeRandomness = 0;
 
@@ -1904,53 +1873,48 @@ var sizeRandomness = 0;
 function fuochi(x,y){
 	
 
-	 var geometry = new THREE.Geometry();
-  var i;
-  for (i = 0; i < totalObjects; i ++) 
-  { 
-    var vertex = new THREE.Vector3();
-    vertex.x = x;
-    vertex.y = y;
-    vertex.z = 0;
-  
-    geometry.vertices.push( vertex );
-    dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
-  }
-  var material = new THREE.PointsMaterial( { size: objectSize,  color: colors[Math.round(Math.random() * colors.length)] });
-  var particles = new THREE.Points( geometry, material );
-  
-  this.object = particles;
-  this.status = true;
-  
-  setTimeout(function() {
+	var geometry = new THREE.Geometry();
+	var i;
+	for (i = 0; i < totalObjects; i ++){ 
+		var vertex = new THREE.Vector3();
+		vertex.x = x;
+		vertex.y = y;
+		vertex.z = 0;
+		geometry.vertices.push( vertex );
+		dirs.push({
+			x:(Math.random() * movementSpeed)-(movementSpeed/2),
+			y:(Math.random() * movementSpeed)-(movementSpeed/2),
+			z:(Math.random() * movementSpeed)-(movementSpeed/2)
+		});
+	}
+	var material = new THREE.PointsMaterial( { size: objectSize,  color: colors[Math.round(Math.random() * colors.length)] });
+	var particles = new THREE.Points( geometry, material );
+
+	this.object = particles;
+	this.status = true;
+
+	setTimeout(function() {
 		scene.remove(particles);
-	}, 180);
-  
-  this.xDir = (Math.random() * movementSpeed)-(movementSpeed/2);
-  this.yDir = (Math.random() * movementSpeed)-(movementSpeed/2);
-  this.zDir = (Math.random() * movementSpeed)-(movementSpeed/2);
-  
-  scene.add( this.object  ); 
-  
-  this.update = function(){
-    if (this.status == true){
-      var pCount = totalObjects;
-      while(pCount--) {
-        var particle =  this.object.geometry.vertices[pCount]
-        particle.y += dirs[pCount].y;
-        particle.x += dirs[pCount].x;
-        particle.z += dirs[pCount].z;
-      }
-      this.object.geometry.verticesNeedUpdate = true;
-    }
-  }
-  
-	
-	
+	}, 250);
 
-	
+	this.xDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+	this.yDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+	this.zDir = (Math.random() * movementSpeed)-(movementSpeed/2);
 
-	
+	scene.add( this.object  ); 
+
+	this.update = function(){
+		if (this.status == true){
+			var pCount = totalObjects;
+			while(pCount--) {
+				var particle =  this.object.geometry.vertices[pCount]
+				particle.y += dirs[pCount].y;
+				particle.x += dirs[pCount].x;
+				particle.z += dirs[pCount].z;
+			}
+			this.object.geometry.verticesNeedUpdate = true;
+		}
+	}
 }
 
 function explode_planet(obj,info) {
@@ -2164,6 +2128,9 @@ function loadDamagedFinalShip(enemy,health){
 
 
 function addToScene(){
+	enemystarship.enemystarship1.model.position.set(-5.0, 0.0, -1000.0);	
+	enemystarship.enemystarship2.model.position.set(5.0, 0.0, -1010.0);	
+	enemystarship.finalenemy.model.position.set(0.0, 2.0, -1040.0);	
 	scene.add(enemystarship.enemystarship1.model);
 	scene.add(enemystarship.enemystarship2.model);
 	scene.add(enemystarship.finalenemy.model);
@@ -2192,7 +2159,7 @@ function playGame(){
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(function() {
 				starship.model.position.z = posStart.z;
-				if(starship.model.position.z <= -29){
+				if(starship.model.position.z <= -29.3){
 					starship.model.remove(propulsor_upper_right);
 					starship.model.remove(propulsor_upper_left);
 					starship.model.remove(propulsor_lower_right);
@@ -2200,6 +2167,7 @@ function playGame(){
 				}
 			})
 			.onComplete(function(){
+				document.getElementById("worldDiv").style.display = "none";
 				TweenMax.set($('.stars'),{opacity:0 });
 				TweenMax.staggerTo($('.stars'),5,{opacity:1}, 0.1, start );
 				scene.remove(stargate.model);
@@ -2226,7 +2194,10 @@ function playGame(){
 function start(){
 	startGame = true;
 	entered = true;
+	movimento = false;
 	reset = false;
+	end = false;
+	posStart.z = 0;
 }
 
 function createMoneyAndAsteroid(){
@@ -2290,7 +2261,7 @@ function animateMoney(){
 
 function getMoney(){
 	if (clock_money.running){
-		for (var vertexIndex = 0; vertexIndex < 2; vertexIndex++){		
+		for (var vertexIndex = 0; vertexIndex < 3; vertexIndex++){		
 			var localVertex = starshipBox.geometry.vertices[vertexIndex].clone();
 			var globalVertex = localVertex.applyMatrix4( starshipBox.matrix );
 			var directionVector = globalVertex.sub( starshipBox.position );
@@ -2308,6 +2279,9 @@ function getMoney(){
 					if ( "asteroid"+i === firstObjIntersected.name){
 						scene.remove(moneys_asteroids[i]);
 						starship.health -= 3;
+						if (starship.health <= 0){
+							gameOver();
+						}
 						return;
 					}
 				}
@@ -2366,37 +2340,12 @@ function quitGame(){
 	}
 }
 
-function resetGame(){
-	if ( keyboard.pressed("R") && entered){
+function resetGame(end){
+	if ( (keyboard.pressed("R") && entered) || end){
 		reset = true;
-		
 		while(scene.children.length > 0){ 
 			scene.remove(scene.children[0]); 
 		}
-		pianeta1.position.z =  -1300;
-		pianeta2.position.z =  -1300;
-		pianeta3.position.z =  -1300;
-		pianeta4.position.z =  -1300;
-		pianeta5.position.z =  -1300;
-		pianeta6.position.z =  -1300;
-		pianeta7.position.z =  -1300;
-		pianeta8.position.z =  -1300;
-		pianeta9.position.z =  -1300;
-		pianeta10.position.z = -1300;
-		pianeta11.position.z = -1300;
-		pianeta12.position.z = -1300;
-		scene.add(pianeta1);
-		scene.add(pianeta2);
-		scene.add(pianeta3);
-		scene.add(pianeta4);
-		scene.add(pianeta5);
-		scene.add(pianeta6);
-		scene.add(pianeta7);
-		scene.add(pianeta8);
-		scene.add(pianeta9);
-		scene.add(pianeta10);
-		scene.add(pianeta11);
-		scene.add(pianeta12);
 		clock.stop();
 		clock_money.stop();
 		planet_clock.stop();
@@ -2407,12 +2356,21 @@ function resetGame(){
 		canShot = false;
 		entered = false;
 		movimento = false;
+		parti = false;
 		fireRate1 = 0;
 		fireRate2 = 0;
 		setMoneys();
+		starship.model.rotation.set(0,0,0);
+		starshipBox.rotation.set(0, 0 ,0);
 		starship.money = 0;
 		starship.health = 10;
 		starship.damage = 1;
+		document.getElementById("healthDiv").innerHTML = starship.health; 
+		document.getElementById("moneysDiv").innerHTML = starship.money;         
+		document.getElementById("damageDiv").innerHTML = starship.damage;         
+		document.getElementById("levelDiv").innerHTML = "LEVEL " + level;   
+		document.getElementById("worldDiv").innerHTML = "World " + world;
+		document.getElementById("worldDiv").style.display = "block";
 		enemystarship.enemystarship1.health = 3;
 		enemystarship.enemystarship2.health = 3;
 		enemystarship.finalenemy.health = 3;

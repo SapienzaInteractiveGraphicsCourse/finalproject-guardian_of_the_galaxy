@@ -14,6 +14,7 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
 		<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js'></script>
+		<script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
 
 		<link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet" />
@@ -21,8 +22,6 @@
 		<!--<link href="https://fonts.googleapis.com/css?family=Lobster&display=swap" rel="stylesheet">
 		font-family: 'Lobster', cursive;-->
 		<link href="https://fonts.googleapis.com/css?family=Abel&display=swap" rel="stylesheet">
-
-		<script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
 
 	</head>
 
@@ -343,6 +342,10 @@
 		}
 		@keyframes h1 { from { opacity: 1; } to { opacity: 0; } }
 
+		#worldDiv{
+			color: rgb(243, 152, 33);
+			font-size: 48px;
+		}
 		
 
 	</style>
@@ -383,7 +386,7 @@
 
 
 		<div id="container">
-				<div id="hint" style="position: absolute;  top: 15%; left: 40%">
+				<div id="hint" style="position: absolute;  top: 15%; left: 40%; display: none;">
 					<h2 id="enter" class="enter">Press E to enter the galaxy</h2>
 				</div>
 				<div id="menu" style="position: absolute; top: 40%; left: 45%">
@@ -391,7 +394,7 @@
 					<span id="commands" style="position: absolute; top: 130%; left:-30%;" class='start-btn'>
 					<a data-fancybox="gallery" href="images/control2.jpg " style="color:gray">COMMANDS</a></span>
 				</div>
-				<div id="improvements" style="position: absolute; left: 0%; top: 17%;">
+				<div id="improvements" style="position: absolute; left: 0%; top: 17%; display: none;">
 					<span id="health" class='improvements-btn'>Restore health</span><br/>
 					<span id="damage" class='improvements-btn'>Increase damage</span>
 				</div>
@@ -402,14 +405,13 @@
 					<h4><div style="position: absolute; top: 77%; left: 32%;" id="percent_load"></div></h4>
 
 				</div>
-				<div id="game_over" style="position: absolute;  top: 10%; left: 27%">
+				<div id="game_over" style="position: absolute;  top: 10%; left: 27%; display: none;">
 					<img src="images/game_over.jpg" />
 					<h2 id="restart" class="restart" style="margin-top: 5%; margin-left:30%;">Press Q to quit the game</h2>
 				</div>
-				<div id="warning" style="position: absolute;  top: 5%; left: 40%">
+				<div id="warning" style="position: absolute;  top: 5%; left: 40%; display: none;">
 					<h1>WARNING!</h1>
 				</div>
-
 		</div>
 		
 	</body>
