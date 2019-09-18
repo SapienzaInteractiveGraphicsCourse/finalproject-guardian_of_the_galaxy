@@ -48,6 +48,7 @@ var tweenShip;
 var game_over;
 var gOverElement = document.getElementById("game_over");
 var warning = document.getElementById("warning");
+var win = document.getElementById("win");
 var enter = document.getElementById("hint");
 var improvemnts = document.getElementById("improvements");
 var parti=false;
@@ -286,7 +287,7 @@ function rotazione_pianeta(pianeta, myData) {
 }
 
 
-function movimento_pianeta(pianeta,myData){
+function movimento_pianeta(pianeta){
     
     if(pianeta.position.z< camera.position.z){
 		pianeta.position.z +=2.5;
@@ -301,54 +302,51 @@ function constructPlanetData(rotation_rate_tmp, distance_from_axis_tmp, name_tmp
 }
 
 function getMaterial(type, color, texture_tmp) {
-    var materialOptions = {
-        color: color === undefined ? 'rgb(255, 255, 255)' : color,
-        map: texture_tmp === undefined ? null : texture_tmp
-    };
+    var material_characteristic = { color: color === undefined ? 'rgb(255, 255, 255)' : color, map: texture_tmp === undefined ? null : texture_tmp };
 
     switch (type) {
         case 'basic':
-            return new THREE.MeshBasicMaterial(materialOptions);
+            return new THREE.MeshBasicMaterial(material_characteristic);
         case 'lambert':
-            return new THREE.MeshLambertMaterial(materialOptions);
+            return new THREE.MeshLambertMaterial(material_characteristic);
         case 'phong':
-            return new THREE.MeshPhongMaterial(materialOptions);
+            return new THREE.MeshPhongMaterial(material_characteristic);
         case 'standard':
-            return new THREE.MeshStandardMaterial(materialOptions);
+            return new THREE.MeshStandardMaterial(material_characteristic);
         default:
-            return new THREE.MeshBasicMaterial(materialOptions);
+            return new THREE.MeshBasicMaterial(material_characteristic);
     }
 }
 
 function getSphere(material, size, segments) {
-    var geometry = new THREE.SphereGeometry(size, segments, segments);
-    var obj = new THREE.Mesh(geometry, material);
-    obj.castShadow = true;
+    var geom = new THREE.SphereGeometry(size, segments, segments);
+    var object = new THREE.Mesh(geom, material);
+    object.castShadow = true;
 
-    return obj;
+    return object;
 }
 
 
-function loadTexturedPlanet(myData, x, y, z, myMaterialType) {
-    var myMaterial;
-    var passThisTexture;
+function loadTexturedPlanet(myData, x, y, z, materialType) {
+    var material;
+    var texture;
 
     if (myData.texture && myData.texture !== "") {
-        THREE.ImageUtils.crossOrigin = '';
-        var passThisTexture = loader.load(myData.texture);
+		THREE.ImageUtils.crossOrigin = '';
+		var texture = loader.load(myData.texture);
+		//texture.minFilter = THREE.LinearFilter;
     }
-    if (myMaterialType) {
-        myMaterial = getMaterial(myMaterialType, "rgb(255, 255, 255 )", passThisTexture);
+    if (materialType) {
+        material = getMaterial(materialType, "rgb(255, 255, 255 )", texture);
     } else {
-        myMaterial = getMaterial("lambert", "rgb(255, 255, 255 )", passThisTexture);
+        material = getMaterial("lambert", "rgb(255, 255, 255 )", texture);
     }
 
-    myMaterial.receiveShadow = true;
-    myMaterial.castShadow = true;
-    var pianeta = getSphere(myMaterial, myData.size, myData.segments);
+    material.receiveShadow = true;
+    material.castShadow = true;
+    var pianeta = getSphere(material, myData.size, myData.segments);
     pianeta.receiveShadow = true;
     pianeta.name = myData.name;
-    //scene.add(pianeta);
     pianeta.position.set(x, y, z);
 
     return pianeta;
@@ -361,6 +359,7 @@ function loadTexturedPlanet(myData, x, y, z, myMaterialType) {
 var loadManager = new THREE.LoadingManager();
 gOverElement.style.display = "none";
 warning.style.display = "none";
+win.style.display = "none";
 improvemnts.style.display = "none";
 enter.style.display = "none";
 
@@ -1388,7 +1387,14 @@ function loadEnemies(){
 			enemystarship.enemystarship1.health = 3;
 			enemystarship.enemystarship2.health = 3;
 		}
-
+		if (clock.running && level == 4){
+			if (clock.getElapsedTime() >= 1 && clock.getElapsedTime() <= 7){
+				win.style.display = "block";
+			}
+			else{
+				win.style.display = "none";
+			}
+		}
 	}
 }
 
@@ -1511,7 +1517,7 @@ function hitShot( x,y ) {
 	
 				if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
 					enemystarship.enemystarship1.health -= starship.damage;
-					console.log(firstObjIntersected);
+					//console.log(firstObjIntersected);
 					shooting = true;
 					if (enemystarship.enemystarship1.health <= 0){
 						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
@@ -1594,6 +1600,7 @@ function hitShot( x,y ) {
 				if (enemystarship.enemystarship1.health <= 0 && enemystarship.enemystarship2.health <= 0 && enemystarship.finalenemy.health <= 0){
 					shooting = false;
 					level = 4;
+					clock.start();
 					stargate.model.position.z = -50;
 					scene.add(stargate.model);
 				}
@@ -1603,7 +1610,7 @@ function hitShot( x,y ) {
 		if( intersects.length > 0 ) {
 			var firstObjIntersected = intersects[0].object;
 			//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
-			console.log(firstObjIntersected.name);
+			//console.log(firstObjIntersected.name);
 			switch (firstObjIntersected.name) {
 				case "pianeta1":
 					parts.push(new explode_planet(pianeta1,1));
