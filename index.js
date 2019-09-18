@@ -1387,13 +1387,14 @@ function loadEnemies(){
 			enemystarship.enemystarship1.health = 3;
 			enemystarship.enemystarship2.health = 3;
 		}
-		if (clock.running && level == 4){
-			if (clock.getElapsedTime() >= 1 && clock.getElapsedTime() <= 7){
-				win.style.display = "block";
-			}
-			else{
-				win.style.display = "none";
-			}
+
+	}
+	if (clock.running && level == 4){
+		if (clock.getElapsedTime() >= 1 && clock.getElapsedTime() <= 7){
+			win.style.display = "block";
+		}
+		else{
+			win.style.display = "none";
 		}
 	}
 }
@@ -1870,7 +1871,7 @@ function handleMovements(){
 }
 
 var movementSpeed = 2;
-var totalObjects = 1000;
+var totalObjects = 500;
 var objectSize = 0.15;
 var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
 var sizeRandomness = 0;
