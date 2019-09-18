@@ -397,6 +397,8 @@ loadManager.onError = function ( url ) {
 };
 
 
+
+
 function loadModels(loadManager){
 	//----MODELS-----
 	if(!scene) {
@@ -710,25 +712,18 @@ function loadModels(loadManager){
 		stargate_obj_loader.setMaterials(materials);
 	});
 
-	var money_loader = new THREE.OBJLoader(loadManager);
-    var money_mtlLoader = new THREE.MTLLoader(loadManager);
 	var asteroid_loader = new THREE.TextureLoader();
 
-	money_mtlLoader.load('models/money/money.mtl', (materials) => {
-        materials.preload();
-        money_loader.setMaterials(materials);
-        money_loader.load('models/money/money.obj', (object) => {
-			object.rotation.y= 1.5;
-			money = object.clone();
-			asteroid_loader.load( './images/5.jpg', function ( texture ) {
-				var geometry = new THREE.SphereGeometry( 1, 7, 7 );
-				var material = new THREE.MeshBasicMaterial( { map: texture} );
-				asteroid = new THREE.Mesh( geometry, material );
-				createMoneyAndAsteroid();
-				setMoneys();				
-			} );
-        });
-	});
+	
+	money = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 1, 64 ),new THREE.MeshBasicMaterial( {color: 0xffff00} ));
+
+	asteroid_loader.load( './images/5.jpg', function ( texture ) {
+		var geometry = new THREE.SphereGeometry( 1, 7, 7 );
+		var material = new THREE.MeshBasicMaterial( { map: texture} );
+		asteroid = new THREE.Mesh( geometry, material );
+		createMoneyAndAsteroid();
+		setMoneys();				
+	} );
 	
 	
 
@@ -777,6 +772,28 @@ function initGame() {
 		document.body.appendChild(levelDiv);
 		document.getElementById("levelDiv").innerHTML = "LEVEL " + level;     
 		document.getElementById("levelDiv").style = "position: absolute; left:90%; top:10px; color: white"
+
+
+		var musicDiv=document.createElement("DIV");
+		musicDiv.id="musicDiv";
+		document.body.appendChild(musicDiv);
+		document.getElementById("musicDiv").style = "position: absolute; left: 90%;top: 10%;"
+	
+	
+		var label1=document.createElement("LABEL");
+		label1.id="label1";
+		label1.className="switch";
+		document.getElementById("musicDiv").appendChild(label1);
+	
+		var check=document.createElement("INPUT");
+		check.setAttribute("type", "checkbox");
+		check.id="togBtn";
+		document.getElementById("label1").appendChild(check);
+	
+		var span1=document.createElement("SPAN");
+		span1.id="span1";
+		span1.className="slider round"
+		document.getElementById("label1").appendChild(span1);
 	}
 
 	
@@ -888,6 +905,20 @@ function initGame() {
 	});
 
 	enter.style.display = "block";
+
+
+	var checkbox = document.getElementById("togBtn");
+
+ 	checkbox.addEventListener('change', function () {
+   	  if(this.checked) {
+        	console.log("off");
+        	sound.setVolume(0.0);
+    	}
+    else {
+        console.log("on");
+        sound.setVolume(0.06);
+    	}
+  	});
 	
 	
 }
@@ -2226,7 +2257,7 @@ function playGame(){
 				var audioLoader = new THREE.AudioLoader();
 				audioLoader.load('sounds/via.wav', function(buffer) {
 					sound.setBuffer(buffer);
-					sound.setVolume(0.06);
+					sound.setVolume(0.03);
 					sound.play();
 				});
 				starship.model.position.z = posStart.z;
@@ -2279,6 +2310,7 @@ function createMoneyAndAsteroid(){
 		}
 		else{ //moneys
 			moneys_asteroids[i] = money.clone();
+			moneys_asteroids[i].rotation.x=-1.5;
 			moneys_asteroids[i].name = "money"+i;
 		}
 	}
@@ -2306,6 +2338,9 @@ function setMoneys(){
 			scene.add(moneys_asteroids[i]);
 		}
 	}
+
+
+
 }
 
 function animateMoney(){
@@ -2342,7 +2377,7 @@ function getMoney(){
 			if( intersects.length > 0 && intersects[0].distance < directionVector.length()) {
 				var firstObjIntersected = intersects[0].object;
 				for(var i = 1; i <= 40; i++){
-					if ( "money"+i === firstObjIntersected.parent.name) {
+					if ( "money"+i === firstObjIntersected.name) {
 						scene.remove(moneys_asteroids[i]);
 						starship.money += 1;
 						return;

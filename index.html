@@ -29,84 +29,8 @@
 
 		#load { display: none; position: relative; right: 30%;}
 		#percent_load { color: #ffffff; text-align: center; display: block; }
-		
-		.switch {
-        position: relative;
-        display: inline-block;
-        width: 100px;
-        height: 34px;
-      }
 
-      .switch input {display:none;}
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ca2222;
-        -webkit-transition: .4s;
-        transition: .4s;
-      }
-
-      .slider.round {
-        border-radius: 34px;
-      }
-
-      .slider.round:before {
-        border-radius: 50%;
-      }
-
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-      }
-
-      input:checked + .slider {
-        background-color: #2ab934;
-      }
-
-      input:focus + .slider {
-        box-shadow: 0 0 1px #2196F3;
-      }
-
-      input:checked + .slider:before {
-        -webkit-transform: translateX(68px);
-        -ms-transform: translateX(68px);
-        transform: translateX(68px);
-      }
-
-      .on
-      {
-        display: none;
-      }
-
-      .on, .off
-      {
-        color: white;
-        position: absolute;
-        transform: translate(-50%,-50%);
-        top: 50%;
-        left: 50%;
-        font-size: 10px;
-        font-family: Verdana, sans-serif;
-      }
-
-      input:checked+ .slider .on
-      {display: block;}
-
-      input:checked + .slider .off
-      {display: none;}
-
+      
 		#levelDiv {
 			text-shadow: 1px 1px pink, -1px -1px maroon;
 
@@ -345,6 +269,75 @@
 		#worldDiv{
 			color: rgb(243, 152, 33);
 			font-size: 48px;
+		}
+
+		.switch {
+  		  position: relative;
+		  display: inline-block;
+		  width: 90px;
+		  height: 34px;
+		}
+		
+		.switch input {display:none;}
+		
+		.slider {
+		  position: absolute;
+		  cursor: pointer;
+		  top: 0;
+		  left: 0;
+		  right: 0;
+		  bottom: 0;
+		  background-color:  #2ab934;
+		  -webkit-transition: .4s;
+		  transition: .4s;
+		   border-radius: 34px;
+		}
+		
+		.slider:before {
+		  position: absolute;
+		  content: "";
+		  height: 26px;
+		  width: 26px;
+		  left: 4px;
+		  bottom: 3px;
+		  content: "🎵";
+		  -webkit-transition: .4s;
+		  transition: .4s;
+		  border-radius: 50%;
+		}
+		
+		input:checked + .slider {
+		  background-color: blue;
+		}
+		
+		input:focus + .slider {
+		  box-shadow: 0 0 1px #2196F3;
+		}
+		
+		input:checked + .slider:before {
+		  -webkit-transform: translateX(26px);
+		  -ms-transform: translateX(26px);
+		  transform: translateX(55px);
+		}
+		
+		/*------ ADDED CSS ---------*/
+		.slider:after
+		{
+		 content:'ON';
+		 color: white;
+		 display: block;
+		 position: absolute;
+		 transform: translate(-50%,-50%);
+		 top: 50%;
+		 left: 50%;
+		 font-weight: bold;
+		 font-size: 15px;
+		 font-family: Abel, sans-serif;
+		}
+		
+		input:checked + .slider:after
+		{  
+		  content:'OFF';
 		}
 		
 
