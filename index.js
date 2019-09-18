@@ -1903,7 +1903,7 @@ function handleMovements(){
 		}
 		if ( keyboard.pressed("W") && starship.model.position.y < window.innerHeight/42){
 			starship.model.translateY(y_step[0]);
-			starship.model.rotation.x= -x_rotate;
+		   starship.model.rotation.z= z_rotate;
 			starshipBox.translateY(y_step[0]);
 			starshipBox.rotation.x= -x_rotate;
 			document.addEventListener( "mousemove", mouseMove, false );
@@ -1911,7 +1911,7 @@ function handleMovements(){
 		}
 		if ( keyboard.pressed("S") && starship.model.position.y > -window.innerHeight/42){
 			starship.model.translateY(-y_step[0]);
-			starship.model.rotation.x= x_rotate;
+		    starship.model.rotation.z= z_rotate;
 			starshipBox.translateY(-y_step[0]);
 			starshipBox.rotation.x= x_rotate;
 			document.addEventListener( "mousemove", mouseMove, false );
