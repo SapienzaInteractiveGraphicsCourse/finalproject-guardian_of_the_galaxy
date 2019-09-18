@@ -1036,11 +1036,46 @@ function animateEnemy(){
 		}
 	}
 	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true){
+	
 		var axis = new THREE.Vector3(0, 0, 1);
-		enemystarship.finalenemy.model.rotateOnAxis(axis, 0.05);
+		if (enemystarship.finalenemy.model.position.x>=0){
+			setTimeout(function(){
+		enemystarship.finalenemy.model.position.x=-30
+		enemystarship.finalenemy.model.position.y=-30
+
+		console.log("1")
+	}, 1000);
+			
+		}
+	if (enemystarship.finalenemy.model.position.y<0){
+			setTimeout(function(){
+				console.log("2")
+		enemystarship.finalenemy.model.position.y=30
+	}, 1000);
+			
+		}
+		
+		if (enemystarship.finalenemy.model.position.x<2){
+			setTimeout(function(){
+				console.log("3")
+		enemystarship.finalenemy.model.position.x=30
+		
+	}, 1000);
+			
+		}
+		
+		
+		if (enemystarship.finalenemy.model.position.y>=2){
+			setTimeout(function(){
+				console.log("4")
+		enemystarship.finalenemy.model.position.y=-30
+	}, 700);
+			
+		}
 	}
 
 }
+
 
 
 
@@ -1114,6 +1149,8 @@ function finishGame(){
 			starship.model.position.y+=0.1;
 		}
 		if (parti==true){
+			
+			
 			if (starship.model.position.z >= -90){
 				if (starship.model.position.z <= -65){
 					starship.model.remove(propulsor_upper_right);
@@ -1403,11 +1440,25 @@ function loadEnemies(){
 
 function destroyEnemy( event ) {
 	if (canShot){
+		
+		var listener = new THREE.AudioListener();
+		camera.add(listener);
+
+		var sound = new THREE.Audio(listener);
+
+
+		var audioLoader = new THREE.AudioLoader();
+		audioLoader.load('sounds/Photon 1.wav', function(buffer) {
+			sound.setBuffer(buffer);
+			sound.setVolume(0.06);
+			sound.play();
+		});
 		vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
 	 
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		
+		hitShot(mouse.x,mouse.y);
+
 		vec.unproject( camera );
 		
 		rete= vec.sub( camera.position ).normalize();
@@ -1415,7 +1466,7 @@ function destroyEnemy( event ) {
 		position= camera.position.clone()
 		position=position.add(rete.multiplyScalar(distanza));
 		
-		
+
 		x1= starship.model.position.x+8.5;
 		x2= starship.model.position.y+1.5;
 		x3= starship.model.position.z-3;
@@ -1426,60 +1477,47 @@ function destroyEnemy( event ) {
 		vec2=new THREE.Vector3( x11,x22,x33);
 
 		
+		var material = new THREE.LineDashedMaterial( {
+			color:0x00FF00,
+			dashSize: 0.5,
+			gapSize: 1,
+		} );		
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3( x1, x2, x3),
+		new THREE.Vector3(position.x, position.y, position.z) );
 
+		var line = new THREE.Line( geometry, material );
+        line.computeLineDistances();
 
-		var bullet_dx = new THREE.Mesh(
-			new THREE.SphereGeometry(0.2, 0.2,20),
-			new THREE.MeshBasicMaterial({color:0x00FF00})
-		);
+		scene.add( line );
 		
-		bullet_dx.position.set(x1,x2,x3);
+		setTimeout(function(){
+			line.alive = false;
+			scene.remove(line);
+		},10);
 
+		
+		var material2 = new THREE.LineDashedMaterial( {
+			color:0x00FF00,
+			dashSize: 0.5,
+			gapSize: 1,
+		} );		
+		var geometry2 = new THREE.Geometry();
+		geometry2.vertices.push(new THREE.Vector3( x11, x22, x33) );
+		geometry2.vertices.push(new THREE.Vector3( position.x, position.y, position.z) );
+		
+		var line2 = new THREE.Line( geometry2, material2 );
+        line2.computeLineDistances();
 
-		var dir = new THREE.Vector3();
-		var starship_pos = bullet_dx.position;
-		var enemy_pos =position;
-		dir.subVectors(enemy_pos,starship_pos).normalize();
-
-
-		bullet_dx.velocity = dir;
-		//console.log("s",bullet_dx)
-		bullet_dx.alive = true;
+		scene.add( line2 );
+		
 		setTimeout(function(){
 			hitShot(mouse.x,mouse.y);
-			bullet_dx.alive = false;
-			scene.remove(bullet_dx);
-		}, 300);
+			line2.alive = false;
+			scene.remove(line2);
+		},10);
 
 
-		bullets.push(bullet_dx);
-		scene.add(bullet_dx);
-		
-		var bullet_dx1 = new THREE.Mesh(
-			new THREE.SphereGeometry(0.2, 0.2, 20),
-			new THREE.MeshBasicMaterial({color:	0x00FF00})
-		);
-		
-		bullet_dx1.position.set(x11,x22,x33);
-
-
-		var dir = new THREE.Vector3();
-		var starship_pos = bullet_dx1.position;
-		var enemy_pos =position;
-		dir.subVectors(enemy_pos,starship_pos).normalize();
-
-
-
-		bullet_dx1.velocity = dir;
-		bullet_dx1.alive = true;
-		setTimeout(function(){
-			bullet_dx1.alive = false;
-			scene.remove(bullet_dx1);
-			hitShot(event);
-		}, 300);
-		
-		bullets.push(bullet_dx1);
-		scene.add(bullet_dx1);	
 	}	
 }
 
@@ -1707,6 +1745,18 @@ function hitShot( x,y ) {
 
 
 function enemyShot(obj){
+	var listener = new THREE.AudioListener();
+				camera.add(listener);
+
+				var sound = new THREE.Audio(listener);
+
+
+				var audioLoader = new THREE.AudioLoader();
+				audioLoader.load('sounds/Photon colpo.wav', function(buffer) {
+					sound.setBuffer(buffer);
+					sound.setVolume(0.06);
+					sound.play();
+				});
 	var enemy_pos = obj.position.clone();
 	var starship_pos = starship.model.position.clone();
 	var dir = new THREE.Vector3();
@@ -2050,7 +2100,7 @@ function updateExplosion(){
 function loadDamagedShip(enemy,health){
 	var obj;
 	if (health == 2){
-		obj = enemystarship.damagedstarship1.model.clone();
+		obj = enemystarship.damagedstarship1.model.clone();e
 	}
 	else if (health == 1){
 		obj = enemystarship.damagedstarship2.model.clone();
@@ -2167,6 +2217,18 @@ function playGame(){
 			.to({z: -35}, 2000)
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(function() {
+				var listener = new THREE.AudioListener();
+				camera.add(listener);
+
+				var sound = new THREE.Audio(listener);
+
+
+				var audioLoader = new THREE.AudioLoader();
+				audioLoader.load('sounds/via.wav', function(buffer) {
+					sound.setBuffer(buffer);
+					sound.setVolume(0.06);
+					sound.play();
+				});
 				starship.model.position.z = posStart.z;
 				if(starship.model.position.z <= -29.3){
 					starship.model.remove(propulsor_upper_right);
