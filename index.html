@@ -29,8 +29,7 @@
 
 		#load { display: none; position: relative; right: 30%;}
 		#percent_load { color: #ffffff; text-align: center; display: block; }
-
-      
+		
 		#levelDiv {
 			text-shadow: 1px 1px pink, -1px -1px maroon;
 
@@ -329,7 +328,7 @@
 		 position: absolute;
 		 transform: translate(-50%,-50%);
 		 top: 50%;
-		 left: 50%;
+		 left: 60%;
 		 font-weight: bold;
 		 font-size: 15px;
 		 font-family: Abel, sans-serif;
@@ -338,6 +337,7 @@
 		input:checked + .slider:after
 		{  
 		  content:'OFF';
+		   left: 40%;
 		}
 		
 
@@ -400,14 +400,18 @@
 				</div>
 				<div id="game_over" style="position: absolute;  top: 10%; left: 27%; display: none;">
 					<img src="images/game_over.jpg" />
-					<h2 id="restart" class="restart" style="margin-top: 5%; margin-left:30%;">Press Q to quit the game</h2>
+					<h2 id="restart" class="restart" style="margin-top: 5%; margin-left:30%;">
+						Press P to quit the game
+						<br/><br/>
+						Press R to restart the game
+					</h2>
 				</div>
 				<div id="warning" style="position: absolute;  top: 5%; left: 40%; display: none;">
 					<h1>WARNING!</h1>
 				</div>
-				<div id="win" style="position: absolute;  top: 5%; left: 45%; display: none; font-size: 56px">
-                    <h1>YOU WIN!</h1>
-                </div>
+				<div id="win" style="position: absolute;  top: 5%; left: 35%; display: none; font-size: 56px">
+					<h1>WORLD CLEARED!</h1>
+				</div>
 		</div>
 		
 	</body>

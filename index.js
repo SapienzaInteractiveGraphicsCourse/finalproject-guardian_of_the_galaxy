@@ -8,6 +8,9 @@ var near = 0.1;
 var far = 1000;
 var reset = false;
 
+//SETTING UP SOUNDS
+var sound;
+
 //starship rotation and shot
 var position;
 var vec;
@@ -106,8 +109,10 @@ var starship;
 var enemystarship;
 var stargate;
 var moneys_asteroids = [];
+var moneys_wireframe = [];
 var moneys_asteroidsBox = [];
 var money;
+var money_wireframe;
 var asteroid;
 var k;
 var beta;
@@ -140,55 +145,57 @@ enemystarship = {
 	originalenemy1 : { 
 		model:null, 
 		name:"enemystarship1",
-		health: 3
+		health: 5
 	},
 	originalenemy2: {
 		model:null, 
 		name:"enemystarship2",
-		health: 3
+		health: 5
 	},
 	originalfinalenemy : { 
 		model:null, 
 		name:"originalfinalenemy",
-		health: 3
+		health: 10,
+		animate: false
 	},
 	enemystarship1 : { 
 		model:null, 
 		name:"enemystarship1",
 		appeared: false,
-		health: 3
+		health: 5
 	},
 	enemystarship2: {
 		model:null, 
 		name:"enemystarship2",
 		appeared: false,
-		health: 3
+		health: 5
 	},
 	damagedstarship1: {
 		model:null, 
 		name:"damagedstarship1",
-		health: 3
+		health: 5
 	},
 	damagedstarship2: {
 		model:null, 
 		name:"damagedfinalship1",
-		health: 3
+		health: 5
 	},
 	damagedfinalship1: {
 		model:null, 
 		name:"damagedstarship1",
-		health: 3
+		health: 5
 	},
 	damagedfinalship2: {
 		model:null, 
 		name:"damagedfinalship2",
-		health: 3
+		health: 5
 	},
 	finalenemy: {
 		model:null, 
 		name:"finalenemy",
 		appeared: false,
-		health: 3
+		health: 10,
+		animate: false
 	}
 }
 
@@ -397,8 +404,6 @@ loadManager.onError = function ( url ) {
 };
 
 
-
-
 function loadModels(loadManager){
 	//----MODELS-----
 	if(!scene) {
@@ -451,7 +456,7 @@ function loadModels(loadManager){
 			});
 			starshipBox = new THREE.Mesh(starshipBox, starshipBoxMaterial);
 			starshipBox.position.set(-1.0, -8.0, 2.0);	
-			starshipBox.material.visible = true;
+			starshipBox.material.visible = false;
 			/* propulsor_upper_right */
 
 			propulsor_upper_right= new THREE.Lensflare();
@@ -605,8 +610,8 @@ function loadModels(loadManager){
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
-	var material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
-	var material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+	var material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+	var material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
 		
 
 	enemies_mtlLoader.load('models/enemies/X-Wing.mtl', (materials) => {
@@ -635,8 +640,8 @@ function loadModels(loadManager){
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
-	material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
-	material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+	material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+	material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
 		
 
 	enemies_mtlLoader.load('models/enemies/X-Wing-damaged1.mtl', (materials) => {
@@ -664,8 +669,8 @@ function loadModels(loadManager){
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
-	material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
-	material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+	material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+	material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
 		
 
 	enemies_mtlLoader.load('models/enemies/X-Wing-damaged2.mtl', (materials) => {
@@ -693,8 +698,8 @@ function loadModels(loadManager){
 
 	var stargate_obj_loader = new THREE.OBJLoader(loadManager);
 	var stargate_mtlLoader = new THREE.MTLLoader(loadManager);
-	material1 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/portal/mqdefault.jpg') } );
-	material2 = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load('models/portal/GateMisc.jpg') } );
+	material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/portal/mqdefault.jpg') } );
+	material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/portal/GateMisc.jpg') } );
 		
 
 	stargate_mtlLoader.load('models/portal/stargate.mtl', (materials) => {
@@ -714,8 +719,8 @@ function loadModels(loadManager){
 
 	var asteroid_loader = new THREE.TextureLoader();
 
-	
 	money = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 1, 64 ),new THREE.MeshBasicMaterial( {color: 0xffff00} ));
+	money_wireframe = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 1, 64 ),new THREE.MeshBasicMaterial( {color: 0x00000, wireframe: true} ));
 
 	asteroid_loader.load( './images/5.jpg', function ( texture ) {
 		var geometry = new THREE.SphereGeometry( 1, 7, 7 );
@@ -739,7 +744,7 @@ function initGame() {
 	if (!camera) {
 		camera = new THREE.PerspectiveCamera( fovy, window.innerWidth / window.innerHeight, near, far );
 		camera.position.set( 0.0, 0.0, 30.0);
-		camera.lookAt( 0.0, 0.0, 0.0 );
+		camera.lookAt( 0.0, -4.0, 0.0 );
 	}
 	
 	if (!renderer) {
@@ -753,7 +758,6 @@ function initGame() {
 	if (!light){
 		var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 		var light= new THREE.PointLight(0xFFFFFF);
-		//light.position.set(-100,200,100);
 		light.position.set(-40.0, 10.0, 0.0);
 	}		
 
@@ -772,7 +776,6 @@ function initGame() {
 		document.body.appendChild(levelDiv);
 		document.getElementById("levelDiv").innerHTML = "LEVEL " + level;     
 		document.getElementById("levelDiv").style = "position: absolute; left:90%; top:10px; color: white"
-
 
 		var musicDiv=document.createElement("DIV");
 		musicDiv.id="musicDiv";
@@ -890,10 +893,10 @@ function initGame() {
 	window.addEventListener( 'resize', onWindowResize, false );
 
 	var listener = new THREE.AudioListener();
-    camera.add(listener);
+	camera.add(listener);
 
     //Create a global audio source
-    var sound = new THREE.Audio(listener);
+    sound = new THREE.Audio(listener);
 
     //Load a sound and set it as the Audio object's buffer
     var audioLoader = new THREE.AudioLoader();
@@ -905,22 +908,17 @@ function initGame() {
 	});
 
 	enter.style.display = "block";
-
-
+	
 	var checkbox = document.getElementById("togBtn");
 
  	checkbox.addEventListener('change', function () {
-   	  if(this.checked) {
-        	console.log("off");
-        	sound.setVolume(0.0);
-    	}
-    else {
-        console.log("on");
-        sound.setVolume(0.06);
-    	}
+		if(this.checked) {
+			sound.setVolume(0.0);
+		}
+		else {
+			sound.setVolume(0.06);
+		}
   	});
-	
-	
 }
 
 function planets_respawn(){
@@ -1066,47 +1064,124 @@ function animateEnemy(){
 			x_step[2] = -x_step[2];
 		}
 	}
-	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true){
-	
-		var axis = new THREE.Vector3(0, 0, 1);
-		if (enemystarship.finalenemy.model.position.x>=0){
-			setTimeout(function(){
-		enemystarship.finalenemy.model.position.x=-30
-		enemystarship.finalenemy.model.position.y=-30
-
-		console.log("1")
-	}, 1000);
-			
+	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true && !enemystarship.finalenemy.animate){
+		enemystarship.finalenemy.animate = true;
+		var rand = Math.random();
+		if (enemystarship.finalenemy.model.position.x > 0){
+			if (rand < 0.2) {
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-30;
+					enemystarship.finalenemy.model.position.y=-30;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.4){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-20;
+					enemystarship.finalenemy.model.position.y=15;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.6){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-20;
+					enemystarship.finalenemy.model.position.y=0;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.8){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-30;
+					enemystarship.finalenemy.model.position.y=-10;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else{
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=0;
+					enemystarship.finalenemy.model.position.y=0;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
 		}
-	if (enemystarship.finalenemy.model.position.y<0){
-			setTimeout(function(){
-				console.log("2")
-		enemystarship.finalenemy.model.position.y=30
-	}, 1000);
-			
+		if (enemystarship.finalenemy.model.position.x == 0){
+			if (rand < 0.2) {
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-30;
+					enemystarship.finalenemy.model.position.y=-30;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.4){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x= 20;
+					enemystarship.finalenemy.model.position.y= 10;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.6){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-20;
+					enemystarship.finalenemy.model.position.y=10;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.8){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=40;
+					enemystarship.finalenemy.model.position.y=-5;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else{
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=-15;
+					enemystarship.finalenemy.model.position.y=-10;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
 		}
 		
-		if (enemystarship.finalenemy.model.position.x<2){
-			setTimeout(function(){
-				console.log("3")
-		enemystarship.finalenemy.model.position.x=30
-		
-	}, 1000);
-			
-		}
-		
-		
-		if (enemystarship.finalenemy.model.position.y>=2){
-			setTimeout(function(){
-				console.log("4")
-		enemystarship.finalenemy.model.position.y=-30
-	}, 700);
-			
-		}
+		if (enemystarship.finalenemy.model.position.x < 0){
+			if (rand < 0.2) {
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=10;
+					enemystarship.finalenemy.model.position.y=-30;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.4){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x= 40;
+					enemystarship.finalenemy.model.position.y= 0;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.6){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=30;
+					enemystarship.finalenemy.model.position.y=-10;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else if (rand < 0.8){
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=20;
+					enemystarship.finalenemy.model.position.y=-15;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}
+			else{
+				setTimeout(function(){
+					enemystarship.finalenemy.model.position.x=0;
+					enemystarship.finalenemy.model.position.y=0;
+					enemystarship.finalenemy.animate = false;
+				}, 500);
+			}		
+		}	
 	}
 
 }
-
 
 
 
@@ -1180,8 +1255,6 @@ function finishGame(){
 			starship.model.position.y+=0.1;
 		}
 		if (parti==true){
-			
-			
 			if (starship.model.position.z >= -90){
 				if (starship.model.position.z <= -65){
 					starship.model.remove(propulsor_upper_right);
@@ -1211,33 +1284,27 @@ function finishGame(){
 			
 		
 		setTimeout(function(){
-			var sizeRandomness = 0;
-			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+			parts.push(new fuochi(-10, 5));
 		}, 3500);
 
 		setTimeout(function(){
-			var sizeRandomness = 0;
-			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+			parts.push(new fuochi(-20, -5));
 		}, 4000);
 
 		setTimeout(function(){
-			var sizeRandomness = 0;
-			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+			parts.push(new fuochi(10, 8));
 		}, 5000);
 
-		setTimeout(function(){			
-			var sizeRandomness = 0;
-			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		setTimeout(function(){
+			parts.push(new fuochi(-15, -7));
 		}, 3500);
 
-		setTimeout(function(){			
-			var sizeRandomness = 0;
-			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		setTimeout(function(){
+			parts.push(new fuochi(0, -5));
 		}, 3500);
 
-		setTimeout(function(){			
-			var sizeRandomness = 0;
-			parts.push(new fuochi((Math.random() * sizeRandomness)-(sizeRandomness/2), (Math.random() * sizeRandomness)-(sizeRandomness/2)));
+		setTimeout(function(){
+			parts.push(new fuochi(-5, -5));
 		}, 3500);
 
 		setTimeout(function(){
@@ -1461,7 +1528,7 @@ function loadEnemies(){
 		if (clock.getElapsedTime() >= 1 && clock.getElapsedTime() <= 7){
 			win.style.display = "block";
 		}
-		else{
+		else if (clock.getElapsedTime() > 7){
 			win.style.display = "none";
 			clock.stop();
 		}
@@ -1471,7 +1538,6 @@ function loadEnemies(){
 
 function destroyEnemy( event ) {
 	if (canShot){
-		
 		var listener = new THREE.AudioListener();
 		camera.add(listener);
 
@@ -1489,7 +1555,7 @@ function destroyEnemy( event ) {
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 		hitShot(mouse.x,mouse.y);
-
+		
 		vec.unproject( camera );
 		
 		rete= vec.sub( camera.position ).normalize();
@@ -1497,7 +1563,7 @@ function destroyEnemy( event ) {
 		position= camera.position.clone()
 		position=position.add(rete.multiplyScalar(distanza));
 		
-
+		
 		x1= starship.model.position.x+8.5;
 		x2= starship.model.position.y+1.5;
 		x3= starship.model.position.z-3;
@@ -1507,7 +1573,6 @@ function destroyEnemy( event ) {
 		vec1=new THREE.Vector3( x1,x2,x3);
 		vec2=new THREE.Vector3( x11,x22,x33);
 
-		
 		var material = new THREE.LineDashedMaterial( {
 			color:0x00FF00,
 			dashSize: 0.5,
@@ -1521,7 +1586,6 @@ function destroyEnemy( event ) {
         line.computeLineDistances();
 
 		scene.add( line );
-		
 		setTimeout(function(){
 			line.alive = false;
 			scene.remove(line);
@@ -1541,9 +1605,10 @@ function destroyEnemy( event ) {
         line2.computeLineDistances();
 
 		scene.add( line2 );
+
+
 		
 		setTimeout(function(){
-			hitShot(mouse.x,mouse.y);
 			line2.alive = false;
 			scene.remove(line2);
 		},10);
@@ -1777,24 +1842,24 @@ function hitShot( x,y ) {
 
 function enemyShot(obj){
 	var listener = new THREE.AudioListener();
-				camera.add(listener);
+	camera.add(listener);
 
-				var sound = new THREE.Audio(listener);
+	var sound = new THREE.Audio(listener);
 
 
-				var audioLoader = new THREE.AudioLoader();
-				audioLoader.load('sounds/Photon colpo.wav', function(buffer) {
-					sound.setBuffer(buffer);
-					sound.setVolume(0.06);
-					sound.play();
-				});
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load('sounds/Photon colpo.wav', function(buffer) {
+		sound.setBuffer(buffer);
+		sound.setVolume(0.06);
+		sound.play();
+	});
 	var enemy_pos = obj.position.clone();
 	var starship_pos = starship.model.position.clone();
 	var dir = new THREE.Vector3();
 	dir.sub(starship_pos, enemy_pos).normalize();
 	var bullet = new THREE.Mesh(
 		new THREE.SphereGeometry(0.2, 0.2, 20),
-		new THREE.MeshBasicMaterial({color:0xF62817})
+		new THREE.MeshPhongMaterial({color:0xF62817})
 	);
 	bullet.position.set(enemy_pos.x, enemy_pos.y, enemy_pos.z);
 	bullet.velocity = dir;
@@ -1934,7 +1999,7 @@ function handleMovements(){
 		}
 		if ( keyboard.pressed("W") && starship.model.position.y < window.innerHeight/42){
 			starship.model.translateY(y_step[0]);
-		   starship.model.rotation.z= z_rotate;
+			starship.model.rotation.z= z_rotate;
 			starshipBox.translateY(y_step[0]);
 			starshipBox.rotation.x= -x_rotate;
 			document.addEventListener( "mousemove", mouseMove, false );
@@ -1954,9 +2019,8 @@ function handleMovements(){
 
 var movementSpeed = 2;
 var totalObjects = 500;
-var objectSize = 0.15;
+var objectSize = 0.2;
 var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
-var sizeRandomness = 0;
 
 
 	
@@ -2130,8 +2194,8 @@ function updateExplosion(){
 
 function loadDamagedShip(enemy,health){
 	var obj;
-	if (health == 2){
-		obj = enemystarship.damagedstarship1.model.clone();e
+	if (health == 3){
+		obj = enemystarship.damagedstarship1.model.clone();
 	}
 	else if (health == 1){
 		obj = enemystarship.damagedstarship2.model.clone();
@@ -2181,10 +2245,10 @@ function loadDamagedShip(enemy,health){
 
 function loadDamagedFinalShip(enemy,health){
 	var obj;
-	if (health == 2){
+	if (health == 6){
 		obj = enemystarship.damagedfinalship1.model.clone();
 	}
-	else if (health == 1){
+	else if (health == 3){
 		obj = enemystarship.damagedfinalship2.model.clone();
 	}
 	else{
@@ -2311,6 +2375,8 @@ function createMoneyAndAsteroid(){
 		else{ //moneys
 			moneys_asteroids[i] = money.clone();
 			moneys_asteroids[i].rotation.x=-1.5;
+			moneys_wireframe[i] = money_wireframe.clone();
+			moneys_wireframe[i].rotation.x=-1.5;
 			moneys_asteroids[i].name = "money"+i;
 		}
 	}
@@ -2330,6 +2396,11 @@ function setMoneys(){
 				moneys_asteroids[i].position.x = k*beta*Math.cos(beta);
 				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 5.5;
 				moneys_asteroids[i].position.z = -950-20*i;
+				
+				moneys_wireframe[i].position.x = k*beta*Math.cos(beta);
+				moneys_wireframe[i].position.y = k*beta*Math.sin(beta) - 5.5;
+				moneys_wireframe[i].position.z = -950-20*i;
+				scene.add(moneys_wireframe[i]);
 			}
 			beta += 0.25;
 			if (beta >= 5){
@@ -2338,9 +2409,6 @@ function setMoneys(){
 			scene.add(moneys_asteroids[i]);
 		}
 	}
-
-
-
 }
 
 function animateMoney(){
@@ -2415,17 +2483,19 @@ function showImprovements(){
 }
 
 function restoreHealth(){
-	starship.health = 10;
-	starship.money -= 10;
+	if (starship.money >= 10 && starship.health < 10){
+		starship.health = 10;
+		starship.money -= 10;
+	}
 }
 
 function increaseDamage(){
-	if (starship.money >= 10*starship.damage){
-		starship.money -= 10*starship.damage;
+	if (starship.money >= 20*starship.damage*world){
+		starship.money -= 20*starship.damage*world;
 		starship.damage += 1;
 	}
 	else{
-		document.getElementById("msg").innerHTML = "You need " + 10*starship.damage + " money to upgrade!";
+		document.getElementById("msg").innerHTML = "You need " + 20*starship.damage*world + " money to upgrade!";
 		document.getElementById("msg").style.display = "block";
 		setTimeout(function(){
 			document.getElementById("msg").style.display = "none";
@@ -2441,7 +2511,7 @@ function updateInfoBar(){
 }
 
 function quitGame(){
-	if ( keyboard.pressed("Q") ){
+	if ( keyboard.pressed("P") ){
 		window.location.reload(false); 
 	}
 }
@@ -2452,6 +2522,7 @@ function resetGame(end){
 		while(scene.children.length > 0){ 
 			scene.remove(scene.children[0]); 
 		}
+		document.getElementById("game_over").style.display = "none";
 		clock.stop();
 		clock_money.stop();
 		planet_clock.stop();
@@ -2468,9 +2539,14 @@ function resetGame(end){
 		setMoneys();
 		starship.model.rotation.set(0,0,0);
 		starshipBox.rotation.set(0, 0 ,0);
-		starship.money = 0;
-		starship.health = 10;
-		starship.damage = 1;
+		if(!end){
+			starship.money = 0;
+			starship.health = 10;
+			starship.damage = 1;
+		}
+		if (sound){
+			sound.stop();
+		}
 		document.getElementById("healthDiv").innerHTML = starship.health; 
 		document.getElementById("moneysDiv").innerHTML = starship.money;         
 		document.getElementById("damageDiv").innerHTML = starship.damage;         
