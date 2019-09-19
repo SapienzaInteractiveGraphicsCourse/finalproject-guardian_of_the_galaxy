@@ -8,8 +8,15 @@ var near = 0.1;
 var far = 1000;
 var reset = false;
 
-//SETTING UP SOUNDS
-var sound;
+/* ---- sound ---- */
+
+var sound_scene;
+var sound_enemy;
+var sound_start;
+var sound_shot;
+
+/* ---------------*/
+
 
 //starship rotation and shot
 var position;
@@ -410,6 +417,12 @@ function loadModels(loadManager){
 		scene = new THREE.Scene();
 	}
 
+	if (!camera) {
+		camera = new THREE.PerspectiveCamera( fovy, window.innerWidth / window.innerHeight, near, far );
+		camera.position.set( 0.0, 0.0, 30.0);
+		camera.lookAt( 0.0, -4.0, 0.0 );
+	}
+
 	var starsDiv = document.createElement("DIV");
     starsDiv.id = "starsid"; 
     starsDiv.className = "stars";
@@ -425,6 +438,50 @@ function loadModels(loadManager){
     //cloudsDiv.id = "cloudsid";
     //cloudsDiv.className = "clouds";
     //document.getElementById("info").appendChild(cloudsDiv);
+    var listener = new THREE.AudioListener();
+    camera.add(listener);
+
+    sound_scene = new THREE.Audio(listener);
+
+    //Load a sound and set it as the Audio object's buffer
+    var audioLoader = new THREE.AudioLoader();
+    audioLoader.load('sounds/avengers_scene.mp3', function(buffer) {
+      sound_scene.setBuffer(buffer);
+      sound_scene.setLoop(true);
+      sound_scene.setVolume(0.06);
+	});
+
+
+
+    sound_start = new THREE.Audio(listener);
+
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load('sounds/via.wav', function(buffer) {
+		sound_start.setBuffer(buffer);
+		sound_start.setVolume(0.03);
+	});
+
+
+
+	sound_shot = new THREE.Audio(listener);
+
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load('sounds/Photon colpo.wav', function(buffer) {
+		sound_shot.setBuffer(buffer);
+		sound_shot.setVolume(0.06);
+		
+	});
+
+
+	sound_enemy = new THREE.Audio(listener);
+
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load('sounds/Photon 1.wav', function(buffer) {
+		sound_enemy.setBuffer(buffer);
+		sound_enemy.setVolume(0.06);
+	});
+
+
 
 	var textureLoader = new THREE.TextureLoader(loadManager);
 
@@ -434,9 +491,6 @@ function loadModels(loadManager){
 
 	var starship_loader = new THREE.OBJLoader(loadManager);
 	var starship_mtlLoader = new THREE.MTLLoader(loadManager);
-
-	
-	
 
 	starship_mtlLoader.load('models/starship/X-Wing.mtl', (materials) => {
 		materials.preload();
@@ -892,32 +946,27 @@ function initGame() {
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
-	var listener = new THREE.AudioListener();
-	camera.add(listener);
-
-    //Create a global audio source
-    sound = new THREE.Audio(listener);
-
-    //Load a sound and set it as the Audio object's buffer
-    var audioLoader = new THREE.AudioLoader();
-    audioLoader.load('sounds/avengers_scene.mp3', function(buffer) {
-      sound.setBuffer(buffer);
-      sound.setLoop(true);
-      sound.setVolume(0.06);
-      sound.play();
-	});
+	sound_scene.play(); 
 
 	enter.style.display = "block";
 	
 	var checkbox = document.getElementById("togBtn");
 
  	checkbox.addEventListener('change', function () {
-		if(this.checked) {
-			sound.setVolume(0.0);
-		}
-		else {
-			sound.setVolume(0.06);
-		}
+   	  if(this.checked) {
+        	console.log("off");
+        	sound_scene.setVolume(0.0);
+        	sound_enemy.setVolume(0.0);
+        	sound_shot.setVolume(0.0);
+        	sound_start.setVolume(0.0);
+    	}
+    else {
+       		console.log("on");
+       		sound_scene.setVolume(0.06);
+       		sound_enemy.setVolume(0.06);
+       		sound_shot.setVolume(0.06);
+       		sound_start.setVolume(0.03);
+    	}
   	});
 }
 
@@ -1073,35 +1122,39 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=-30;
 					enemystarship.finalenemy.model.position.y=-30;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
 			}
 			else if (rand < 0.4){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-20;
 					enemystarship.finalenemy.model.position.y=15;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
 			}
 			else if (rand < 0.6){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-20;
 					enemystarship.finalenemy.model.position.y=0;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+				}, 1000);
 			}
 			else if (rand < 0.8){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-30;
 					enemystarship.finalenemy.model.position.y=-10;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
 			}
 			else{
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=0;
 					enemystarship.finalenemy.model.position.y=0;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
 			}
 		}
 		if (enemystarship.finalenemy.model.position.x == 0){
@@ -1110,35 +1163,47 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=-30;
 					enemystarship.finalenemy.model.position.y=-30;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
 			}
 			else if (rand < 0.4){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x= 20;
 					enemystarship.finalenemy.model.position.y= 10;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+			
 			}
 			else if (rand < 0.6){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-20;
 					enemystarship.finalenemy.model.position.y=10;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
 			}
 			else if (rand < 0.8){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=40;
 					enemystarship.finalenemy.model.position.y=-5;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
+				
 			}
 			else{
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-15;
 					enemystarship.finalenemy.model.position.y=-10;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
+				
 			}
 		}
 		
@@ -1148,39 +1213,48 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=10;
 					enemystarship.finalenemy.model.position.y=-30;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
 			}
 			else if (rand < 0.4){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x= 40;
 					enemystarship.finalenemy.model.position.y= 0;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
 			}
+		
 			else if (rand < 0.6){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=30;
 					enemystarship.finalenemy.model.position.y=-10;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
 			}
+			
 			else if (rand < 0.8){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=20;
 					enemystarship.finalenemy.model.position.y=-15;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
 			}
 			else{
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=0;
 					enemystarship.finalenemy.model.position.y=0;
 					enemystarship.finalenemy.animate = false;
-				}, 500);
+
+				}, 1000);
+
 			}		
 		}	
 	}
-
 }
 
 
@@ -1420,7 +1494,7 @@ function rotateWings(action){
 				if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
 					child.rotation.z -= 0.0016;
 					propulsor_lower_left.position.y += 0.00085;
-					propulsor_lower_left.position.x += 0.00060;
+					propulsor_lower_left.position.x -= 0.00045;
 				}
 				if (child.name == "LeftWingTop.001" || child.name == "LeftWingTopEngineAndGreebles.001" || child.name == "LeftWingTopHullPlates.001"){
 					child.rotation.z += 0.0016;
@@ -1538,18 +1612,7 @@ function loadEnemies(){
 
 function destroyEnemy( event ) {
 	if (canShot){
-		var listener = new THREE.AudioListener();
-		camera.add(listener);
-
-		var sound = new THREE.Audio(listener);
-
-
-		var audioLoader = new THREE.AudioLoader();
-		audioLoader.load('sounds/Photon 1.wav', function(buffer) {
-			sound.setBuffer(buffer);
-			sound.setVolume(0.06);
-			sound.play();
-		});
+		sound_enemy.play();
 		vec= new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
 	 
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -1841,18 +1904,7 @@ function hitShot( x,y ) {
 
 
 function enemyShot(obj){
-	var listener = new THREE.AudioListener();
-	camera.add(listener);
-
-	var sound = new THREE.Audio(listener);
-
-
-	var audioLoader = new THREE.AudioLoader();
-	audioLoader.load('sounds/Photon colpo.wav', function(buffer) {
-		sound.setBuffer(buffer);
-		sound.setVolume(0.06);
-		sound.play();
-	});
+	sound_shot.play();
 	var enemy_pos = obj.position.clone();
 	var starship_pos = starship.model.position.clone();
 	var dir = new THREE.Vector3();
@@ -2312,18 +2364,7 @@ function playGame(){
 			.to({z: -35}, 2000)
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(function() {
-				var listener = new THREE.AudioListener();
-				camera.add(listener);
-
-				var sound = new THREE.Audio(listener);
-
-
-				var audioLoader = new THREE.AudioLoader();
-				audioLoader.load('sounds/via.wav', function(buffer) {
-					sound.setBuffer(buffer);
-					sound.setVolume(0.03);
-					sound.play();
-				});
+				sound_start.play();
 				starship.model.position.z = posStart.z;
 				if(starship.model.position.z <= -29.3){
 					starship.model.remove(propulsor_upper_right);
@@ -2539,13 +2580,17 @@ function resetGame(end){
 		setMoneys();
 		starship.model.rotation.set(0,0,0);
 		starshipBox.rotation.set(0, 0 ,0);
+		starship.model.remove(propulsor_upper_right);
+		starship.model.remove(propulsor_upper_left);
+		starship.model.remove(propulsor_lower_right);
+		starship.model.remove(propulsor_lower_left);
 		if(!end){
 			starship.money = 0;
 			starship.health = 10;
 			starship.damage = 1;
 		}
-		if (sound){
-			sound.stop();
+		if (sound_scene){
+			sound_scene.stop();
 		}
 		document.getElementById("healthDiv").innerHTML = starship.health; 
 		document.getElementById("moneysDiv").innerHTML = starship.money;         
