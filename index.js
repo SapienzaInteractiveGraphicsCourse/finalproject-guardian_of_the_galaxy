@@ -16,8 +16,6 @@ var sound_start;
 var sound_shot;
 
 /* ---------------*/
-
-
 //starship rotation and shot
 var position;
 var vec;
@@ -86,11 +84,10 @@ var pianeta9;
 var pianeta10;
 var pianeta11;
 var pianeta12;
+var planets = [];
+var planets_data = [];
 var loader = new THREE.TextureLoader();
 var planet_clock;
-
-var planet_position=[[20,10,-1300],[-20,-10,-1300],[-20,10,-1300],[20,-10,-1300],[-10,0,-1300],[10,0,-1300]];
-shuffle(planet_position,6);
 
 //Enemies destruction
  var dirs = [];
@@ -104,6 +101,7 @@ var bullets = [];
 var enemy_bullets = [];
 var curr_bullet1;
 var curr_bullet2;
+var curr_bullet3;
 var objects = [];
 var fireRate1 = 0;
 var fireRate2 = 0;
@@ -211,12 +209,12 @@ enemystarship = {
 //PLANETS
 //
 var pointLight;
-var segmenti_pianeta = 48;
+var segmenti_pianeta = 64;
 
 var texture_planets=["./images/1.jpg","./images/2.jpg","./images/3.jpg","./images/4.jpg","./images/5.jpg","./images/6.jpg","./images/7.jpg","./images/8.jpg","./images/9.jpg","./images/10.jpg","./images/11.jpg","./images/12.jpg",
 			 "./images/13.jpg","./images/14.jpg","./images/15.jpg","./images/16.jpg",
 			 "./images/17.jpg","./images/18.png","./images/19.png","./images/20.png","./images/21.png","./images/22.png","./images/23.jpg","./images/24.jpg","./images/25.jpg","./images/26.jpg"];
-var planets_dimensions=[15,14,13,12,11];
+var planets_dimensions=[40,30,45,55,25,38,45,30,28,42,29,51];
 
 function shuffle(myArray,myLen){
     var array=myArray;
@@ -230,84 +228,49 @@ function shuffle(myArray,myLen){
         array[index]=temp;
     }
 }
-shuffle(texture_planets,26);
-shuffle(planets_dimensions,6);
 
-var pianeta1_data = constructPlanetData(0.02, (0,0,20), "pianeta1", texture_planets[0], planets_dimensions[0], segmenti_pianeta);
-var pianeta2_data = constructPlanetData(0.025, (15,15,20), "pianeta2", texture_planets[1], planets_dimensions[1], segmenti_pianeta);
-var pianeta3_data = constructPlanetData(0.02, (15,15,20), "pianeta3", texture_planets[2], planets_dimensions[2], segmenti_pianeta);
-var pianeta4_data = constructPlanetData(0.025, (-15,-15,-20), "pianeta4", texture_planets[3], planets_dimensions[3], segmenti_pianeta);
-var pianeta5_data = constructPlanetData(0.02, (15,15,20), "pianeta5", texture_planets[4], planets_dimensions[4], segmenti_pianeta);
-var pianeta6_data = constructPlanetData(0.025, (0,0,0), "pianeta6", texture_planets[5], planets_dimensions[5], segmenti_pianeta);
-var pianeta7_data = constructPlanetData(0.02, (0,0,20), "pianeta7", texture_planets[6], planets_dimensions[0], segmenti_pianeta);
-var pianeta8_data = constructPlanetData(0.025, (15,15,20), "pianeta8", texture_planets[7], planets_dimensions[1], segmenti_pianeta);
-var pianeta9_data = constructPlanetData(0.02, (15,15,20), "pianeta9", texture_planets[8], planets_dimensions[2], segmenti_pianeta);
-var pianeta10_data = constructPlanetData(0.025, (-15,-15,-20), "pianeta10", texture_planets[9], planets_dimensions[3], segmenti_pianeta);
-var pianeta11_data = constructPlanetData(0.02, (15,15,20), "pianeta11", texture_planets[10], planets_dimensions[4], segmenti_pianeta);
-var pianeta12_data = constructPlanetData(0.025, (0,0,0), "pianeta12", texture_planets[11], planets_dimensions[5], segmenti_pianeta);
-
+function fill_planets(){
+	for (var i = 0; i < 12; i++){
+		var sign = i % 2 == 0 ? i+1 : -i-1;
+		planets_data[i] = constructPlanetData(0.001, {x: 150*(sign), y: 15*sign, z :-500 - 500*i}, "pianeta" + i, texture_planets[i], planets_dimensions[i], segmenti_pianeta)
+	}
+}
 shuffle(texture_planets, 26);
-shuffle(planets_dimensions, 6);
+shuffle(planets_dimensions, 12);
+fill_planets();
+
 
 function rotazione_pianeta(pianeta, myData) {
-    if(myData.name=='pianeta1'){
-        pianeta.rotation.y += myData.rotationRate*1.2;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-    }
-    if(myData.name=='pianeta2'){
-        pianeta.rotation.y += myData.rotationRate*1.2;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-    }
-    if(myData.name=='pianeta3'){
-        pianeta.rotation.y += myData.rotationRate;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-    }
-    if(myData.name=='pianeta4'){
-        pianeta.rotation.y += myData.rotationRate*1.3;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-    }
-    if(myData.name=='pianeta5'){
-        pianeta.rotation.y += myData.rotationRate*1.6;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-    }
-    if(myData.name=='pianeta6'){
-        pianeta.rotation.y += myData.rotationRate*1.3;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-	}
-	if(myData.name=='pianeta7'){
-        pianeta.rotation.y += myData.rotationRate*1.1;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-	}
-	if(myData.name=='pianeta8'){
-        pianeta.rotation.y += myData.rotationRate*1.2;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-	}
-	if(myData.name=='pianeta9'){
-        pianeta.rotation.y += myData.rotationRate*1.2;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-	}
-	if(myData.name=='pianeta10'){
-        pianeta.rotation.y += myData.rotationRate*1.3;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-	}
-	if(myData.name=='pianeta11'){
-        pianeta.rotation.y += myData.rotationRate*1.3;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-	}
-	if(myData.name=='pianeta12'){
-        pianeta.rotation.y += myData.rotationRate;
-        pianeta.rotation.x += (myData.rotationRate)/3;
-    }
+	pianeta.rotation.y += myData.rotationRate;
 }
 
+function loadPlanets(){
+	for (var i = 0; i < 12; i++){
+		var data = planets_data[i];
+		var x = planets_data[i].distanceFromAxis.x;
+		console.log(planets_data[i].distanceFromAxis);
+		var y = planets_data[i].distanceFromAxis.y;
+		var z = planets_data[i].distanceFromAxis.z;
+		planets[i] = loadTexturedPlanet(data, x , y, z, 0);
+	}
+}
 
-function movimento_pianeta(pianeta){
-    
-    if(pianeta.position.z< camera.position.z){
-		pianeta.position.z +=2.5;
+function movimento_pianeta(pianeta, planet_data){
+	if (pianeta.position.x > 0){
+		pianeta.position.x += 0.01;
+	}
+	else{
+		pianeta.position.x -= 0.01;
+	}
+    if(pianeta.position.z < camera.position.z){
+		pianeta.position.z += 1.2;
 	}
     else{
-        scene.remove(pianeta);
+		scene.remove(pianeta);
+		pianeta.position.x = planet_data.distanceFromAxis.x;
+		pianeta.position.y = planet_data.distanceFromAxis.y;
+		pianeta.position.z = planet_data.distanceFromAxis.z - 1300;
+		scene.add(pianeta)
 	}
 }
 
@@ -360,7 +323,7 @@ function loadTexturedPlanet(myData, x, y, z, materialType) {
     material.castShadow = true;
     var pianeta = getSphere(material, myData.size, myData.segments);
     pianeta.receiveShadow = true;
-    pianeta.name = myData.name;
+	pianeta.name = myData.name;
     pianeta.position.set(x, y, z);
 
     return pianeta;
@@ -422,7 +385,6 @@ function loadModels(loadManager){
 		camera.position.set( 0.0, 0.0, 30.0);
 		camera.lookAt( 0.0, -4.0, 0.0 );
 	}
-
 	var starsDiv = document.createElement("DIV");
     starsDiv.id = "starsid"; 
     starsDiv.className = "stars";
@@ -437,8 +399,8 @@ function loadModels(loadManager){
     //var cloudsDiv = document.createElement("DIV");
     //cloudsDiv.id = "cloudsid";
     //cloudsDiv.className = "clouds";
-    //document.getElementById("info").appendChild(cloudsDiv);
-    var listener = new THREE.AudioListener();
+	//document.getElementById("info").appendChild(cloudsDiv);
+	var listener = new THREE.AudioListener();
     camera.add(listener);
 
     sound_scene = new THREE.Audio(listener);
@@ -491,6 +453,9 @@ function loadModels(loadManager){
 
 	var starship_loader = new THREE.OBJLoader(loadManager);
 	var starship_mtlLoader = new THREE.MTLLoader(loadManager);
+
+	
+	
 
 	starship_mtlLoader.load('models/starship/X-Wing.mtl', (materials) => {
 		materials.preload();
@@ -630,20 +595,9 @@ function loadModels(loadManager){
 	});
 
 	
-	//PLANETS MOVEMENT
-	pianeta1 = loadTexturedPlanet(pianeta1_data, 220, 80, -400, 0);
-	pianeta2 = loadTexturedPlanet(pianeta2_data, -205, -20, -500, 0);
-	pianeta3 = loadTexturedPlanet(pianeta3_data, -280, -90, -200, 0);
-	pianeta4 = loadTexturedPlanet(pianeta4_data, 230, -70, -100, 0);
-	pianeta5 = loadTexturedPlanet(pianeta5_data, -215, 100, -300, 0);
-	pianeta6 = loadTexturedPlanet(pianeta6_data, 185, -100, -100, 0);
-	pianeta7 = loadTexturedPlanet(pianeta7_data, 40, 95, -200, 0);
-	pianeta8 = loadTexturedPlanet(pianeta8_data, -40, -65, -800, 0);
-	pianeta9 = loadTexturedPlanet(pianeta9_data, 90, -25, -200, 0);
-	pianeta10 = loadTexturedPlanet(pianeta10_data, -90, 75, -1100, 0);
-	pianeta11 = loadTexturedPlanet(pianeta11_data, -75, -50, -10, 0);
-	pianeta12 = loadTexturedPlanet(pianeta12_data, -100, -50, -90, 0);
-
+	//Loading planets
+	loadPlanets();
+	
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
 
@@ -664,16 +618,17 @@ function loadModels(loadManager){
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
-	var material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
-	var material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
 		
 
 	enemies_mtlLoader.load('models/enemies/X-Wing.mtl', (materials) => {
 		enemies_obj_loader.load('models/enemies/X-Wing.obj', (object) => {
-			object.name ="finalenemy"
+			object.name ="finalenemy";
+			var material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+			var material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+				 
 			object.traverse( function ( child ) {
 				 // For any meshes in the model, add our material.
-
+				
 				if ( child instanceof THREE.Mesh ) {
 					child.castShadow = true;
 					if (child.name == "polySurface46_Mesh"){
@@ -694,15 +649,17 @@ function loadModels(loadManager){
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
-	material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
-	material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
 		
 
 	enemies_mtlLoader.load('models/enemies/X-Wing-damaged1.mtl', (materials) => {
 		enemies_obj_loader.load('models/enemies/X-Wing-damaged1.obj', (object) => {
 			object.name ="damagedfinalship1"
+			var material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+			var material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+	
 			object.traverse( function ( child ) {
 				 // For any meshes in the model, add our material.
+				
 
 				if ( child instanceof THREE.Mesh ) {
 					child.castShadow = true;
@@ -723,16 +680,17 @@ function loadModels(loadManager){
 
 	enemies_obj_loader = new THREE.OBJLoader(loadManager);
 	enemies_mtlLoader = new THREE.MTLLoader(loadManager);
-	material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
-	material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
 		
 
 	enemies_mtlLoader.load('models/enemies/X-Wing-damaged2.mtl', (materials) => {
 		enemies_obj_loader.load('models/enemies/X-Wing-damaged2.obj', (object) => {
 			object.name ="damagedfinalship2"
+			var material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_TIE_VN_BaseColor.png') } );
+			var material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/enemies/textures/TIE-vn_Glass_BaseColor.png') } );
+				 
 			object.traverse( function ( child ) {
 				 // For any meshes in the model, add our material.
-
+				
 				if ( child instanceof THREE.Mesh ) {
 					child.castShadow = true;
 					if (child.name == "polySurface46_Mesh"){
@@ -752,8 +710,6 @@ function loadModels(loadManager){
 
 	var stargate_obj_loader = new THREE.OBJLoader(loadManager);
 	var stargate_mtlLoader = new THREE.MTLLoader(loadManager);
-	material1 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/portal/mqdefault.jpg') } );
-	material2 = new THREE.MeshPhongMaterial( { map: new THREE.TextureLoader().load('models/portal/GateMisc.jpg') } );
 		
 
 	stargate_mtlLoader.load('models/portal/stargate.mtl', (materials) => {
@@ -771,21 +727,49 @@ function loadModels(loadManager){
 		stargate_obj_loader.setMaterials(materials);
 	});
 
-	var asteroid_loader = new THREE.TextureLoader();
+	var money_material = createDataTexture("money");
+	money = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 1, 16 ), money_material);
+	money_wireframe = new THREE.Mesh( new THREE.CylinderGeometry( 2.1, 2.1, 1, 64 ),new THREE.MeshPhongMaterial( {color: 0x000000, wireframe: true} ));
 
-	money = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 1, 64 ),new THREE.MeshBasicMaterial( {color: 0xffff00} ));
-	money_wireframe = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 1, 64 ),new THREE.MeshBasicMaterial( {color: 0x00000, wireframe: true} ));
+	var geometry = new THREE.SphereGeometry( 2, 7, 7 );
+	var asteroid_material = createDataTexture("asteroid");
+	asteroid = new THREE.Mesh( geometry, asteroid_material );
+	createMoneyAndAsteroid();
+	setMoneys();		
+}
 
-	asteroid_loader.load( './images/5.jpg', function ( texture ) {
-		var geometry = new THREE.SphereGeometry( 1, 7, 7 );
-		var material = new THREE.MeshBasicMaterial( { map: texture} );
-		asteroid = new THREE.Mesh( geometry, material );
-		createMoneyAndAsteroid();
-		setMoneys();				
-	} );
-	
-	
-
+function createDataTexture(obj){
+	var side = 48;
+	var amount = Math.pow(side, 2);
+	var cell = new Uint8Array(amount);
+	if (obj == "money"){
+		for (var i = 0; i < amount; i++) {
+			cell[i] = 156 + (92*i)/amount;
+		}
+		var texture = new THREE.DataTexture(cell, side, side, THREE.LuminanceFormat, THREE.UnsignedByteType);
+		texture.magFilter = THREE.NearestFilter;
+		texture.needsUpdate = true; 
+		var material = new THREE.MeshPhongMaterial( { 
+			color: 0xFBB917,
+			map: texture,
+			side: THREE.DoubleSide
+		});
+		return material;
+	}
+	else{
+		side = 32;
+		for (var i = 0; i < amount; i++) {
+			cell[i] = 128*Math.random();
+		}
+		var texture = new THREE.DataTexture(cell, side, side, THREE.LuminanceFormat, THREE.UnsignedByteType);
+		texture.magFilter = THREE.NearestFilter;
+		texture.needsUpdate = true; 
+		var material = new THREE.MeshPhongMaterial( { 
+			map: texture,
+			side: THREE.DoubleSide
+		});
+		return material;
+	}
 }
 
 function initGame() {
@@ -947,120 +931,38 @@ function initGame() {
 	window.addEventListener( 'resize', onWindowResize, false );
 
 	sound_scene.play(); 
-
+	
 	enter.style.display = "block";
 	
 	var checkbox = document.getElementById("togBtn");
 
  	checkbox.addEventListener('change', function () {
-   	  if(this.checked) {
-        	console.log("off");
-        	sound_scene.setVolume(0.0);
+		if(this.checked) {
+			sound_scene.setVolume(0.0);
         	sound_enemy.setVolume(0.0);
         	sound_shot.setVolume(0.0);
         	sound_start.setVolume(0.0);
-    	}
-    else {
-       		console.log("on");
-       		sound_scene.setVolume(0.06);
-       		sound_enemy.setVolume(0.06);
-       		sound_shot.setVolume(0.06);
-       		sound_start.setVolume(0.03);
-    	}
+
+		}
+		else {
+			sound.setVolume(0.06);
+			sound_enemy.setVolume(0.06);
+			sound_shot.setVolume(0.06);
+			sound_start.setVolume(0.03);
+		}
   	});
 }
 
 function planets_respawn(){
-	movimento_pianeta(pianeta1,pianeta1_data);
-	movimento_pianeta(pianeta2,pianeta2_data);
-	movimento_pianeta(pianeta3,pianeta3_data);
-	movimento_pianeta(pianeta4,pianeta4_data);
-	movimento_pianeta(pianeta5,pianeta5_data);
-	movimento_pianeta(pianeta6,pianeta6_data);
-	movimento_pianeta(pianeta7,pianeta7_data);
-	movimento_pianeta(pianeta8,pianeta8_data);
-	movimento_pianeta(pianeta9,pianeta9_data);
-	movimento_pianeta(pianeta10,pianeta10_data);
-	movimento_pianeta(pianeta11,pianeta11_data);
-	movimento_pianeta(pianeta12,pianeta12_data);
+	for (var i = 0; i < planets.length; i++){
+		movimento_pianeta(planets[i], planets_data[i]);
+		rotazione_pianeta(planets[i], planets_data[i]);
+	}	
+}
 
-	rotazione_pianeta(pianeta1,pianeta1_data);
-	rotazione_pianeta(pianeta2,pianeta2_data);
-	rotazione_pianeta(pianeta3,pianeta3_data);
-	rotazione_pianeta(pianeta4,pianeta4_data);
-	rotazione_pianeta(pianeta5,pianeta5_data);
-	rotazione_pianeta(pianeta6,pianeta6_data);
-	rotazione_pianeta(pianeta7,pianeta7_data);
-	rotazione_pianeta(pianeta8,pianeta8_data);
-	rotazione_pianeta(pianeta9,pianeta9_data);
-	rotazione_pianeta(pianeta10,pianeta10_data);
-	rotazione_pianeta(pianeta11,pianeta11_data);
-	rotazione_pianeta(pianeta12,pianeta12_data);
-	var roundednumber=Math.round(planet_clock.getElapsedTime());
-	var starting_position_planets=	[[80, 70, -1300],[127, 107, -1300],[-200, -104, -1300],[-110, -114, -1300],[-129, 116, -1300],[-79, 89, -1300],
-	[120, -100, -1300],[113, -115, -1300], [-110, 110, -1300],[-104, 130, -1300],[110, -123, -1300],[118, 84, -1300],[-110, 100, -1300],[-80, -105, -1300],[89,-95, -1300],[-140,105 , -1300],[-100,80 , -1300],[-75,-95 , -1300]
-	,[90,-95 , -1300],[-80,85 , -1300],[-100,100 , -1300],[87,-100 , -1300],[90,-82 , -1300],[110,-90 , -1300],[120,52 , -1300],[-120,-125 , -1300]];
-	//console.log(roundednumber);
-	shuffle(starting_position_planets,6);
-	var x=starting_position_planets[0];
-	var y=starting_position_planets[0];
-	//console.log(starting_position_planets[0]);
-	if(roundednumber % 2 ==0){
-		if(pianeta1.position.z >= camera.position.z){
-			pianeta1.position.set(x[0],x[1],x[2]);			
-			shuffle(starting_position_planets,6);
-			x=starting_position_planets[0];
-			scene.add(pianeta1);
-		}
-		if(pianeta12.position.z >= camera.position.z){
-			pianeta12.position.set(y[0],y[1],y[2]);		
-			shuffle(starting_position_planets,14);
-			y=starting_position_planets[0];
-			scene.add(pianeta12);
-		}
-	}
-	
-	if(roundednumber % 3 ==0){
-		if(pianeta2.position.z >= camera.position.z){
-			pianeta2.position.set(x[0],x[1],x[2]);						
-			shuffle(starting_position_planets,6);
-			x=starting_position_planets[0];
-			scene.add(pianeta2);
-		}
-		if(pianeta11.position.z >= camera.position.z){
-			pianeta11.position.set(y[0],y[1],y[2]);			
-			shuffle(starting_position_planets,14);
-			y=starting_position_planets[0];
-			scene.add(pianeta11);
-		}
-	}
-	if(roundednumber % 4 ==0){
-		if(pianeta3.position.z >= camera.position.z){
-			pianeta3.position.set(x[0],x[1],x[2]);						
-			shuffle(starting_position_planets,6);
-			x=starting_position_planets[0];
-			scene.add(pianeta3);
-		}
-		if(pianeta10.position.z >= camera.position.z){
-			pianeta10.position.set(y[0],y[1],y[2]);				
-			shuffle(starting_position_planets,14);
-			y=starting_position_planets[0];
-			scene.add(pianeta10);
-		}
-	}
-	if(roundednumber % 6 ==0){
-		if(pianeta4.position.z >= camera.position.z){
-			pianeta4.position.set(x[0],x[1],x[2]);		
-			shuffle(starting_position_planets,6);
-			x=starting_position_planets[0];
-			scene.add(pianeta4);
-		}
-		if(pianeta9.position.z >= camera.position.z){
-			pianeta9.position.set(y[0],y[1],y[2]);		
-			shuffle(starting_position_planets,14);
-			y=starting_position_planets[0];
-			scene.add(pianeta9);
-		}
+function addPlanets(){
+	for (var i = 0; i < planets.length; i++){
+		scene.add(planets[i]);
 	}
 }
 
@@ -1116,13 +1018,45 @@ function animateEnemy(){
 	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true && !enemystarship.finalenemy.animate){
 		enemystarship.finalenemy.animate = true;
 		var rand = Math.random();
+		if (shooting && enemystarship.finalenemy.health > 0 && level >= 3){	//when an enemy is hit, it starts to shot you
+			curr_bullet3 = enemyShot(enemystarship.finalenemy.model);
+		}
+		if (curr_bullet3 != undefined){
+			if (curr_bullet3.position.z >= camera.position.z){
+				scene.remove(curr_bullet3);
+			}
+			else{
+				raycaster = new THREE.Raycaster();
+				var dir = new THREE.Vector3();
+				var starship_pos = starship.model.position.clone();
+				var enemy_pos = curr_bullet3.position.clone();
+				dir.subVectors(starship_pos, enemy_pos).normalize();
+				raycaster.set(enemy_pos, dir);
+				var intersects = raycaster.intersectObjects( scene.children, true);
+				if( intersects.length > 0 && intersects[0].distance < 2) {
+					
+					var firstObjIntersected = intersects[0].object;
+		
+					if ( starship.name === firstObjIntersected.parent.name ) {
+						starship.health -= 2*world;
+						scene.remove(curr_bullet3);
+						curr_bullet3 = undefined;
+						if (starship.health <= 0){
+							scene.remove(starship.model);	
+							canShot = false;
+							gameOver();
+						}
+					}
+				}
+			}
+			
+		}
 		if (enemystarship.finalenemy.model.position.x > 0){
 			if (rand < 0.2) {
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-30;
 					enemystarship.finalenemy.model.position.y=-30;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
 			}
 			else if (rand < 0.4){
@@ -1130,7 +1064,6 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=-20;
 					enemystarship.finalenemy.model.position.y=15;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
 			}
 			else if (rand < 0.6){
@@ -1145,7 +1078,6 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=-30;
 					enemystarship.finalenemy.model.position.y=-10;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
 			}
 			else{
@@ -1153,7 +1085,6 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=0;
 					enemystarship.finalenemy.model.position.y=0;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
 			}
 		}
@@ -1163,47 +1094,35 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=-30;
 					enemystarship.finalenemy.model.position.y=-30;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
 			}
 			else if (rand < 0.4){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x= 20;
 					enemystarship.finalenemy.model.position.y= 10;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-			
 			}
 			else if (rand < 0.6){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-20;
 					enemystarship.finalenemy.model.position.y=10;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
 			}
 			else if (rand < 0.8){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=40;
 					enemystarship.finalenemy.model.position.y=-5;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
-				
 			}
 			else{
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=-15;
 					enemystarship.finalenemy.model.position.y=-10;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
-				
 			}
 		}
 		
@@ -1213,7 +1132,6 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=10;
 					enemystarship.finalenemy.model.position.y=-30;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
 			}
 			else if (rand < 0.4){
@@ -1221,27 +1139,20 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x= 40;
 					enemystarship.finalenemy.model.position.y= 0;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
 			}
-		
 			else if (rand < 0.6){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=30;
 					enemystarship.finalenemy.model.position.y=-10;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
 			}
-			
 			else if (rand < 0.8){
 				setTimeout(function(){
 					enemystarship.finalenemy.model.position.x=20;
 					enemystarship.finalenemy.model.position.y=-15;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
 			}
 			else{
@@ -1249,12 +1160,11 @@ function animateEnemy(){
 					enemystarship.finalenemy.model.position.x=0;
 					enemystarship.finalenemy.model.position.y=0;
 					enemystarship.finalenemy.animate = false;
-
 				}, 1000);
-
 			}		
 		}	
 	}
+
 }
 
 
@@ -1563,7 +1473,7 @@ function loadEnemies(){
 				canShot = true;
 				clock.stop();
 			}
-			enemystarship.enemystarship1.health = 3;
+			enemystarship.enemystarship1.health = 5;
 		}
 
 	}
@@ -1593,8 +1503,8 @@ function loadEnemies(){
 				canShot = true;
 				clock.stop();
 			}
-			enemystarship.enemystarship1.health = 3;
-			enemystarship.enemystarship2.health = 3;
+			enemystarship.enemystarship1.health = 5;
+			enemystarship.enemystarship2.health = 5;
 		}
 
 	}
@@ -1638,7 +1548,7 @@ function destroyEnemy( event ) {
 
 		var material = new THREE.LineDashedMaterial( {
 			color:0x00FF00,
-			dashSize: 0.5,
+			dashSize: 0.7,
 			gapSize: 1,
 		} );		
 		var geometry = new THREE.Geometry();
@@ -1657,7 +1567,7 @@ function destroyEnemy( event ) {
 		
 		var material2 = new THREE.LineDashedMaterial( {
 			color:0x00FF00,
-			dashSize: 0.5,
+			dashSize: 0.7,
 			gapSize: 1,
 		} );		
 		var geometry2 = new THREE.Geometry();
@@ -1805,100 +1715,72 @@ function hitShot( x,y ) {
 				}
 			}
 		}
-		////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if( intersects.length > 0 ) {
 			var firstObjIntersected = intersects[0].object;
-			//var planet_list=["pianeta1","pianeta2","pianeta3","pianeta4","pianeta5","pianeta6","pianeta7","pianeta8","pianeta9","pianeta10","pianeta11","pianeta12",];
-			//console.log(firstObjIntersected.name);
-			switch (firstObjIntersected.name) {
-				case "pianeta1":
-					parts.push(new explode_planet(pianeta1,1));
+			for (var i = 0; i < planets.length; i++){
+				if (firstObjIntersected.name == "pianeta"+i){
+					parts.push(new explode_planet(planets[i],1));
+					calculate_damages(planets[i].position);
 					setTimeout(function() {
-						parts.push(new explode_planet(pianeta1,2));
+						parts.push(new explode_planet(pianetas[i],2));
 					}, 180);
-					pianeta1.position.z= camera.position.z+1;
+					pianeta[i].position.z= camera.position.z+1;
 					break;
-				case "pianeta2":
-					parts.push(new explode_planet(pianeta2,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta2,2));
-					}, 180);
-					pianeta2.position.z= camera.position.z+2;
-					break;
-				case "pianeta3":
-					parts.push(new explode_planet(pianeta3,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta3,2));
-					}, 180);
-					pianeta3.position.z= camera.position.z+3;
-					break;
-				case "pianeta4":
-					parts.push(new explode_planet(pianeta4,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta4,2));
-					}, 180);
-					pianeta4.position.z= camera.position.z+4;
-					break;
-				case "pianeta5":
-					parts.push(new explode_planet(pianeta5,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta5,2));
-					}, 180);
-					pianeta5.position.z= camera.position.z+5;
-					break;
-				case "pianeta6":
-					parts.push(new explode_planet(pianeta6,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta6,2));
-					}, 180);
-					pianeta6.position.z= camera.position.z+1;
-					break;
-				case "pianeta7":
-					parts.push(new explode_planet(pianeta7,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta7,2));
-					}, 180);
-					pianeta7.position.z= camera.position.z+2;
-					break;
-				case "pianeta8":
-					parts.push(new explode_planet(pianeta8,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta8,2));
-					}, 180);
-					pianeta8.position.z= camera.position.z+3;
-					break;
-				case "pianeta9":
-					parts.push(new explode_planet(pianeta9,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta9,2));
-					}, 180);
-					pianeta9.position.z= camera.position.z+4;
-					break;
-				case "pianeta10":
-					parts.push(new explode_planet(pianeta10,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta10,2));
-					}, 180);
-					pianeta10.position.z= camera.position.z+5;
-					break;
-				case "pianeta11":
-					parts.push(new explode_planet(pianeta11,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta11,2));
-					}, 180);
-					pianeta11.position.z= camera.position.z+1;
-					break;
-				case "pianeta12":
-					parts.push(new explode_planet(pianeta12,1));
-					setTimeout(function() {
-						parts.push(new explode_planet(pianeta12,2));
-					}, 180);
-					pianeta12.position.z= camera.position.z+5;
-					break;
+				}
 			}
-			
 		}
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+}
+
+
+function calculate_damages(src){
+	var distance = src.distanceTo(starship.model.position);
+	if (distance < 10){
+		starship.health -= 2;
+		if (starship.health <= 0){
+			scene.remove(starship.model);	
+			canShot = false;
+			gameOver();
+		}
+	}
+	distance = src.distanceTo(enemystarship.enemystarship1.model.position);
+	if (distance < 5){
+		enemystarship.enemystarship1.health -= 2;
+		if (enemystarship.enemystarship1.health <= 0){
+			parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
+			enemystarship.enemystarship1.appeared = false;
+			enemystarship.enemystarship1.model.position.z = -1000;
+			enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+		}
+		else{
+			loadDamagedShip(enemystarship.enemystarship1.model, enemystarship.enemystarship1.health);
+		}
+	}
+	distance = src.distanceTo(enemystarship.enemystarship2.model.position);
+	if (distance < 5){
+		enemystarship.enemystarship2.health -= 2;
+		if (enemystarship.enemystarship2.health <= 0){
+			parts.push(new esplode_enemy(enemystarship.enemystarship2.model));
+			enemystarship.enemystarship2.appeared = false;
+			enemystarship.enemystarship2.model.position.z = -1010;
+			enemystarship.enemystarship2.model = enemystarship.originalenemy2.model.clone();
+		}
+		else{
+			loadDamagedShip(enemystarship.enemystarship2.model, enemystarship.enemystarship2.health);
+		}
+	}
+	distance = src.distanceTo(enemystarship.finalenemy.model.position);
+	if (distance < 5){
+		enemystarship.finalenemy.health -= 2;
+		if (enemystarship.finalenemy.health <= 0){
+			parts.push(new esplode_enemy(enemystarship.finalenemy.model));
+			enemystarship.finalenemy.appeared = false;
+			enemystarship.finalenemy.model.position.z = -1040;
+			enemystarship.finalenemy.model = enemystarship.originalfinalenemy.model.clone();
+		}
+		else{
+			loadDamagedFinalShip(enemystarship.finalenemy.model, enemystarship.finalenemy.health);
+		}
 	}
 }
 
@@ -1910,7 +1792,7 @@ function enemyShot(obj){
 	var dir = new THREE.Vector3();
 	dir.sub(starship_pos, enemy_pos).normalize();
 	var bullet = new THREE.Mesh(
-		new THREE.SphereGeometry(0.2, 0.2, 20),
+		new THREE.SphereGeometry(0.3, 0.3, 20),
 		new THREE.MeshPhongMaterial({color:0xF62817})
 	);
 	bullet.position.set(enemy_pos.x, enemy_pos.y, enemy_pos.z);
@@ -1927,7 +1809,7 @@ function shotResponse(){
 	fireRate1 += 1;
 	fireRate2 += 1;
 	if (fireRate1 % 100 == 0){
-		if (shooting && enemystarship.enemystarship1.health > 0){	//when an enemy is hit, it starts to shot you
+		if (enemystarship.enemystarship1.appeared && enemystarship.enemystarship1.health > 0){	//when an enemy is hit, it starts to shot you
 			curr_bullet1 = enemyShot(enemystarship.enemystarship1.model);
 		}
 	}
@@ -1951,7 +1833,7 @@ function shotResponse(){
 				starship.health -= 1*world;
 				scene.remove(curr_bullet1);
 				curr_bullet1 = undefined;
-				if (starship.health == 0){
+				if (starship.health <= 0){
 					scene.remove(starship.model);	
 					canShot = false;
 					gameOver();
@@ -1962,7 +1844,7 @@ function shotResponse(){
 	}
 
 	if (fireRate2 % 70 == 0){
-		if (shooting && enemystarship.enemystarship2.health > 0 && level >= 2){	//when an enemy is hit, it starts to shot you
+		if (enemystarship.enemystarship2.appeared && enemystarship.enemystarship2.health > 0 && level >= 2){	//when an enemy is hit, it starts to shot you
 			curr_bullet2 = enemyShot(enemystarship.enemystarship2.model);
 		}
 	}
@@ -1995,8 +1877,8 @@ function shotResponse(){
 			}
 		}
 	}
-	if (fireRate2 % 20 == 0){
-		if (shooting && enemystarship.finalenemy.health > 0 && level == 3){	//when an enemy is hit, it starts to shot you
+	if (fireRate2 % 120 == 0){
+		if (enemystarship.finalenemy.appeared && enemystarship.finalenemy.health > 0 && level == 3){	
 			raycaster = new THREE.Raycaster();
 			var dir = new THREE.Vector3();
 			var starship_pos = starship.model.position.clone();
@@ -2405,6 +2287,7 @@ function start(){
 	reset = false;
 	end = false;
 	posStart.z = 0;
+	addPlanets();
 }
 
 function createMoneyAndAsteroid(){
@@ -2430,23 +2313,20 @@ function setMoneys(){
 		for (var i = 1; i <= 40; i++){
 			if (i % 10 == 0){
 				moneys_asteroids[i].position.x = k*beta*Math.cos(beta);
-				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 4;
+				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 7.5;
 				moneys_asteroids[i].position.z = -950-20*i;
 			}
 			else{
 				moneys_asteroids[i].position.x = k*beta*Math.cos(beta);
-				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 5.5;
+				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 7.5;
 				moneys_asteroids[i].position.z = -950-20*i;
 				
 				moneys_wireframe[i].position.x = k*beta*Math.cos(beta);
-				moneys_wireframe[i].position.y = k*beta*Math.sin(beta) - 5.5;
+				moneys_wireframe[i].position.y = k*beta*Math.sin(beta) - 7.5;
 				moneys_wireframe[i].position.z = -950-20*i;
 				scene.add(moneys_wireframe[i]);
 			}
-			beta += 0.25;
-			if (beta >= 5){
-				beta = -beta;
-			}
+			beta += 0.23;
 			scene.add(moneys_asteroids[i]);
 		}
 	}
@@ -2460,7 +2340,7 @@ function animateMoney(){
 				moneys_asteroids[i].position.z += 2;
 			}
             else if(moneys_asteroids[i].position.z <= camera.position.z){
-                moneys_asteroids[i].position.z += 0.75;
+                moneys_asteroids[i].position.z += 0.8;
 			}
 			else{
 				scene.remove(moneys_asteroids[i]);
@@ -2481,7 +2361,7 @@ function getMoney(){
 			var globalVertex = localVertex.applyMatrix4( starshipBox.matrix );
 			var directionVector = globalVertex.sub( starshipBox.position );
 			
-			var ray = new THREE.Raycaster( starshipBox.position.clone(), directionVector.clone().normalize() );
+			var ray = new THREE.Raycaster(starshipBox.position.clone(), directionVector.clone().normalize() );
 			var intersects = ray.intersectObjects( scene.children, true );
 			if( intersects.length > 0 && intersects[0].distance < directionVector.length()) {
 				var firstObjIntersected = intersects[0].object;
@@ -2589,6 +2469,9 @@ function resetGame(end){
 			starship.health = 10;
 			starship.damage = 1;
 		}
+		else{
+			world = 1;
+		}
 		if (sound_scene){
 			sound_scene.stop();
 		}
@@ -2598,11 +2481,12 @@ function resetGame(end){
 		document.getElementById("levelDiv").innerHTML = "LEVEL " + level;   
 		document.getElementById("worldDiv").innerHTML = "World " + world;
 		document.getElementById("worldDiv").style.display = "block";
-		enemystarship.enemystarship1.health = 3;
-		enemystarship.enemystarship2.health = 3;
-		enemystarship.finalenemy.health = 3;
+		enemystarship.enemystarship1.health = 5;
+		enemystarship.enemystarship2.health = 5;
+		enemystarship.finalenemy.health = 10;
 		initGame();
 		addToScene();
+		addPlanets();
 		cancelAnimationFrame( animation ); 
 	}
 
