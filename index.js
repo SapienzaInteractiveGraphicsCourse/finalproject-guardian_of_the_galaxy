@@ -256,22 +256,24 @@ function loadPlanets(){
 }
 
 function movimento_pianeta(pianeta, planet_data){
-	if (pianeta.position.x > 0){
-		pianeta.position.x += 0.01;
-	}
-	else{
-		pianeta.position.x -= 0.01;
-	}
-    if(pianeta.position.z < camera.position.z){
-		pianeta.position.z += 1.2;
-	}
-    else{
-		scene.remove(pianeta);
-		pianeta.position.x = planet_data.distanceFromAxis.x;
-		pianeta.position.y = planet_data.distanceFromAxis.y;
-		pianeta.position.z = planet_data.distanceFromAxis.z - 1300;
-		scene.add(pianeta)
-	}
+	if (!enemystarship.enemystarship1.appeared && !enemystarship.enemystarship2.appeared && !enemystarship.finalenemy.appeared){
+		if (pianeta.position.x > 0){
+			pianeta.position.x += 0.01;
+		}
+		else{
+			pianeta.position.x -= 0.01;
+		}
+		if(pianeta.position.z < camera.position.z){
+			pianeta.position.z += 1.2;
+		}
+		else{
+			scene.remove(pianeta);
+			pianeta.position.x = planet_data.distanceFromAxis.x;
+			pianeta.position.y = planet_data.distanceFromAxis.y;
+			pianeta.position.z = planet_data.distanceFromAxis.z - 1300;
+			scene.add(pianeta)
+		}
+	}	
 }
 
 function constructPlanetData(rotation_rate_tmp, distance_from_axis_tmp, name_tmp, texture_tmp, size_tmp, segments_tmp) {
@@ -404,13 +406,12 @@ function loadModels(loadManager){
     camera.add(listener);
 
     sound_scene = new THREE.Audio(listener);
-
     //Load a sound and set it as the Audio object's buffer
     var audioLoader = new THREE.AudioLoader();
     audioLoader.load('sounds/avengers_scene.mp3', function(buffer) {
       sound_scene.setBuffer(buffer);
       sound_scene.setLoop(true);
-      sound_scene.setVolume(0.06);
+	  sound_scene.setVolume(0.06);
 	});
 
 
@@ -818,7 +819,7 @@ function initGame() {
 		var musicDiv=document.createElement("DIV");
 		musicDiv.id="musicDiv";
 		document.body.appendChild(musicDiv);
-		document.getElementById("musicDiv").style = "position: absolute; left: 90%;top: 10%;"
+		document.getElementById("musicDiv").style = "position: absolute; left: 90.5%;top: 10%;"
 	
 	
 		var label1=document.createElement("LABEL");
@@ -945,7 +946,7 @@ function initGame() {
 
 		}
 		else {
-			sound.setVolume(0.06);
+			sound_scene.setVolume(0.06);
 			sound_enemy.setVolume(0.06);
 			sound_shot.setVolume(0.06);
 			sound_start.setVolume(0.03);
@@ -1309,7 +1310,6 @@ function createEnemyBullets(){
 }
 
 function animate() {
-	
 	animation = requestAnimationFrame( animate );
 	if (movimento==false){
 		starship.model.rotation.x=0;
@@ -1790,7 +1790,7 @@ function enemyShot(obj){
 	var enemy_pos = obj.position.clone();
 	var starship_pos = starship.model.position.clone();
 	var dir = new THREE.Vector3();
-	dir.sub(starship_pos, enemy_pos).normalize();
+	dir.subVectors(starship_pos, enemy_pos).normalize();
 	var bullet = new THREE.Mesh(
 		new THREE.SphereGeometry(0.3, 0.3, 20),
 		new THREE.MeshPhongMaterial({color:0xF62817})
@@ -2313,16 +2313,16 @@ function setMoneys(){
 		for (var i = 1; i <= 40; i++){
 			if (i % 10 == 0){
 				moneys_asteroids[i].position.x = k*beta*Math.cos(beta);
-				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 7.5;
+				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 7;
 				moneys_asteroids[i].position.z = -950-20*i;
 			}
 			else{
 				moneys_asteroids[i].position.x = k*beta*Math.cos(beta);
-				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 7.5;
+				moneys_asteroids[i].position.y = k*beta*Math.sin(beta) - 7;
 				moneys_asteroids[i].position.z = -950-20*i;
 				
 				moneys_wireframe[i].position.x = k*beta*Math.cos(beta);
-				moneys_wireframe[i].position.y = k*beta*Math.sin(beta) - 7.5;
+				moneys_wireframe[i].position.y = k*beta*Math.sin(beta) - 7;
 				moneys_wireframe[i].position.z = -950-20*i;
 				scene.add(moneys_wireframe[i]);
 			}
@@ -2468,8 +2468,6 @@ function resetGame(end){
 			starship.money = 0;
 			starship.health = 10;
 			starship.damage = 1;
-		}
-		else{
 			world = 1;
 		}
 		if (sound_scene){
