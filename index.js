@@ -271,6 +271,7 @@ function movimento_pianeta(pianeta, planet_data){
 			pianeta.position.x = planet_data.distanceFromAxis.x;
 			pianeta.position.y = planet_data.distanceFromAxis.y;
 			pianeta.position.z = planet_data.distanceFromAxis.z - 1300;
+			pianeta.health = 5;
 			scene.add(pianeta)
 		}
 	}	
@@ -326,7 +327,9 @@ function loadTexturedPlanet(myData, x, y, z, materialType) {
     var pianeta = getSphere(material, myData.size, myData.segments);
     pianeta.receiveShadow = true;
 	pianeta.name = myData.name;
-    pianeta.position.set(x, y, z);
+	pianeta.position.set(x, y, z);
+	pianeta.health = 5;
+	console.log(pianeta.health);
 
     return pianeta;
 }
@@ -1016,10 +1019,11 @@ function animateEnemy(){
 			x_step[2] = -x_step[2];
 		}
 	}
+	
 	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true && !enemystarship.finalenemy.animate){
 		enemystarship.finalenemy.animate = true;
 		var rand = Math.random();
-		if (shooting && enemystarship.finalenemy.health > 0 && level >= 3){	//when an enemy is hit, it starts to shot you
+		if (enemystarship.finalenemy.health > 0 && level >= 3){	//when an enemy is hit, it starts to shot you
 			curr_bullet3 = enemyShot(enemystarship.finalenemy.model);
 		}
 		if (curr_bullet3 != undefined){
@@ -1719,13 +1723,16 @@ function hitShot( x,y ) {
 			var firstObjIntersected = intersects[0].object;
 			for (var i = 0; i < planets.length; i++){
 				if (firstObjIntersected.name == "pianeta"+i){
-					parts.push(new explode_planet(planets[i],1));
-					calculate_damages(planets[i].position);
-					setTimeout(function() {
-						parts.push(new explode_planet(pianetas[i],2));
-					}, 180);
-					pianeta[i].position.z= camera.position.z+1;
-					break;
+					planets[i].health -= starship.damage;
+					if (planets[i].health <= 0){
+						parts.push(new explode_planet(planets[i],1));
+						calculate_damages(planets[i].position);
+						setTimeout(function() {
+							parts.push(new explode_planet(pianetas[i],2));
+						}, 180);
+						pianeta[i].position.z= camera.position.z+1;
+						break;
+					}
 				}
 			}
 		}
@@ -1876,32 +1883,6 @@ function shotResponse(){
 				return;
 			}
 		}
-	}
-	if (fireRate2 % 120 == 0){
-		if (enemystarship.finalenemy.appeared && enemystarship.finalenemy.health > 0 && level == 3){	
-			raycaster = new THREE.Raycaster();
-			var dir = new THREE.Vector3();
-			var starship_pos = starship.model.position.clone();
-			var enemy_pos = enemystarship.finalenemy.model.position.clone();
-			dir.subVectors(starship_pos, enemy_pos).normalize();
-			raycaster.set(enemy_pos, dir);
-			var intersects = raycaster.intersectObjects( scene.children, true);
-			if( intersects.length > 0 ) {
-				
-				var firstObjIntersected = intersects[0].object;
-
-				if ( starship.name === firstObjIntersected.parent.name ) {
-					starship.health -= 2*world; 
-					if (starship.health <= 0){
-						scene.remove(starship.model);	
-						canShot = false;
-						gameOver();
-					}
-					return;
-				}
-			}
-		}
-	
 	}
 	
 }
@@ -2482,9 +2463,32 @@ function resetGame(end){
 		enemystarship.enemystarship1.health = 5;
 		enemystarship.enemystarship2.health = 5;
 		enemystarship.finalenemy.health = 10;
+		enemystarship.enemystarship1.appeared = false;
+		enemystarship.enemystarship2.appeared = false;
+		enemystarship.finalenemy.appeared = false;
+		enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+		enemystarship.enemystarship2.model = enemystarship.originalenemy2.model.clone();
+		enemystarship.finalenemy.model = enemystarship.originalfinalenemy.model.clone();
+		if (starship.model.getObjectByName("LeftWingBottom.001").rotation.z > 0){
+			starship.model.traverse( function ( child ) {
+				if ( child instanceof THREE.Mesh ) {
+					if (child.name == "LeftWingBottom.001" || child.name == "LeftWingBottomEngineAndGreebles.001" || child.name == "LeftWingBottomHullPlates.001"){
+						child.rotation.z = 0;
+					}
+					if (child.name == "LeftWingTop.001" || child.name == "LeftWingTopEngineAndGreebles.001" || child.name == "LeftWingTopHullPlates.001"){
+						child.rotation.z = 0.;
+					}
+					if (child.name == "RightWingBottom.001" || child.name == "RightWingBottomEngineAndGreebles.001" || child.name == "RightWingBottomHullPlates.001"){
+						child.rotation.z = 0;
+					}
+					if (child.name == "RightWingTop.001" || child.name == "RightWingTopEngineAndGreebles.001" || child.name == "RightWingTopHullPlates.001"){
+						child.rotation.z = 0;
+					}
+	
+				}
+			} );}
 		initGame();
 		addToScene();
-		addPlanets();
 		cancelAnimationFrame( animation ); 
 	}
 
