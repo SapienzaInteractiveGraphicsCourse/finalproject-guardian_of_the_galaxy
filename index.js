@@ -44,9 +44,9 @@ var keyboard = new THREEx.KeyboardState();
 //Setting up clock and levels
 var clock;
 var clock_money;
-var level = 1;
 
 //SETTING UP GAME LOGIC
+var level = 1;
 var world = 1;
 var startGame = false;
 var entered = false;
@@ -248,7 +248,6 @@ function loadPlanets(){
 	for (var i = 0; i < 12; i++){
 		var data = planets_data[i];
 		var x = planets_data[i].distanceFromAxis.x;
-		console.log(planets_data[i].distanceFromAxis);
 		var y = planets_data[i].distanceFromAxis.y;
 		var z = planets_data[i].distanceFromAxis.z;
 		planets[i] = loadTexturedPlanet(data, x , y, z, 0);
@@ -329,7 +328,6 @@ function loadTexturedPlanet(myData, x, y, z, materialType) {
 	pianeta.name = myData.name;
 	pianeta.position.set(x, y, z);
 	pianeta.health = 5;
-	console.log(pianeta.health);
 
     return pianeta;
 }
@@ -996,8 +994,8 @@ function animateEnemy(){
 	if (enemystarship.enemystarship2.health > 0 && enemystarship.enemystarship2.appeared == true){
 		var y_pos = enemystarship.enemystarship2.model.position.y;	//0.0
 		var x_pos = enemystarship.enemystarship2.model.position.x; //0.0
-		enemystarship.enemystarship2.model.position.x += x_step[2]*world;
-		enemystarship.enemystarship2.model.position.y += y_step[2]*world;
+		enemystarship.enemystarship2.model.position.x -= x_step[2]*world;
+		enemystarship.enemystarship2.model.position.y -= y_step[2]*world;
 		var dir = new THREE.Vector3();
 		var starship_pos = starship.model.position.clone();
 		var enemy_pos = enemystarship.enemystarship1.model.position.clone();
@@ -1020,14 +1018,20 @@ function animateEnemy(){
 		}
 	}
 	
-	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true && !enemystarship.finalenemy.animate){
-		enemystarship.finalenemy.animate = true;
-		var rand = Math.random();
+	if (enemystarship.finalenemy.health > 0 && enemystarship.finalenemy.appeared == true){
 		if (enemystarship.finalenemy.health > 0 && level >= 3){	//when an enemy is hit, it starts to shot you
-			curr_bullet3 = enemyShot(enemystarship.finalenemy.model);
+			if (curr_bullet3 == undefined){
+				curr_bullet3 = enemyShot(enemystarship.finalenemy.model);
+			}
+			else{
+				if (!curr_bullet3.alive){
+					curr_bullet3 = enemyShot(enemystarship.finalenemy.model);
+				}
+			}
 		}
-		if (curr_bullet3 != undefined){
+		if (curr_bullet3.alive){
 			if (curr_bullet3.position.z >= camera.position.z){
+				curr_bullet3.alive = false;
 				scene.remove(curr_bullet3);
 			}
 			else{
@@ -1038,14 +1042,13 @@ function animateEnemy(){
 				dir.subVectors(starship_pos, enemy_pos).normalize();
 				raycaster.set(enemy_pos, dir);
 				var intersects = raycaster.intersectObjects( scene.children, true);
-				if( intersects.length > 0 && intersects[0].distance < 2) {
-					
-					var firstObjIntersected = intersects[0].object;
+				if( intersects.length > 0 && intersects[1].distance < 2) {
+					var firstObjIntersected = intersects[1].object;
 		
-					if ( starship.name === firstObjIntersected.parent.name ) {
+					if ( starship.name === firstObjIntersected.parent.name && intersects[1].distance < 2 ) {
 						starship.health -= 2*world;
 						scene.remove(curr_bullet3);
-						curr_bullet3 = undefined;
+						curr_bullet3.alive = false;
 						if (starship.health <= 0){
 							scene.remove(starship.model);	
 							canShot = false;
@@ -1056,118 +1059,123 @@ function animateEnemy(){
 			}
 			
 		}
-		if (enemystarship.finalenemy.model.position.x > 0){
-			if (rand < 0.2) {
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-30;
-					enemystarship.finalenemy.model.position.y=-30;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
+		if (!enemystarship.finalenemy.animate){
+			enemystarship.finalenemy.animate = true;
+			var rand = Math.random();
+			if (enemystarship.finalenemy.model.position.x > 0){
+				if (rand < 0.2) {
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-30;
+						enemystarship.finalenemy.model.position.y=-30;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.4){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-20;
+						enemystarship.finalenemy.model.position.y=15;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.6){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-20;
+						enemystarship.finalenemy.model.position.y=0;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.8){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-30;
+						enemystarship.finalenemy.model.position.y=-10;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else{
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=0;
+						enemystarship.finalenemy.model.position.y=0;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
 			}
-			else if (rand < 0.4){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-20;
-					enemystarship.finalenemy.model.position.y=15;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
+			if (enemystarship.finalenemy.model.position.x == 0){
+				if (rand < 0.2) {
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-30;
+						enemystarship.finalenemy.model.position.y=-30;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.4){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x= 20;
+						enemystarship.finalenemy.model.position.y= 10;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.6){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-20;
+						enemystarship.finalenemy.model.position.y=10;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.8){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=40;
+						enemystarship.finalenemy.model.position.y=-5;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else{
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=-15;
+						enemystarship.finalenemy.model.position.y=-10;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
 			}
-			else if (rand < 0.6){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-20;
-					enemystarship.finalenemy.model.position.y=0;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.8){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-30;
-					enemystarship.finalenemy.model.position.y=-10;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else{
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=0;
-					enemystarship.finalenemy.model.position.y=0;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-		}
-		if (enemystarship.finalenemy.model.position.x == 0){
-			if (rand < 0.2) {
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-30;
-					enemystarship.finalenemy.model.position.y=-30;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.4){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x= 20;
-					enemystarship.finalenemy.model.position.y= 10;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.6){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-20;
-					enemystarship.finalenemy.model.position.y=10;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.8){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=40;
-					enemystarship.finalenemy.model.position.y=-5;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else{
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=-15;
-					enemystarship.finalenemy.model.position.y=-10;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
+			
+			if (enemystarship.finalenemy.model.position.x < 0){
+				if (rand < 0.2) {
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=10;
+						enemystarship.finalenemy.model.position.y=-30;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.4){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x= 40;
+						enemystarship.finalenemy.model.position.y= 0;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.6){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=30;
+						enemystarship.finalenemy.model.position.y=-10;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else if (rand < 0.8){
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=20;
+						enemystarship.finalenemy.model.position.y=-15;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}
+				else{
+					setTimeout(function(){
+						enemystarship.finalenemy.model.position.x=0;
+						enemystarship.finalenemy.model.position.y=0;
+						enemystarship.finalenemy.animate = false;
+					}, 1200);
+				}		
+			}	
 		}
 		
-		if (enemystarship.finalenemy.model.position.x < 0){
-			if (rand < 0.2) {
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=10;
-					enemystarship.finalenemy.model.position.y=-30;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.4){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x= 40;
-					enemystarship.finalenemy.model.position.y= 0;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.6){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=30;
-					enemystarship.finalenemy.model.position.y=-10;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else if (rand < 0.8){
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=20;
-					enemystarship.finalenemy.model.position.y=-15;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}
-			else{
-				setTimeout(function(){
-					enemystarship.finalenemy.model.position.x=0;
-					enemystarship.finalenemy.model.position.y=0;
-					enemystarship.finalenemy.animate = false;
-				}, 1000);
-			}		
-		}	
 	}
 
 }
@@ -1630,7 +1638,6 @@ function hitShot( x,y ) {
 	
 				if ( enemystarship.enemystarship1.name === firstObjIntersected.parent.name ) {
 					enemystarship.enemystarship1.health -= starship.damage;
-					//console.log(firstObjIntersected);
 					shooting = true;
 					if (enemystarship.enemystarship1.health <= 0){
 						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
@@ -2224,7 +2231,7 @@ function playGame(){
 
 		enter.style.display = "none";
 		tweenShip = new TWEEN.Tween(posStart)
-			.to({z: -35}, 2000)
+			.to({z: -35}, 1200)
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(function() {
 				sound_start.play();
