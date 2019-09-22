@@ -16,7 +16,7 @@ It is developed using Three.js framework and involves users to interact with the
 
 ## Documentation
 
-For more details about how the project has been developed please refers to the report file.
+For more details about how the project has been developed please refers to the [report](./report.pdf) file.
 
 ## Demo
 Play the game here at this [link](https://sapienzainteractivegraphicscourse.github.io/finalproject-guardian_of_the_galaxy/) .
