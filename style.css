@@ -79,12 +79,12 @@ header a, a:visited {
 }
 
 .stars {
-  background:#000 url(http://www.script-tutorials.com/demos/360/images/stars.png) ;
+  background:#000 url(https://www.script-tutorials.com/demos/360/images/stars.png) ;
   z-index:-1;
 }
 
 .twinkling{
-  background:transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
+  background:transparent url(https://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
   z-index:-1;
 
   -moz-animation:move-twink-back 200s linear infinite;
