@@ -89,6 +89,13 @@ var planets_data = [];
 var loader = new THREE.TextureLoader();
 var planet_clock;
 
+//FIREWORKS
+
+var movementSpeed = 2;
+var totalObjects = 500;
+var objectSize = 0.2;
+var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
+
 //Enemies destruction
  var dirs = [];
  var parts = [];
@@ -1281,28 +1288,28 @@ function finishGame(){
 			
 		
 		setTimeout(function(){
-			parts.push(new fuochi(-10, 5));
-		}, 3500);
+			parts.push(new fuochi(-15, 5));
+		}, 2500);
 
 		setTimeout(function(){
 			parts.push(new fuochi(-20, -5));
-		}, 4000);
+		}, 2000);
 
 		setTimeout(function(){
 			parts.push(new fuochi(10, 8));
-		}, 5000);
+		}, 3000);
 
 		setTimeout(function(){
-			parts.push(new fuochi(-15, -7));
-		}, 3500);
+			parts.push(new fuochi(-25, -7));
+		}, 1500);
 
 		setTimeout(function(){
-			parts.push(new fuochi(0, -5));
-		}, 3500);
+			parts.push(new fuochi(20, -5));
+		}, 2500);
 
 		setTimeout(function(){
-			parts.push(new fuochi(-5, -5));
-		}, 3500);
+			parts.push(new fuochi(-10, -5));
+		}, 1500);
 
 		setTimeout(function(){
 			parti=true;
@@ -1618,8 +1625,9 @@ function hitShot( x,y ) {
 					if (enemystarship.enemystarship1.health <= 0){
 						parts.push(new esplode_enemy(enemystarship.enemystarship1.model));
 						enemystarship.enemystarship1.appeared = false;
-						enemystarship.enemystarship1.model.position.z = -1000;
 						enemystarship.enemystarship1.model = enemystarship.originalenemy1.model.clone();
+						enemystarship.enemystarship1.model.position.z = -1000;
+						enemystarship.enemystarship1.model.position.x = -5;
 						scene.add(enemystarship.enemystarship1.model);
 						clock_money.start();
 						shooting = false;
@@ -1939,12 +1947,6 @@ function handleMovements(){
 	
 }
 
-var movementSpeed = 2;
-var totalObjects = 500;
-var objectSize = 0.2;
-var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
-
-
 	
 function fuochi(x,y){
 	
@@ -1955,7 +1957,7 @@ function fuochi(x,y){
 		var vertex = new THREE.Vector3();
 		vertex.x = x;
 		vertex.y = y;
-		vertex.z = 0;
+		vertex.z = -20;
 		geometry.vertices.push( vertex );
 		dirs.push({
 			x:(Math.random() * movementSpeed)-(movementSpeed/2),
